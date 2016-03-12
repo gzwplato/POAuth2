@@ -1,35 +1,15 @@
 unit frmMain;
 
-{
-	var
-  	client: TOAuth2Client;
-    token: TOAuth2Token;
-    res: TOAuth2Response;
-  begin
-  	client := TOAuth2Client.Create(IdHTTP1);
-    try
-    	client.Site := 'localhost';
-      client.UserName := 'testuser';
-      client.PassWord := 'testpass';
-      client.ClientId := 'testclient';
-      client.ClientSecret := 'testsecret';
-      resp := client.GetReosurce('/path/to/resource?name=value');
-    finally
-    	client.Free;
-    end;
-  end;
-}
-
 interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, IdBaseComponent,
   IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, uIndyClient, uOAuth2HttpClient,
-  uOAuth2Client;
+  uOAuth2Client, Vcl.Menus;
 
 type
-  TForm1 = class(TForm)
+  TMainForm = class(TForm)
     txtUser: TEdit;
     txtPass: TEdit;
     txtClientId: TEdit;
@@ -52,9 +32,16 @@ type
     Label9: TLabel;
     Edit7: TEdit;
     IdHTTP1: TIdHTTP;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    Exit1: TMenuItem;
+    est1: TMenuItem;
+    JSON1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button2Click(Sender: TObject);
+    procedure Exit1Click(Sender: TObject);
+    procedure JSON1Click(Sender: TObject);
   private
     { Private-Deklarationen }
     FClient: TIndyHttpClient;
@@ -63,13 +50,16 @@ type
   end;
 
 var
-  Form1: TForm1;
+  MainForm: TMainForm;
 
 implementation
 
+uses
+	frmJson;
+
 {$R *.dfm}
 
-procedure TForm1.Button2Click(Sender: TObject);
+procedure TMainForm.Button2Click(Sender: TObject);
 var
   client: TOAuth2Client;
   res: TOAuth2Response;
@@ -88,14 +78,24 @@ begin
   end;
 end;
 
-procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TMainForm.Exit1Click(Sender: TObject);
+begin
+	Close;
+end;
+
+procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   FClient.Free;
 end;
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TMainForm.FormCreate(Sender: TObject);
 begin
   FClient := TIndyHttpClient.Create(IdHTTP1);
+end;
+
+procedure TMainForm.JSON1Click(Sender: TObject);
+begin
+  JsonForm.Show;
 end;
 
 end.

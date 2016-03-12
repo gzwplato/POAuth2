@@ -1,4 +1,4 @@
-object Form1: TForm1
+object MainForm: TMainForm
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
@@ -11,6 +11,7 @@ object Form1: TForm1
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  Menu = MainMenu1
   OldCreateOrder = False
   OnClose = FormClose
   OnCreate = FormCreate
@@ -171,7 +172,6 @@ object Form1: TForm1
     Color = clBtnFace
     ReadOnly = True
     TabOrder = 9
-    Text = 'Edit5'
   end
   object Edit6: TEdit
     Left = 8
@@ -181,7 +181,6 @@ object Form1: TForm1
     Color = clBtnFace
     ReadOnly = True
     TabOrder = 10
-    Text = 'Edit5'
   end
   object Edit7: TEdit
     Left = 504
@@ -191,7 +190,6 @@ object Form1: TForm1
     Color = clBtnFace
     ReadOnly = True
     TabOrder = 11
-    Text = 'Edit5'
   end
   object IdHTTP1: TIdHTTP
     AllowCookies = True
@@ -209,5 +207,23 @@ object Form1: TForm1
     HTTPOptions = [hoForceEncodeParams]
     Left = 528
     Top = 120
+  end
+  object MainMenu1: TMainMenu
+    Left = 544
+    Top = 216
+    object File1: TMenuItem
+      Caption = '&File'
+      object Exit1: TMenuItem
+        Caption = '&Exit'
+        OnClick = Exit1Click
+      end
+    end
+    object est1: TMenuItem
+      Caption = '&Test'
+      object JSON1: TMenuItem
+        Caption = '&JSON...'
+        OnClick = JSON1Click
+      end
+    end
   end
 end

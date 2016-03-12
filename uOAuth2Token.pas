@@ -7,27 +7,40 @@ uses
 
 type
 	TOAuth2Token = class
-	private
+	protected
   	FExpiresIn: integer;
-    FExpiresAt: integer;
+    FExpiresAt: TDateTime;
     FTokenType: string;
     FRefreshToken: string;
     FAccessToken: string;
+    procedure SetExpiresIn(Value: integer);
   public
   	function IsExpired: boolean;
 
-  	property ExpiresIn: integer read FExpiresIn;
-    property ExpiresAt: integer read FExpiresAt;
-    property TokenType: string read FTokenType;
-    property RefreshToken: string read FRefreshToken;
-    property AccessToken: string read FAccessToken;
+  	property ExpiresIn: integer read FExpiresIn write SetExpiresIn;
+    property ExpiresAt: TDateTime read FExpiresAt;
+    property TokenType: string read FTokenType write FTokenType;
+    property RefreshToken: string read FRefreshToken write FRefreshToken;
+    property AccessToken: string read FAccessToken write FAccessToken;
   end;
 
 implementation
 
-function TOAuth2Token.IsExpired: boolean;
-begin
+uses
+	DateUtils;
 
+procedure TOAuth2Token.SetExpiresIn(Value: integer);
+begin
+  FExpiresIn := Value;
+  FExpiresAt := IncSecond(Now, Value);
+end;
+
+function TOAuth2Token.IsExpired: boolean;
+var
+	n: TDateTime;
+begin
+	n := Now;
+  Result := FExpiresAt < n;
 end;
 
 end.

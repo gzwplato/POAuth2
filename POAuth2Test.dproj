@@ -83,7 +83,7 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="frmMain.pas">
-            <Form>Form1</Form>
+            <Form>MainForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="uOAuth2Client.pas"/>
@@ -93,6 +93,10 @@
         <DCCReference Include="uOAuth2Consts.pas"/>
         <DCCReference Include="uIndyClient.pas"/>
         <DCCReference Include="uOAuth2Tools.pas"/>
+        <DCCReference Include="frmJson.pas">
+            <Form>JsonForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

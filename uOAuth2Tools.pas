@@ -22,10 +22,51 @@ function BuildUrl(const AParts: TUrlParts): string;
 function EncodeBase64(const S: string): AnsiString;
 function DecodeBase64(const S: AnsiString): string;
 
+function RemoveLeadingSlash(const S: string): string;
+function AddLeadingSlash(const S: string): string;
+function RemoveTrailingSlash(const S: string): string;
+function AddTrailingSlash(const S: string): string;
+
 implementation
 
 const
 	BASE64_CODES: AnsiString = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
+
+function RemoveLeadingSlash(const S: string): string;
+begin
+  Result := S;
+  if Result <> '' then begin
+  	if Result[1] = '/' then
+    	Delete(Result, 1, 1);
+  end;
+end;
+
+function AddLeadingSlash(const S: string): string;
+begin
+  Result := S;
+  if Result <> '' then begin
+  	if Result[1] <> '/' then
+    	Result := '/' + Result;
+  end;
+end;
+
+function RemoveTrailingSlash(const S: string): string;
+begin
+  Result := S;
+  if Result <> '' then begin
+  	if Result[Length(Result)] = '/' then
+    	Delete(Result, Length(Result), 1);
+  end;
+end;
+
+function AddTrailingSlash(const S: string): string;
+begin
+  Result := S;
+  if Result <> '' then begin
+  	if Result[Length(Result)] <> '/' then
+    	Result := Result + '/';
+  end;
+end;
 
 function BuildUrl(const AParts: TUrlParts): string;
 begin

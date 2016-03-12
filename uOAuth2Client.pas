@@ -39,7 +39,7 @@ type
 implementation
 
 uses
-	uOAuth2Consts, uOAuth2Tools;
+	uOAuth2Consts, uOAuth2Tools, uJson;
 
 constructor TOAuth2Client.Create(AClient: TOAuth2HttpClient);
 begin
@@ -59,6 +59,8 @@ function TOAuth2Client.GetAccessToken: TOAuth2Token;
 var
   response: TOAuth2Response;
   url: string;
+  json: TJson;
+  val: TJsonValue;
 begin
 	if Assigned(FAccessToken) then
 		FAccessToken.Free;
@@ -75,7 +77,26 @@ begin
     FHttpClient.AddFormField(OAUTH2_SCOPE, FScope);
   url := FSite + OAUTH2_TOKEN_ENDPOINT;
   response := FHttpClient.Post(url);
+
   Result := TOAuth2Token.Create;
+  json := TJson.Create;
+  try
+		json.Parse(response.Body);
+    val := json.GetValue('access_token');
+    if val.Index <> -1 then begin
+      Result.AccessToken := json.Output.Strings[val.Index];
+    end;
+    val := json.GetValue('refresh_token');
+    if val.Index <> -1 then begin
+      Result.RefreshToken := json.Output.Strings[val.Index];
+    end;
+    val := json.GetValue('expires_in');
+    if val.Index <> -1 then begin
+      Result.ExpiresIn := Trunc(json.Output.Numbers[val.Index]);
+    end;
+  finally
+    json.Free;
+  end;
 end;
 
 function TOAuth2Client.GetAuthHeaderForAccessToken(const AAccessToken: string): string;
