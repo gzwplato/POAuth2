@@ -81,7 +81,8 @@ begin
       urlp.Query := urlp.Query + '&';
     urlp.Query := urlp.Query + GetQuery;
     url := TIdURI.URLEncode(BuildUrl(urlp));
-    FHttp.Request.CustomHeaders.AddStrings(FHeaders);
+    if FHeaders.Count > 0 then
+      FHttp.Request.CustomHeaders.AddStrings(FHeaders);
     body := FHttp.Get(url);
     Result.Code := FHttp.ResponseCode;
     Result.ContentType := FHttp.Response.ContentType;
@@ -103,7 +104,8 @@ begin
   try
     SetIOHandler(urlp.Protocol);
 
-    FHttp.Request.CustomHeaders.AddStrings(FHeaders);
+    if FHeaders.Count > 0 then
+      FHttp.Request.CustomHeaders.AddStrings(FHeaders);
     body := FHttp.Post(AUrl, FFormFields);
     Result.Code := FHttp.ResponseCode;
     Result.ContentType := FHttp.Response.ContentType;

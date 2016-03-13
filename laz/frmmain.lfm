@@ -1,0 +1,183 @@
+object MainForm: TMainForm
+  Left = 1246
+  Height = 586
+  Top = 47
+  Width = 618
+  Caption = 'POAuth2 Test'
+  ClientHeight = 586
+  ClientWidth = 618
+  OnClose = FormClose
+  OnCreate = FormCreate
+  LCLVersion = '1.6.0.4'
+  object Label1: TLabel
+    Left = 8
+    Height = 15
+    Top = 8
+    Width = 22
+    Caption = 'Site:'
+    ParentColor = False
+  end
+  object txtSite: TEdit
+    Left = 8
+    Height = 23
+    Top = 24
+    Width = 600
+    TabOrder = 0
+    Text = 'http://localhost/lockdin'
+  end
+  object Label2: TLabel
+    Left = 8
+    Height = 15
+    Top = 56
+    Width = 56
+    Caption = 'Username:'
+    ParentColor = False
+  end
+  object txtUser: TEdit
+    Left = 8
+    Height = 23
+    Top = 72
+    Width = 232
+    TabOrder = 1
+    Text = 'demouser'
+  end
+  object Label3: TLabel
+    Left = 256
+    Height = 15
+    Top = 56
+    Width = 53
+    Caption = 'Password:'
+    ParentColor = False
+  end
+  object txtPass: TEdit
+    Left = 256
+    Height = 23
+    Top = 72
+    Width = 232
+    TabOrder = 2
+    Text = 'testpass'
+  end
+  object Label4: TLabel
+    Left = 8
+    Height = 15
+    Top = 104
+    Width = 48
+    Caption = 'Client ID:'
+    ParentColor = False
+  end
+  object txtClientId: TEdit
+    Left = 8
+    Height = 23
+    Top = 120
+    Width = 232
+    TabOrder = 3
+    Text = 'demoapp'
+  end
+  object txtClientSecret: TEdit
+    Left = 256
+    Height = 23
+    Top = 120
+    Width = 232
+    TabOrder = 4
+    Text = 'demopass'
+  end
+  object Label5: TLabel
+    Left = 256
+    Height = 15
+    Top = 104
+    Width = 69
+    Caption = 'Client Secret:'
+    ParentColor = False
+  end
+  object Label6: TLabel
+    Left = 8
+    Height = 15
+    Top = 160
+    Width = 75
+    Caption = 'Access Token:'
+    ParentColor = False
+  end
+  object txtAccessToken: TEdit
+    Left = 8
+    Height = 23
+    Top = 176
+    Width = 480
+    Color = clBtnFace
+    ReadOnly = True
+    TabOrder = 5
+  end
+  object Label7: TLabel
+    Left = 8
+    Height = 15
+    Top = 208
+    Width = 78
+    Caption = 'Refresh Token:'
+    ParentColor = False
+  end
+  object txtRefreshToken: TEdit
+    Left = 8
+    Height = 23
+    Top = 224
+    Width = 480
+    Color = clBtnFace
+    ReadOnly = True
+    TabOrder = 6
+  end
+  object Label8: TLabel
+    Left = 504
+    Height = 15
+    Top = 160
+    Width = 39
+    Caption = 'Expires:'
+    ParentColor = False
+  end
+  object txtExpires: TEdit
+    Left = 504
+    Height = 23
+    Top = 176
+    Width = 104
+    Color = clBtnFace
+    ReadOnly = True
+    TabOrder = 7
+  end
+  object Label9: TLabel
+    Left = 8
+    Height = 15
+    Top = 264
+    Width = 51
+    Caption = 'Resource:'
+    ParentColor = False
+  end
+  object txtResource: TEdit
+    Left = 8
+    Height = 23
+    Top = 280
+    Width = 480
+    TabOrder = 8
+    Text = '/resource?query=somevalue'
+  end
+  object Button1: TButton
+    Left = 504
+    Height = 25
+    Top = 280
+    Width = 104
+    Caption = 'Get Resource'
+    OnClick = Button1Click
+    TabOrder = 9
+  end
+  object txtResponse: TMemo
+    Left = 8
+    Height = 266
+    Top = 312
+    Width = 600
+    Color = clBtnFace
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    ParentFont = False
+    ReadOnly = True
+    TabOrder = 10
+  end
+end

@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'POAuth2 Test'
-  ClientHeight = 624
+  ClientHeight = 604
   ClientWidth = 633
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,12 +12,12 @@ object MainForm: TMainForm
   Font.Name = 'Tahoma'
   Font.Style = []
   Menu = MainMenu1
-  OldCreateOrder = False
+  OldCreateOrder = True
   OnClose = FormClose
   OnCreate = FormCreate
   DesignSize = (
     633
-    624)
+    604)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -26,6 +26,8 @@ object MainForm: TMainForm
     Width = 52
     Height = 13
     Caption = 'Username:'
+    Color = clBtnFace
+    ParentColor = False
   end
   object Label2: TLabel
     Left = 256
@@ -33,6 +35,8 @@ object MainForm: TMainForm
     Width = 50
     Height = 13
     Caption = 'Password:'
+    Color = clBtnFace
+    ParentColor = False
   end
   object Label3: TLabel
     Left = 8
@@ -40,6 +44,8 @@ object MainForm: TMainForm
     Width = 45
     Height = 13
     Caption = 'Client ID:'
+    Color = clBtnFace
+    ParentColor = False
   end
   object Label4: TLabel
     Left = 256
@@ -47,6 +53,8 @@ object MainForm: TMainForm
     Width = 65
     Height = 13
     Caption = 'Client Secret:'
+    Color = clBtnFace
+    ParentColor = False
   end
   object Label5: TLabel
     Left = 8
@@ -54,6 +62,8 @@ object MainForm: TMainForm
     Width = 49
     Height = 13
     Caption = 'Resource:'
+    Color = clBtnFace
+    ParentColor = False
   end
   object Label6: TLabel
     Left = 8
@@ -61,6 +71,8 @@ object MainForm: TMainForm
     Width = 22
     Height = 13
     Caption = 'Site:'
+    Color = clBtnFace
+    ParentColor = False
   end
   object Label7: TLabel
     Left = 8
@@ -68,6 +80,8 @@ object MainForm: TMainForm
     Width = 69
     Height = 13
     Caption = 'Access Token:'
+    Color = clBtnFace
+    ParentColor = False
   end
   object Label8: TLabel
     Left = 8
@@ -75,6 +89,8 @@ object MainForm: TMainForm
     Width = 74
     Height = 13
     Caption = 'Refresh Token:'
+    Color = clBtnFace
+    ParentColor = False
   end
   object Label9: TLabel
     Left = 504
@@ -82,6 +98,8 @@ object MainForm: TMainForm
     Width = 39
     Height = 13
     Caption = 'Expires:'
+    Color = clBtnFace
+    ParentColor = False
   end
   object txtUser: TEdit
     Left = 8
@@ -138,7 +156,7 @@ object MainForm: TMainForm
     Left = 8
     Top = 314
     Width = 615
-    Height = 302
+    Height = 282
     Anchors = [akLeft, akTop, akRight, akBottom]
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText

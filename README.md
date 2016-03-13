@@ -65,6 +65,12 @@ begin
 end;
 ~~~
 
+### Lazarus
+
+To compile the demo you need Indy 10 for Lazarus, see [here](http://wiki.freepascal.org/Indy_with_Lazarus).
+If you can't use Indy you must implement a `TOAuth2HttpClient` descendant which
+implements the methods `Get` and `Post`.
+
 ## Limitations
 
 * Only the password GrantType (i.e. user credentials) is supported.

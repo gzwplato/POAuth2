@@ -35,6 +35,11 @@ function AddTrailingSlash(const S: string): string;
 
 implementation
 
+{$IFDEF FPC}
+uses
+  StrUtils;
+{$ENDIF}
+
 const
   BASE64_CODES: AnsiString = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
 
@@ -132,7 +137,7 @@ begin
     end;
     p := p2 + 1;
   end;
-  p2 := Pos('/', AUrl, p);
+  p2 := {$IFDEF FPC}PosEx{$ELSE}Pos{$ENDIF}('/', AUrl, p);
   if p2 = 0 then
     Exit;
   h := Copy(AUrl, p, p2 - p);

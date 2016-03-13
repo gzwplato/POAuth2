@@ -209,8 +209,8 @@ begin
     RefreshAccessToken(FAccessToken);
 
   FHttpClient.ClearHeader;
+  FHttpClient.ClearFormFields;
   url := FSite + APath;
-  FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
   FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
   response := FHttpClient.Get(url);
   if response.Code <> 200 then begin
