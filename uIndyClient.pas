@@ -78,9 +78,7 @@ begin
     SetIOHandler(urlp.Protocol);
 
     if urlp.Query <> '' then
-      urlp.Query := urlp.Query + '&'
-    else
-      urlp.Query := urlp.Query + '?';
+      urlp.Query := urlp.Query + '&';
     urlp.Query := urlp.Query + GetQuery;
     url := TIdURI.URLEncode(BuildUrl(urlp));
     FHttp.Request.CustomHeaders.AddStrings(FHeaders);
