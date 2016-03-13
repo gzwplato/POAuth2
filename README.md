@@ -39,4 +39,4 @@ end;
 
 ## Get it
 
-* GitHub
+* [GitHub](https://github.com/stievie/POAuth2)
