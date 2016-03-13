@@ -1,5 +1,5 @@
 {
-	Simple OAuth2 client
+  Simple OAuth2 client
 
   (C) 2016, Stefan Ascher
 }
@@ -32,13 +32,13 @@ var
 implementation
 
 uses
-	uJson;
+  uJson;
 
 {$R *.dfm}
 
 procedure TJsonForm.Button1Click(Sender: TObject);
 var
-	j: integer;
+  j: integer;
 begin
   with TJson.Create do try
     Parse(txtJson.Text);
@@ -46,8 +46,8 @@ begin
     Print(txtResult.Lines);
     if Length(Output.Errors) > 0 then begin
       txtResult.Lines.Add('Errors:');
-	    for J := 0 to Length(Output.Errors) - 1 do
-  	    txtResult.Lines.Add(Output.Errors[J]);
+      for J := 0 to Length(Output.Errors) - 1 do
+        txtResult.Lines.Add(Output.Errors[J]);
     end;
 
   finally

@@ -1,5 +1,5 @@
 {
-	Simple OAuth2 client
+  Simple OAuth2 client
 
   (C) 2016, Stefan Ascher
 }
@@ -7,7 +7,7 @@
 unit uOAuth2Client;
 
 {
-	Tested with https://github.com/bshaffer/oauth2-server-php
+  Tested with https://github.com/bshaffer/oauth2-server-php
 
   Limitations:
     * Only the password GrantType (i.e. user credentials) is supported.
@@ -18,12 +18,12 @@ unit uOAuth2Client;
 interface
 
 uses
-	SysUtils, Classes, uOAuth2Token, uOAuth2HttpClient;
+  SysUtils, Classes, uOAuth2Token, uOAuth2HttpClient;
 
 type
-	TOAuth2Client = class
+  TOAuth2Client = class
   private
-  	FUserName: string;
+    FUserName: string;
     FPassWord: string;
     FClientId: string;
     FClientSecret: string;
@@ -36,9 +36,9 @@ type
     function GetBasicAuthHeader(const AUsername, APassword: string): string;
     function EncodeCredentials(const AUsername, APassword: string): string;
     procedure RefreshAccessToken(AToken: TOAuth2Token);
-  	function GetAccessToken: TOAuth2Token;
+    function GetAccessToken: TOAuth2Token;
   public
-  	constructor Create(AClient: TOAuth2HttpClient);
+    constructor Create(AClient: TOAuth2HttpClient);
     destructor Destroy; override;
     function GetReosurce(const APath: string): TOAuth2Response;
 
@@ -54,7 +54,7 @@ type
 implementation
 
 uses
-	uOAuth2Consts, uOAuth2Tools, uJson;
+  uOAuth2Consts, uOAuth2Tools, uJson;
 
 constructor TOAuth2Client.Create(AClient: TOAuth2HttpClient);
 begin
@@ -65,8 +65,8 @@ end;
 
 destructor TOAuth2Client.Destroy;
 begin
-	if Assigned(FAccessToken) then
-  	FAccessToken.Free;
+  if Assigned(FAccessToken) then
+    FAccessToken.Free;
   inherited;
 end;
 
@@ -77,8 +77,8 @@ var
   json: TJson;
   val: TJsonValue;
 begin
-	if Assigned(FAccessToken) then
-		FAccessToken.Free;
+  if Assigned(FAccessToken) then
+    FAccessToken.Free;
 
   FHttpClient.ClearHeader;
   FHttpClient.ClearFormFields;
@@ -101,7 +101,7 @@ begin
   Result := TOAuth2Token.Create;
   json := TJson.Create;
   try
-		json.Parse(response.Body);
+    json.Parse(response.Body);
     val := json.GetValue('access_token');
     if val.Index <> -1 then begin
       Result.AccessToken := json.Output.Strings[val.Index];
@@ -130,20 +130,20 @@ end;
 
 function TOAuth2Client.GetBasicAuthHeader(const AUsername, APassword: string): string;
 begin
-	Result := Format('%s %s', [OATUH2_BASIC, EncodeCredentials(AUsername, APassword)]);
+  Result := Format('%s %s', [OATUH2_BASIC, EncodeCredentials(AUsername, APassword)]);
 end;
 
 function TOAuth2Client.EncodeCredentials(const AUsername, APassword: string): string;
 var
-	cred: string;
+  cred: string;
 begin
-	cred := Format('%s:%s', [AUsername, APassword]);
+  cred := Format('%s:%s', [AUsername, APassword]);
   Result := string(EncodeBase64(cred));
 end;
 
 procedure TOAuth2Client.RefreshAccessToken(AToken: TOAuth2Token);
 var
-	url: string;
+  url: string;
   response: TOAuth2Response;
   json: TJson;
   val: TJsonValue;
@@ -165,7 +165,7 @@ begin
 
   json := TJson.Create;
   try
-		json.Parse(response.Body);
+    json.Parse(response.Body);
     val := json.GetValue('access_token');
     if val.Index <> -1 then begin
       AToken.AccessToken := json.Output.Strings[val.Index];
@@ -190,16 +190,16 @@ end;
 
 function TOAuth2Client.GetReosurce(const APath: string): TOAuth2Response;
 var
-	url: string;
+  url: string;
   response: TOAuth2Response;
 begin
-	if not Assigned(FAccessToken) then
-  	FAccessToken := GetAccessToken;
+  if not Assigned(FAccessToken) then
+    FAccessToken := GetAccessToken;
   if FAccessToken.IsExpired then
     RefreshAccessToken(FAccessToken);
 
   FHttpClient.ClearHeader;
-	url := FSite + APath;
+  url := FSite + APath;
   FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
   FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
   response := FHttpClient.Get(url);

@@ -1,5 +1,5 @@
 {
-	Simple OAuth2 client
+  Simple OAuth2 client
 }
 
 unit uJson;
@@ -7,7 +7,7 @@ unit uJson;
 interface
 
 {
-	JSON parser
+  JSON parser
   https://github.com/koldev/JsonParser
 }
 
@@ -406,14 +406,14 @@ begin
 end;
 
 procedure TJson.Parse(const AStr: string);
-var 
+var
   old_ds, old_ts: Char;
 begin
   old_ds := FormatSettings.DecimalSeparator;
   old_ts := FormatSettings.ThousandSeparator;
-	FormatSettings.DecimalSeparator := '.';
+  FormatSettings.DecimalSeparator := '.';
   FormatSettings.ThousandSeparator := ',';
-  
+
   if AStr = '' then
     Exit;
   At := 1;
@@ -423,8 +423,8 @@ begin
   White;
   if Ch <> #0 then
     Error('Syntax error');
-    
-	FormatSettings.DecimalSeparator := old_ds;
+
+  FormatSettings.DecimalSeparator := old_ds;
   FormatSettings.ThousandSeparator := old_ts;
 end;
 

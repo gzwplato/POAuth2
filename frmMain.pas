@@ -1,5 +1,5 @@
 {
-	Simple OAuth2 client
+  Simple OAuth2 client
 
   (C) 2014, Stefan Ascher
 }
@@ -61,7 +61,7 @@ var
 implementation
 
 uses
-	frmJson;
+  frmJson;
 
 {$R *.dfm}
 
@@ -84,7 +84,7 @@ end;
 
 procedure TMainForm.Exit1Click(Sender: TObject);
 begin
-	Close;
+  Close;
 end;
 
 procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);

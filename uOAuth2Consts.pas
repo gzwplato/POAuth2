@@ -1,5 +1,5 @@
 {
-	Simple OAuth2 client
+  Simple OAuth2 client
 
   (C) 2016, Stefan Ascher
 }
@@ -11,7 +11,7 @@ interface
 const
   OAUTH2_TOKEN_ENDPOINT = '/token';
 
-	OATUH2_ACCESS_TOKEN = 'access_token';
+  OATUH2_ACCESS_TOKEN = 'access_token';
   OAUTH2_GRANT_TYPE = 'grant_type';
   OAUTH2_REFRESH_TOKEN = 'refresh_token';
   OAUTH2_CLIENT_ID = 'client_id';
@@ -20,7 +20,7 @@ const
   OAUTH2_USERNAME = 'username';
   OAUTH2_PASSWORD = 'password';
   OAUTH2_SCOPE = 'scope';
-	OAUTH2_BEARER = 'Bearer';
+  OAUTH2_BEARER = 'Bearer';
   OATUH2_BASIC = 'Basic';
   OAUTH2_AUTHORIZATION = 'Authorization';
 

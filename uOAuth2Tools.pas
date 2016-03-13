@@ -1,5 +1,5 @@
 {
-	Simple OAuth2 client
+  Simple OAuth2 client
 
   (C) 2016, Stefan Ascher
 }
@@ -9,7 +9,7 @@ unit uOAuth2Tools;
 interface
 
 uses
-	SysUtils;
+  SysUtils;
 
 type
   TUrlParts = record
@@ -36,14 +36,14 @@ function AddTrailingSlash(const S: string): string;
 implementation
 
 const
-	BASE64_CODES: AnsiString = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
+  BASE64_CODES: AnsiString = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
 
 function RemoveLeadingSlash(const S: string): string;
 begin
   Result := S;
   if Result <> '' then begin
-  	if Result[1] = '/' then
-    	Delete(Result, 1, 1);
+    if Result[1] = '/' then
+      Delete(Result, 1, 1);
   end;
 end;
 
@@ -51,8 +51,8 @@ function AddLeadingSlash(const S: string): string;
 begin
   Result := S;
   if Result <> '' then begin
-  	if Result[1] <> '/' then
-    	Result := '/' + Result;
+    if Result[1] <> '/' then
+      Result := '/' + Result;
   end;
 end;
 
@@ -60,8 +60,8 @@ function RemoveTrailingSlash(const S: string): string;
 begin
   Result := S;
   if Result <> '' then begin
-  	if Result[Length(Result)] = '/' then
-    	Delete(Result, Length(Result), 1);
+    if Result[Length(Result)] = '/' then
+      Delete(Result, Length(Result), 1);
   end;
 end;
 
@@ -69,14 +69,14 @@ function AddTrailingSlash(const S: string): string;
 begin
   Result := S;
   if Result <> '' then begin
-  	if Result[Length(Result)] <> '/' then
-    	Result := Result + '/';
+    if Result[Length(Result)] <> '/' then
+      Result := Result + '/';
   end;
 end;
 
 function BuildUrl(const AParts: TUrlParts): string;
 begin
-	Result := AParts.Protocol + '://';
+  Result := AParts.Protocol + '://';
   if AParts.User <> '' then begin
     Result := Result + AParts.User;
     if AParts.Pass <> '' then begin
@@ -87,26 +87,26 @@ begin
   Result := Result + AParts.Host;
   if AParts.Port <> 0 then begin
     if ((AParts.Protocol = 'http') and (AParts.Port <> 80)) or
-    	((AParts.Protocol = 'https') and (AParts.Port <> 443)) then
-		Result := Format('%s:%d', [Result, AParts.Port]);
+      ((AParts.Protocol = 'https') and (AParts.Port <> 443)) then
+    Result := Format('%s:%d', [Result, AParts.Port]);
   end;
   if AParts.Path <> '' then
-  	Result := Result + AParts.Path
+    Result := Result + AParts.Path
   else
-  	Result := Result + '/';
+    Result := Result + '/';
   if AParts.Query <> '' then
-  	Result := Result + '?' + AParts.Query;
+    Result := Result + '?' + AParts.Query;
 end;
 
 {
-	https://user:pass@server:1337/path/to/file?query=somevalue
+  https://user:pass@server:1337/path/to/file?query=somevalue
 }
 function ParseUrl(const AUrl: string): TUrlParts;
 var
-	p, p2, p3: integer;
+  p, p2, p3: integer;
   userpass, h, port, fq: string;
 begin
-	with Result do begin
+  with Result do begin
     Protocol := '';
     Host := '';
     Path := '';
@@ -115,9 +115,9 @@ begin
     User := '';
     Pass := '';
   end;
-	p := Pos('://', AUrl);
+  p := Pos('://', AUrl);
   if p = 0 then
-  	Exit;
+    Exit;
   Result.Protocol := LowerCase(Copy(AUrl, 1, p - 1));
   Inc(p, 3);
   p2 := Pos('@', AUrl);
@@ -125,7 +125,7 @@ begin
     userpass := Copy(AUrl, p, p2 - p);
     p3 := Pos(':', userpass);
     if p3 <> 0 then begin
-			Result.User := Copy(userpass, 1, p3 - 1);
+      Result.User := Copy(userpass, 1, p3 - 1);
       Result.Pass := Copy(userpass, p3 + 1, MaxInt);
     end else begin
       Result.User := userpass;
@@ -134,11 +134,11 @@ begin
   end;
   p2 := Pos('/', AUrl, p);
   if p2 = 0 then
-  	Exit;
-	h := Copy(AUrl, p, p2 - p);
+    Exit;
+  h := Copy(AUrl, p, p2 - p);
   p3 := Pos(':', h);
   if (p3 <> 0) then begin
-		Result.Host := Copy(h, 1, p3 - 1);
+    Result.Host := Copy(h, 1, p3 - 1);
     port := Copy(h, p3 + 1, MaxInt);
     Result.Port := StrToIntDef(port, 0);
   end else begin
@@ -146,15 +146,15 @@ begin
   end;
   if (Result.Port = 0) and (Result.Protocol <> '') then begin
     if Result.Protocol = 'http' then
-    	Result.Port := 80
+      Result.Port := 80
     else if Result.Protocol = 'https' then
-    	Result.Port := 443;
+      Result.Port := 443;
   end;
   p := p2;
   fq := Copy(AUrl, p, MaxInt);
   p2 := Pos('?', fq);
   if p2 <> 0 then begin
-		Result.Path := Copy(fq, 1, p2 - 1);
+    Result.Path := Copy(fq, 1, p2 - 1);
     Result.Query := Copy(fq, p2 + 1, MaxInt);
   end else begin
     Result.Path := fq;
@@ -168,7 +168,7 @@ var
   x: Integer;
   b: Integer;
 begin
-	Result := '';
+  Result := '';
   a := 0;
   b := 0;
   for i := 1 to Length(s) do begin
