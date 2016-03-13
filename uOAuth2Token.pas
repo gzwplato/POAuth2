@@ -24,7 +24,7 @@ type
     function IsExpired: boolean;
 
     property ExpiresIn: integer read FExpiresIn write SetExpiresIn;
-    property ExpiresAt: TDateTime read FExpiresAt;
+    property ExpiresAt: TDateTime read FExpiresAt write FExpiresAt;
     property TokenType: string read FTokenType write FTokenType;
     property RefreshToken: string read FRefreshToken write FRefreshToken;
     property AccessToken: string read FAccessToken write FAccessToken;
