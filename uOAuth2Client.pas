@@ -37,6 +37,7 @@ type
     function EncodeCredentials(const AUsername, APassword: string): string;
     procedure RefreshAccessToken(AToken: TOAuth2Token);
     function GetAccessToken: TOAuth2Token;
+    procedure SetAccessToken(Value: TOAuth2Token);
   public
     constructor Create(AClient: TOAuth2HttpClient);
     destructor Destroy; override;
@@ -48,7 +49,7 @@ type
     property ClientSecret: string read FClientSecret write FClientSecret;
     property Site: string read FSite write FSite;
     property GrantType: string read FGrantType write FGrantType;
-    property AccessToken: TOAuth2Token read FAccessToken write FAccessToken;
+    property AccessToken: TOAuth2Token read FAccessToken write SetAccessToken;
   end;
 
 implementation
@@ -68,6 +69,15 @@ begin
   if Assigned(FAccessToken) then
     FAccessToken.Free;
   inherited;
+end;
+
+procedure TOAuth2Client.SetAccessToken(Value: TOAuth2Token);
+begin
+  if FAccessToken <> Value then begin
+    if Assigned(FAccessToken) then
+    	FAccessToken.Free;
+    FAccessToken := Value;
+  end;
 end;
 
 function TOAuth2Client.GetAccessToken: TOAuth2Token;
