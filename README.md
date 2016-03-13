@@ -35,7 +35,7 @@ end;
 
 * Only the password GrantType (i.e. user credentials) is supported.
 * Server must return JSON
-* Refress token must be returned with the access token
+* Refresh token must be returned with the access token
 
 ## Credits
 
