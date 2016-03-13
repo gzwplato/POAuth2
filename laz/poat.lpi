@@ -55,7 +55,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..;c:\Users\Stefan Ascher\Documents\Projects\indylaz\fpc\"/>
+      <OtherUnitFiles Value="..;..\..\indy-10.2.0.3\fpc"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
