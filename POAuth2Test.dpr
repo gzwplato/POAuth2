@@ -1,7 +1,7 @@
 program POAuth2Test;
 
 uses
-  Vcl.Forms,
+  Forms,
   frmMain in 'frmMain.pas' {MainForm},
   uOAuth2Client in 'uOAuth2Client.pas',
   uOAuth2HttpClient in 'uOAuth2HttpClient.pas',

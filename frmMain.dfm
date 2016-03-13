@@ -115,21 +115,13 @@ object MainForm: TMainForm
     TabOrder = 3
     Text = 'demopass'
   end
-  object Button1: TButton
-    Left = 498
-    Top = 73
-    Width = 127
-    Height = 25
-    Caption = 'Authorize'
-    TabOrder = 4
-  end
   object txtResource: TEdit
     Left = 8
     Top = 285
     Width = 482
     Height = 21
     Anchors = [akLeft, akTop, akRight]
-    TabOrder = 5
+    TabOrder = 4
     Text = '/resource?query=somevalue'
   end
   object Button2: TButton
@@ -139,7 +131,7 @@ object MainForm: TMainForm
     Height = 25
     Anchors = [akTop, akRight]
     Caption = 'Get Resource'
-    TabOrder = 6
+    TabOrder = 5
     OnClick = Button2Click
   end
   object txtResponse: TMemo
@@ -154,59 +146,42 @@ object MainForm: TMainForm
     Font.Name = 'Consolas'
     Font.Style = []
     ParentFont = False
-    TabOrder = 7
+    TabOrder = 6
   end
   object txtSite: TEdit
     Left = 8
     Top = 27
     Width = 617
     Height = 21
-    TabOrder = 8
+    TabOrder = 7
     Text = 'http://localhost/lockdin'
   end
-  object Edit5: TEdit
+  object txtAccessToken: TEdit
     Left = 8
     Top = 179
     Width = 481
     Height = 21
     Color = clBtnFace
     ReadOnly = True
-    TabOrder = 9
+    TabOrder = 8
   end
-  object Edit6: TEdit
+  object txtRefreshToken: TEdit
     Left = 8
     Top = 225
     Width = 481
     Height = 21
     Color = clBtnFace
     ReadOnly = True
-    TabOrder = 10
+    TabOrder = 9
   end
-  object Edit7: TEdit
+  object txtExpires: TEdit
     Left = 504
     Top = 179
     Width = 121
     Height = 21
     Color = clBtnFace
     ReadOnly = True
-    TabOrder = 11
-  end
-  object IdHTTP1: TIdHTTP
-    AllowCookies = True
-    ProxyParams.BasicAuthentication = False
-    ProxyParams.ProxyPort = 0
-    Request.ContentLength = -1
-    Request.ContentRangeEnd = -1
-    Request.ContentRangeStart = -1
-    Request.ContentRangeInstanceLength = -1
-    Request.Accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-    Request.BasicAuthentication = False
-    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
-    Request.Ranges.Units = 'bytes'
-    Request.Ranges = <>
-    HTTPOptions = [hoForceEncodeParams]
-    Left = 528
-    Top = 120
+    TabOrder = 10
   end
   object MainMenu1: TMainMenu
     Left = 544

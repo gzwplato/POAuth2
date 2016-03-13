@@ -1,3 +1,9 @@
+{
+	Simple OAuth2 client
+
+  (C) 2016, Stefan Ascher
+}
+
 unit frmJson;
 
 interface

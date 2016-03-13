@@ -1,6 +1,6 @@
 # POAuth2
 
-OAuth2 client for Pascal.
+Simple OAuth2 client for Pascal.
 
 ## Usage
 
@@ -8,10 +8,13 @@ OAuth2 client for Pascal.
 var
   client: TOAuth2Client;
   res: TOAuth2Response;
+  cli: TIndyHttpClient;
 begin
-  client := TOAuth2Client.Create(TIndyHttpClient.Create);
+  cli := TIndyHttpClient.Create;
+  client := TOAuth2Client.Create(cli);
   try
     client.Site := 'localhost';
+    client.GrantType := 'password';   // Only password is supported
     client.UserName := 'testuser';
     client.PassWord := 'testpass';
     client.ClientId := 'testclient';
@@ -19,6 +22,17 @@ begin
     resp := client.GetReosurce('/path/to/resource?name=value');
   finally
     client.Free;
+    cli.Free;
   end;
 end;
 ~~~
+
+## Limitations
+
+* Only the password GrantType (i.e. user credentials) is supported.
+* Server must return JSON
+* Refress token must be returned with the access token
+
+## Get it
+
+* GitHub

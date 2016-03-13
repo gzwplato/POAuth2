@@ -1,4 +1,14 @@
+{
+	Simple OAuth2 client
+
+  (C) 2016, Stefan Ascher
+}
+
 unit uOAuth2HttpClient;
+
+{
+	Abstract HTTP client class.
+}
 
 interface
 
@@ -23,6 +33,7 @@ type
   	function Get(const AUrl: string): TOAuth2Response; virtual; abstract;
   	function Post(const AUrl: string): TOAuth2Response; virtual; abstract;
 
+		function GetQuery: string;
     procedure AddFormField(const AKey, AValue: string); virtual;
     procedure ClearFormFields; virtual;
     procedure AddHeader(const AKey, AValue: string); virtual;
@@ -47,6 +58,23 @@ begin
   inherited;
 end;
 
+function TOAuth2HttpClient.GetQuery: string;
+var
+	i: integer;
+  key, value: string;
+begin
+	Result := '';
+  for i := 0 to FFormFields.Count - 1 do begin
+		key := FFormFields.Names[i];
+    value := FFormFields.Values[key];
+    Result := Format('%s=%s&', [key, value]);
+  end;
+  if Result <> '' then begin
+    if Result[Length(Result)] = '&' then
+			Delete(Result, Length(Result), 1);
+  end;
+end;
+
 procedure TOAuth2HttpClient.ClearFormFields;
 begin
   FFormFields.Clear;
@@ -66,12 +94,12 @@ end;
 
 procedure TOAuth2HttpClient.ClearHeader;
 begin
-
+  FHeaders.Clear;
 end;
 
 procedure TOAuth2HttpClient.AddHeader(const AKey, AValue: string);
 begin
-
+	FHeaders.Add(Format('%s: %s', [AKey, AValue]));
 end;
 
 end.

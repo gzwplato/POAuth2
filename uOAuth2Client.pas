@@ -1,4 +1,19 @@
+{
+	Simple OAuth2 client
+
+  (C) 2016, Stefan Ascher
+}
+
 unit uOAuth2Client;
+
+{
+	Tested with https://github.com/bshaffer/oauth2-server-php
+
+  Limitations:
+    * Only the password GrantType (i.e. user credentials) is supported.
+    * Server must return JSON
+    * Refress token must be returned with the access token
+}
 
 interface
 
@@ -65,6 +80,7 @@ begin
 	if Assigned(FAccessToken) then
 		FAccessToken.Free;
 
+  FHttpClient.ClearHeader;
   FHttpClient.ClearFormFields;
   FHttpClient.AddFormField(OAUTH2_GRANT_TYPE, FGrantType);
   FHttpClient.AddFormField(OAUTH2_USERNAME, FUserName);
@@ -77,6 +93,10 @@ begin
     FHttpClient.AddFormField(OAUTH2_SCOPE, FScope);
   url := FSite + OAUTH2_TOKEN_ENDPOINT;
   response := FHttpClient.Post(url);
+
+  if response.Code <> HTTP_OK then begin
+
+  end;
 
   Result := TOAuth2Token.Create;
   json := TJson.Create;
@@ -93,6 +113,10 @@ begin
     val := json.GetValue('expires_in');
     if val.Index <> -1 then begin
       Result.ExpiresIn := Trunc(json.Output.Numbers[val.Index]);
+    end;
+    val := json.GetValue(OAUTH2_TOKEN_TYPE);
+    if val.Index <> -1 then begin
+      Result.TokenType := json.Output.Strings[val.Index];
     end;
   finally
     json.Free;
@@ -114,14 +138,17 @@ var
 	cred: string;
 begin
 	cred := Format('%s:%s', [AUsername, APassword]);
-  Result := EncodeBase64(cred);
+  Result := string(EncodeBase64(cred));
 end;
 
 procedure TOAuth2Client.RefreshAccessToken(AToken: TOAuth2Token);
 var
 	url: string;
   response: TOAuth2Response;
+  json: TJson;
+  val: TJsonValue;
 begin
+  FHttpClient.ClearHeader;
   FHttpClient.ClearFormFields;
   FHttpClient.AddFormField(OAUTH2_GRANT_TYPE, 'refresh_token');
   FHttpClient.AddFormField(OAUTH2_REFRESH_TOKEN, AToken.RefreshToken);
@@ -131,6 +158,34 @@ begin
     FHttpClient.AddFormField(OAUTH2_CLIENT_SECRET, FClientSecret);
   url := FSite + OAUTH2_TOKEN_ENDPOINT;
   response := FHttpClient.Post(url);
+
+  if response.Code <> HTTP_OK then begin
+
+  end;
+
+  json := TJson.Create;
+  try
+		json.Parse(response.Body);
+    val := json.GetValue('access_token');
+    if val.Index <> -1 then begin
+      AToken.AccessToken := json.Output.Strings[val.Index];
+    end;
+    val := json.GetValue('refresh_token');
+    if val.Index <> -1 then begin
+      AToken.RefreshToken := json.Output.Strings[val.Index];
+    end;
+    val := json.GetValue('expires_in');
+    if val.Index <> -1 then begin
+      AToken.ExpiresIn := Trunc(json.Output.Numbers[val.Index]);
+    end;
+    val := json.GetValue(OAUTH2_TOKEN_TYPE);
+    if val.Index <> -1 then begin
+      AToken.TokenType := json.Output.Strings[val.Index];
+    end;
+  finally
+    json.Free;
+  end;
+
 end;
 
 function TOAuth2Client.GetReosurce(const APath: string): TOAuth2Response;
@@ -143,8 +198,10 @@ begin
   if FAccessToken.IsExpired then
     RefreshAccessToken(FAccessToken);
 
+  FHttpClient.ClearHeader;
 	url := FSite + APath;
   FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
+  FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
   response := FHttpClient.Get(url);
   if response.Code <> 200 then begin
     raise Exception.CreateFmt('Server returned %d: %s', [response.Code, response.Body]);

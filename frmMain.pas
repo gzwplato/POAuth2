@@ -1,3 +1,9 @@
+{
+	Simple OAuth2 client
+
+  (C) 2014, Stefan Ascher
+}
+
 unit frmMain;
 
 interface
@@ -18,7 +24,6 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
-    Button1: TButton;
     txtResource: TEdit;
     Label5: TLabel;
     Button2: TButton;
@@ -26,12 +31,11 @@ type
     Label6: TLabel;
     txtSite: TEdit;
     Label7: TLabel;
-    Edit5: TEdit;
+    txtAccessToken: TEdit;
     Label8: TLabel;
-    Edit6: TEdit;
+    txtRefreshToken: TEdit;
     Label9: TLabel;
-    Edit7: TEdit;
-    IdHTTP1: TIdHTTP;
+    txtExpires: TEdit;
     MainMenu1: TMainMenu;
     File1: TMenuItem;
     Exit1: TMenuItem;
@@ -45,6 +49,8 @@ type
   private
     { Private-Deklarationen }
     FClient: TIndyHttpClient;
+    FOAuthClient: TOAuth2Client;
+    FIdHttp: TIdHTTP;
   public
     { Public-Deklarationen }
   end;
@@ -61,21 +67,19 @@ uses
 
 procedure TMainForm.Button2Click(Sender: TObject);
 var
-  client: TOAuth2Client;
   res: TOAuth2Response;
 begin
-  client := TOAuth2Client.Create(FClient);
-  try
-    client.Site := txtSite.Text;
-    client.GrantType := 'password';
-    client.UserName := txtUser.Text;
-    client.PassWord := txtPass.Text;
-    client.ClientId := txtClientId.Text;
-    client.ClientSecret := txtClientSecret.Text;
-    res := client.GetReosurce('/resource?name=value');
-  finally
-    client.Free;
-  end;
+  FOAuthClient.Site := txtSite.Text;
+  FOAuthClient.GrantType := 'password';
+  FOAuthClient.UserName := txtUser.Text;
+  FOAuthClient.PassWord := txtPass.Text;
+  FOAuthClient.ClientId := txtClientId.Text;
+  FOAuthClient.ClientSecret := txtClientSecret.Text;
+  res := FOAuthClient.GetReosurce('/resource?name=value');
+  txtResponse.Text := res.Body;
+  txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
+  txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
+  txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
 end;
 
 procedure TMainForm.Exit1Click(Sender: TObject);
@@ -85,12 +89,15 @@ end;
 
 procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  FOAuthClient.Free;
   FClient.Free;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  FClient := TIndyHttpClient.Create(IdHTTP1);
+  FIdHttp := TIdHTTP.Create(Self);
+  FClient := TIndyHttpClient.Create(FIdHttp);
+  FOAuthClient := TOAuth2Client.Create(FClient);
 end;
 
 procedure TMainForm.JSON1Click(Sender: TObject);

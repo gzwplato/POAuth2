@@ -1,13 +1,18 @@
+{
+	Simple OAuth2 client
+}
+
 unit uJson;
 
 interface
 
 {
-	https://github.com/koldev/JsonParser
+	JSON parser
+  https://github.com/koldev/JsonParser
 }
 
 uses
-	SysUtils, Classes;
+  SysUtils, Classes;
 
 type
   TJsonNumber = Double;
@@ -44,25 +49,25 @@ type
 
   TJsonValueParser = function: TJsonValue of object;
 
-	TJson = class
+  TJson = class
   private
     At: Integer; // The index of the current character
     Ch: TJsonChar; // The current character
     Text: TJsonString;
     FOutput: TJsonParserOutput;
-		procedure Error(Msg: TJsonString);
-		function Next(C: TJsonChar): TJsonChar;
-		function Number: Double;
-		function String_: TJsonString;
-		procedure White;
-		function Word_: TJsonWord;
-		function Array_: TJsonArray;
-		function Object_: TJsonObject;
-		function Value: TJsonValue;
+    procedure Error(Msg: TJsonString);
+    function Next(C: TJsonChar): TJsonChar;
+    function Number: Double;
+    function String_: TJsonString;
+    procedure White;
+    function Word_: TJsonWord;
+    function Array_: TJsonArray;
+    function Object_: TJsonObject;
+    function Value: TJsonValue;
     procedure PrintObject(Index, Indent: Integer; Lines: TStrings; CommaAfter: TJsonString);
-		procedure PrintArray(Index, Indent: Integer; Lines: TStrings; CommaAfter: TJsonString);
-	public
-  	constructor Create;
+    procedure PrintArray(Index, Indent: Integer; Lines: TStrings; CommaAfter: TJsonString);
+  public
+    constructor Create;
     destructor Destroy; override;
     procedure Parse(const AStr: string);
     procedure Clear;
@@ -401,7 +406,14 @@ begin
 end;
 
 procedure TJson.Parse(const AStr: string);
+var 
+  old_ds, old_ts: Char;
 begin
+  old_ds := FormatSettings.DecimalSeparator;
+  old_ts := FormatSettings.ThousandSeparator;
+	FormatSettings.DecimalSeparator := '.';
+  FormatSettings.ThousandSeparator := ',';
+  
   if AStr = '' then
     Exit;
   At := 1;
@@ -411,6 +423,9 @@ begin
   White;
   if Ch <> #0 then
     Error('Syntax error');
+    
+	FormatSettings.DecimalSeparator := old_ds;
+  FormatSettings.ThousandSeparator := old_ts;
 end;
 
 procedure TJson.Clear;
@@ -519,17 +534,17 @@ end;
 
 function TJson.GetValue(const Key: string): TJsonValue;
 var
-	i: integer;
+  i: integer;
   O: TJsonPair;
 begin
-	for i := 0 to Length(FOutput.Objects[0]) do begin
+  for i := 0 to Length(FOutput.Objects[0]) do begin
     O := FOutput.Objects[0][i];
     if O.Key = Key then begin
       Result := O.Value;
       Exit;
     end;
   end;
-	Result.Kind := JVKUnknown;
+  Result.Kind := JVKUnknown;
   Result.Index := -1;
 end;
 

@@ -1,17 +1,28 @@
+{
+	Simple OAuth2 client
+
+  (C) 2016, Stefan Ascher
+}
+
 unit uIndyClient;
 
-// http://www.delphipraxis.net/160152-indy-10-http-s-protokoll.html
+{
+	HTTP client using Indy
+}
 
 interface
 
 uses
-	SysUtils, Classes, IdHttp, uOAuth2HttpClient;
+	SysUtils, Classes, IdHttp, uOAuth2HttpClient, IdIOHandler;
 
 type
 	TIndyHttpClient = class(TOAuth2HttpClient)
   private
   	FHttp: TIdHttp;
     FOwnClient: boolean;
+    FIOHandler: TIdIOHandler;
+    FSSLIOHandler: TIdIOHandler;
+    procedure SetIOHandler(const AProt: string);
 	public
   	constructor Create(AHttp: TIdHttp);
     destructor Destroy; override;
@@ -22,11 +33,12 @@ type
 implementation
 
 uses
-	uOAuth2Tools, IdSSLOpenSSL;
+	uOAuth2Tools, IdSSLOpenSSL, IdURI;
 
 constructor TIndyHttpClient.Create(AHttp: TIdHttp);
 begin
   inherited Create;
+  FSSLIOHandler := nil;
   if Assigned(AHttp) then begin
     FHttp := AHttp;
     FOwnClient := false;
@@ -43,18 +55,36 @@ begin
   inherited;
 end;
 
+procedure TIndyHttpClient.SetIOHandler(const AProt: string);
+begin
+  if (AProt = 'https') and not (FHttp.IOHandler is TIdSSLIOHandlerSocketOpenSSL) then begin
+    FIOHandler := FHttp.IOHandler;
+    if not Assigned(FSSLIOHandler) then
+      FSSLIOHandler := TIdSSLIOHandlerSocketOpenSSL.Create(FHttp);
+    FHttp.IOHandler := FSSLIOHandler;
+  end else if ((AProt = 'http') and (FHttp.IOHandler is TIdSSLIOHandlerSocketOpenSSL)) then begin
+    FHttp.IOHandler := FIOHandler;
+  end;
+end;
+
 function TIndyHttpClient.Get(const AUrl: string): TOAuth2Response;
 var
 	body: string;
   urlp: TUrlParts;
+  url: string;
 begin
 	urlp := ParseUrl(AUrl);
 	try
-  	if urlp.Protocol = 'https' then begin
-//      FHttp.IOHandler := TIdSSLIOHandlerSocketOpenSSL.Create;
-    end;
+  	SetIOHandler(urlp.Protocol);
 
-	  body := FHttp.Get(AUrl);
+    if urlp.Query <> '' then
+      urlp.Query := urlp.Query + '&'
+    else
+      urlp.Query := urlp.Query + '?';
+		urlp.Query := urlp.Query + GetQuery;
+    url := TIdURI.URLEncode(BuildUrl(urlp));
+    FHttp.Request.CustomHeaders.AddStrings(FHeaders);
+	  body := FHttp.Get(url);
     Result.Code := FHttp.ResponseCode;
     Result.ContentType := FHttp.Response.ContentType;
 	  Result.Body := body;
@@ -69,8 +99,13 @@ end;
 function TIndyHttpClient.Post(const AUrl: string): TOAuth2Response;
 var
 	body: string;
+  urlp: TUrlParts;
 begin
+	urlp := ParseUrl(AUrl);
 	try
+  	SetIOHandler(urlp.Protocol);
+
+    FHttp.Request.CustomHeaders.AddStrings(FHeaders);
 		body := FHttp.Post(AUrl, FFormFields);
     Result.Code := FHttp.ResponseCode;
     Result.ContentType := FHttp.Response.ContentType;
