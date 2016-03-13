@@ -2,6 +2,10 @@
 
 Simple OAuth2 client for Pascal.
 
+## License
+
+MIT
+
 ## Usage
 
 ~~~pascal
