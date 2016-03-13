@@ -41,7 +41,7 @@ type
   public
     constructor Create(AClient: TOAuth2HttpClient);
     destructor Destroy; override;
-    function GetReosurce(const APath: string): TOAuth2Response;
+    function GetResource(const APath: string): TOAuth2Response;
 
     property UserName: string read FUserName write FUserName;
     property PassWord: string read FPassWord write FPassWord;
@@ -198,7 +198,7 @@ begin
 
 end;
 
-function TOAuth2Client.GetReosurce(const APath: string): TOAuth2Response;
+function TOAuth2Client.GetResource(const APath: string): TOAuth2Response;
 var
   url: string;
   response: TOAuth2Response;

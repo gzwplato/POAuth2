@@ -75,7 +75,7 @@ begin
   FOAuthClient.PassWord := txtPass.Text;
   FOAuthClient.ClientId := txtClientId.Text;
   FOAuthClient.ClientSecret := txtClientSecret.Text;
-  res := FOAuthClient.GetReosurce('/resource?name=value');
+  res := FOAuthClient.GetResource('/resource?name=value');
   txtResponse.Text := res.Body;
   txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
   txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
