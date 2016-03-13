@@ -37,6 +37,10 @@ end;
 * Server must return JSON
 * Refress token must be returned with the access token
 
+## Credits
+
+* JSON parser: [https://github.com/koldev/JsonParser](https://github.com/koldev/JsonParser)
+
 ## Get it
 
 * [GitHub](https://github.com/stievie/POAuth2)
