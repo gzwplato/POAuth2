@@ -48,7 +48,7 @@ type
     property ClientSecret: string read FClientSecret write FClientSecret;
     property Site: string read FSite write FSite;
     property GrantType: string read FGrantType write FGrantType;
-    property AccessToken: TOAuth2Token read FAccessToken;
+    property AccessToken: TOAuth2Token read FAccessToken write FAccessToken;
   end;
 
 implementation
