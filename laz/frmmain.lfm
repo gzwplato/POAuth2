@@ -24,6 +24,7 @@ object MainForm: TMainForm
     Top = 24
     Width = 600
     Anchors = [akTop, akLeft, akRight]
+    OnExit = txtSiteExit
     TabOrder = 0
     Text = 'http://localhost/lockdin'
   end
@@ -156,6 +157,7 @@ object MainForm: TMainForm
     Top = 280
     Width = 480
     Anchors = [akTop, akLeft, akRight]
+    OnExit = txtResourceExit
     TabOrder = 8
     Text = '/resource?query=somevalue'
   end

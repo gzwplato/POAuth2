@@ -141,6 +141,7 @@ object MainForm: TMainForm
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 4
     Text = '/resource?query=somevalue'
+    OnExit = txtResourceExit
   end
   object Button2: TButton
     Left = 496
@@ -173,6 +174,7 @@ object MainForm: TMainForm
     Height = 21
     TabOrder = 7
     Text = 'http://localhost/lockdin'
+    OnExit = txtSiteExit
   end
   object txtAccessToken: TEdit
     Left = 8

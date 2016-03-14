@@ -46,6 +46,8 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Exit1Click(Sender: TObject);
     procedure JSON1Click(Sender: TObject);
+    procedure txtSiteExit(Sender: TObject);
+    procedure txtResourceExit(Sender: TObject);
   private
     { Private-Deklarationen }
     FClient: TIndyHttpClient;
@@ -61,7 +63,7 @@ var
 implementation
 
 uses
-  frmJson;
+  frmJson, uOAuth2Tools, uJson;
 
 {$R *.dfm}
 
@@ -76,7 +78,12 @@ begin
   FOAuthClient.ClientId := txtClientId.Text;
   FOAuthClient.ClientSecret := txtClientSecret.Text;
   res := FOAuthClient.GetResource(txtResource.Text);
-  txtResponse.Text := res.Body;
+  with TJson.Create do try
+    Parse(res.Body);
+    Print(txtResponse.Lines);
+  finally
+    Free;
+  end;
   txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
   txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
   txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
@@ -103,6 +110,16 @@ end;
 procedure TMainForm.JSON1Click(Sender: TObject);
 begin
   JsonForm.Show;
+end;
+
+procedure TMainForm.txtResourceExit(Sender: TObject);
+begin
+  txtResource.Text := AddLeadingSlash(txtResource.Text);
+end;
+
+procedure TMainForm.txtSiteExit(Sender: TObject);
+begin
+  txtSite.Text := RemoveTrailingSlash(txtSite.Text);
 end;
 
 end.

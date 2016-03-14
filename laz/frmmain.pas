@@ -35,6 +35,8 @@ type
     procedure Button1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure txtResourceExit(Sender: TObject);
+    procedure txtSiteExit(Sender: TObject);
   private
     { private declarations }
     FClient: TIndyHttpClient;
@@ -49,6 +51,9 @@ var
 
 implementation
 
+uses
+  uOAuth2Tools, uJson;
+
 {$R *.lfm}
 
 { TMainForm }
@@ -58,6 +63,16 @@ begin
   FIdHttp := TIdHTTP.Create(Self);
   FClient := TIndyHttpClient.Create(FIdHttp);
   FOAuthClient := TOAuth2Client.Create(FClient);
+end;
+
+procedure TMainForm.txtResourceExit(Sender: TObject);
+begin
+  txtResource.Text := AddLeadingSlash(txtResource.Text);
+end;
+
+procedure TMainForm.txtSiteExit(Sender: TObject);
+begin
+  txtSite.Text := RemoveTrailingSlash(txtSite.Text);
 end;
 
 procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -77,7 +92,12 @@ begin
   FOAuthClient.ClientId := txtClientId.Text;
   FOAuthClient.ClientSecret := txtClientSecret.Text;
   res := FOAuthClient.GetResource(txtResource.Text);
-  txtResponse.Text := res.Body;
+  with TJson.Create do try
+    Parse(res.Body);
+    Print(txtResponse.Lines);
+  finally
+    Free;
+  end;
   txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
   txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
   txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
