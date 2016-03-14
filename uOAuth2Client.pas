@@ -6,6 +6,11 @@
 
 unit uOAuth2Client;
 
+{$IFDEF FPC}
+  {$mode objfpc}
+  {$H+}
+{$ENDIF}
+
 {
   Tested with https://github.com/bshaffer/oauth2-server-php
 
@@ -18,7 +23,7 @@ unit uOAuth2Client;
 interface
 
 uses
-  SysUtils, Classes, uOAuth2Token, uOAuth2HttpClient;
+  SysUtils, Classes, uOAuth2Token, uOAuth2HttpClient, uOAuth2Config;
 
 type
   TOAuth2Client = class
@@ -32,6 +37,7 @@ type
     FHttpClient: TOAuth2HttpClient;
     FAccessToken: TOAuth2Token;
     FGrantType: string;
+    FConfig: TOAuth2Config;
     function GetAuthHeaderForAccessToken(const AAccessToken: string): string;
     function GetBasicAuthHeader(const AUsername, APassword: string): string;
     function EncodeCredentials(const AUsername, APassword: string): string;
@@ -39,7 +45,8 @@ type
     function GetAccessToken: TOAuth2Token;
     procedure SetAccessToken(Value: TOAuth2Token);
   public
-    constructor Create(AClient: TOAuth2HttpClient);
+    constructor Create(AClient: TOAuth2HttpClient); overload;
+    constructor Create(AConfig: TOAuth2Config; AClient: TOAuth2HttpClient); overload;
     destructor Destroy; override;
     function GetResource(const APath: string): TOAuth2Response;
 
@@ -62,6 +69,15 @@ begin
   inherited Create;
   FHttpClient := AClient;
   FAccessToken := nil;
+  FConfig := DEF_OATUH2_CONFIG;
+end;
+
+constructor TOAuth2Client.Create(AConfig: TOAuth2Config; AClient: TOAuth2HttpClient);
+begin
+  inherited Create;
+  FHttpClient := AClient;
+  FAccessToken := nil;
+  FConfig := AConfig;
 end;
 
 destructor TOAuth2Client.Destroy;
@@ -98,7 +114,7 @@ begin
     FHttpClient.AddFormField(OAUTH2_CLIENT_SECRET, FClientSecret);
   if FScope <> '' then
     FHttpClient.AddFormField(OAUTH2_SCOPE, FScope);
-  url := FSite + OAUTH2_TOKEN_ENDPOINT;
+  url := FSite + FConfig.TokenEndPoint;
   response := FHttpClient.Post(url);
 
   if response.Code <> HTTP_OK then begin
@@ -109,15 +125,15 @@ begin
   json := TJson.Create;
   try
     json.Parse(response.Body);
-    val := json.GetValue('access_token');
+    val := json.GetValue(OATUH2_ACCESS_TOKEN);
     if val.Kind = JVKString then begin
       Result.AccessToken := json.Output.Strings[val.Index];
     end;
-    val := json.GetValue('refresh_token');
+    val := json.GetValue(OAUTH2_REFRESH_TOKEN);
     if val.Kind = JVKString then begin
       Result.RefreshToken := json.Output.Strings[val.Index];
     end;
-    val := json.GetValue('expires_in');
+    val := json.GetValue(OAUTH2_EXPIRES_IN);
     if val.Kind = JVKNumber then begin
       Result.ExpiresIn := Trunc(json.Output.Numbers[val.Index]);
     end;
@@ -125,7 +141,7 @@ begin
     if val.Kind = JVKString then begin
       Result.TokenType := json.Output.Strings[val.Index];
     end;
-    val := json.GetValue('scope');
+    val := json.GetValue(OAUTH2_SCOPE);
     if val.Kind = JVKString then begin
       FScope := json.Output.Strings[val.Index];
     end;
@@ -161,13 +177,13 @@ var
 begin
   FHttpClient.ClearHeader;
   FHttpClient.ClearFormFields;
-  FHttpClient.AddFormField(OAUTH2_GRANT_TYPE, 'refresh_token');
+  FHttpClient.AddFormField(OAUTH2_GRANT_TYPE, OAUTH2_REFRESH_TOKEN);
   FHttpClient.AddFormField(OAUTH2_REFRESH_TOKEN, AToken.RefreshToken);
   if FClientId <> '' then
     FHttpClient.AddFormField(OAUTH2_CLIENT_ID, FClientId);
   if FClientSecret <> '' then
     FHttpClient.AddFormField(OAUTH2_CLIENT_SECRET, FClientSecret);
-  url := FSite + OAUTH2_TOKEN_ENDPOINT;
+  url := FSite + FConfig.TokenEndPoint;
   response := FHttpClient.Post(url);
 
   if response.Code <> HTTP_OK then begin
@@ -177,15 +193,15 @@ begin
   json := TJson.Create;
   try
     json.Parse(response.Body);
-    val := json.GetValue('access_token');
+    val := json.GetValue(OATUH2_ACCESS_TOKEN);
     if val.Kind = JVKString then begin
       AToken.AccessToken := json.Output.Strings[val.Index];
     end;
-    val := json.GetValue('refresh_token');
+    val := json.GetValue(OAUTH2_REFRESH_TOKEN);
     if val.Kind = JVKString then begin
       AToken.RefreshToken := json.Output.Strings[val.Index];
     end;
-    val := json.GetValue('expires_in');
+    val := json.GetValue(OAUTH2_EXPIRES_IN);
     if val.Kind = JVKNumber then begin
       AToken.ExpiresIn := Trunc(json.Output.Numbers[val.Index]);
     end;
@@ -193,7 +209,7 @@ begin
     if val.Kind = JVKString then begin
       AToken.TokenType := json.Output.Strings[val.Index];
     end;
-    val := json.GetValue('scope');
+    val := json.GetValue(OAUTH2_SCOPE);
     if val.Kind = JVKString then begin
       FScope := json.Output.Strings[val.Index];
     end;

@@ -6,6 +6,11 @@
 
 unit uOAuth2Consts;
 
+{$IFDEF FPC}
+  {$mode objfpc}
+  {$H+}
+{$ENDIF}
+
 interface
 
 const
@@ -14,6 +19,7 @@ const
   OATUH2_ACCESS_TOKEN = 'access_token';
   OAUTH2_GRANT_TYPE = 'grant_type';
   OAUTH2_REFRESH_TOKEN = 'refresh_token';
+  OAUTH2_EXPIRES_IN = 'expires_in';
   OAUTH2_CLIENT_ID = 'client_id';
   OAUTH2_CLIENT_SECRET = 'client_secret';
   OAUTH2_TOKEN_TYPE = 'token_type';

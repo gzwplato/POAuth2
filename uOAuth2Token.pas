@@ -6,6 +6,11 @@
 
 unit uOAuth2Token;
 
+{$IFDEF FPC}
+  {$mode objfpc}
+  {$H+}
+{$ENDIF}
+
 interface
 
 uses

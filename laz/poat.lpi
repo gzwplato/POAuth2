@@ -67,7 +67,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="2">
+    <Units Count="8">
       <Unit0>
         <Filename Value="poat.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -79,6 +79,30 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="..\uOAuth2Client.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="..\uOAuth2HttpClient.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="..\uIndyClient.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="..\uOAuth2Token.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="..\uOAuth2Config.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="..\uOAuth2Consts.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit7>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

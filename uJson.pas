@@ -6,6 +6,11 @@ unit uJson;
 
 interface
 
+{$IFDEF FPC}
+  {$mode objfpc}
+  {$H+}
+{$ENDIF}
+
 {
   JSON parser
   https://github.com/koldev/JsonParser

@@ -6,6 +6,11 @@
 
 unit uOAuth2Tools;
 
+{$IFDEF FPC}
+  {$mode objfpc}
+  {$H+}
+{$ENDIF}
+
 interface
 
 uses

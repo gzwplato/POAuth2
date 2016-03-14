@@ -6,6 +6,11 @@
 
 unit uOAuth2HttpClient;
 
+{$IFDEF FPC}
+  {$mode objfpc}
+  {$H+}
+{$ENDIF}
+
 {
   Abstract HTTP client class.
 }

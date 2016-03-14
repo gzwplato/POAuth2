@@ -6,6 +6,11 @@
 
 unit uIndyClient;
 
+{$IFDEF FPC}
+  {$mode objfpc}
+  {$H+}
+{$ENDIF}
+
 {
   HTTP client using Indy
 }
