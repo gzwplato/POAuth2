@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 1246
+  Left = 1978
   Height = 586
-  Top = 47
+  Top = 67
   Width = 618
   Caption = 'POAuth2 Test'
   ClientHeight = 586
@@ -186,5 +186,22 @@ object MainForm: TMainForm
     ParentFont = False
     ReadOnly = True
     TabOrder = 10
+  end
+  object Label10: TLabel
+    Left = 506
+    Height = 15
+    Top = 207
+    Width = 57
+    Caption = 'Took (ms):'
+    ParentColor = False
+  end
+  object txtTook: TEdit
+    Left = 504
+    Height = 23
+    Top = 224
+    Width = 104
+    Color = clBtnFace
+    ReadOnly = True
+    TabOrder = 11
   end
 end

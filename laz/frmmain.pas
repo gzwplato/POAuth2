@@ -13,6 +13,8 @@ type
   { TMainForm }
   TMainForm = class(TForm)
     Button1: TButton;
+    Label10: TLabel;
+    txtTook: TEdit;
     txtResponse: TMemo;
     txtResource: TEdit;
     Label9: TLabel;
@@ -52,7 +54,7 @@ var
 implementation
 
 uses
-  uOAuth2Tools, uJson;
+  uOAuth2Tools, uJson, uOAuth2Consts, LCLIntf;
 
 {$R *.lfm}
 
@@ -84,6 +86,7 @@ end;
 procedure TMainForm.Button1Click(Sender: TObject);
 var
   res: TOAuth2Response;
+  start, stop: DWord;
 begin
   FOAuthClient.Site := txtSite.Text;
   FOAuthClient.GrantType := 'password';
@@ -91,17 +94,29 @@ begin
   FOAuthClient.PassWord := txtPass.Text;
   FOAuthClient.ClientId := txtClientId.Text;
   FOAuthClient.ClientSecret := txtClientSecret.Text;
-  res := FOAuthClient.GetResource(txtResource.Text);
-  txtResponse.Lines.Clear;
-  with TJson.Create do try
-    Parse(res.Body);
-    Print(txtResponse.Lines);
-  finally
-    Free;
+  try
+    start := LCLIntf.GetTickCount;
+    res := FOAuthClient.GetResource(txtResource.Text);
+    stop := LCLIntf.GetTickCount;
+    txtTook.Text := FloatToStr(stop - start);
+    txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
+    txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
+    txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
+    txtResponse.Lines.Clear;
+    if res.Code = HTTP_OK then begin
+      with TJson.Create do try
+        Parse(res.Body);
+        Print(txtResponse.Lines);
+      finally
+        Free;
+      end;
+    end else begin
+      txtResponse.Text := Format('Error (%d): %s', [res.Code, res.Body]);
+    end;
+  except
+    on E: Exception do
+      txtResponse.Text := Format('Error: %s', [E.Message]);
   end;
-  txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
-  txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
-  txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
 end;
 
 end.

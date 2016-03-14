@@ -63,7 +63,7 @@ var
 implementation
 
 uses
-  frmJson, uOAuth2Tools, uJson;
+  frmJson, uOAuth2Tools, uJson, uOAuth2Consts;
 
 {$R *.dfm}
 
@@ -77,17 +77,26 @@ begin
   FOAuthClient.PassWord := txtPass.Text;
   FOAuthClient.ClientId := txtClientId.Text;
   FOAuthClient.ClientSecret := txtClientSecret.Text;
-  res := FOAuthClient.GetResource(txtResource.Text);
-  txtResponse.Lines.Clear;
-  with TJson.Create do try
-    Parse(res.Body);
-    Print(txtResponse.Lines);
-  finally
-    Free;
+  try
+	  res := FOAuthClient.GetResource(txtResource.Text);
+    txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
+    txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
+    txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
+    txtResponse.Lines.Clear;
+    if res.Code = HTTP_OK then begin
+      with TJson.Create do try
+        Parse(res.Body);
+        Print(txtResponse.Lines);
+      finally
+        Free;
+      end;
+    end else begin
+      txtResponse.Text := Format('Error (%d): %s', [res.Code, res.Body]);
+    end;
+  except
+		on E: Exception do
+    	txtResponse.Text := Format('Error: %s', [E.Message]);
   end;
-  txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
-  txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
-  txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
 end;
 
 procedure TMainForm.Exit1Click(Sender: TObject);
