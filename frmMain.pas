@@ -78,6 +78,7 @@ begin
   FOAuthClient.ClientId := txtClientId.Text;
   FOAuthClient.ClientSecret := txtClientSecret.Text;
   res := FOAuthClient.GetResource(txtResource.Text);
+  txtResponse.Lines.Clear;
   with TJson.Create do try
     Parse(res.Body);
     Print(txtResponse.Lines);
