@@ -84,6 +84,7 @@ function IndentString(Indent: Integer): TJsonString;
 var
   I: Integer;
 begin
+  Result := '';
   for I := 1 to 4 * Indent do
     Result := Result + ' ';
 end;

@@ -87,9 +87,6 @@ var
   json: TJson;
   val: TJsonValue;
 begin
-  if Assigned(FAccessToken) then
-    FAccessToken.Free;
-
   FHttpClient.ClearHeader;
   FHttpClient.ClearFormFields;
   FHttpClient.AddFormField(OAUTH2_GRANT_TYPE, FGrantType);
@@ -105,7 +102,7 @@ begin
   response := FHttpClient.Post(url);
 
   if response.Code <> HTTP_OK then begin
-
+    raise Exception.CreateFmt('Server returned %d: %s', [response.Code, response.Body]);
   end;
 
   Result := TOAuth2Token.Create;
@@ -113,20 +110,24 @@ begin
   try
     json.Parse(response.Body);
     val := json.GetValue('access_token');
-    if val.Index <> -1 then begin
+    if val.Kind = JVKString then begin
       Result.AccessToken := json.Output.Strings[val.Index];
     end;
     val := json.GetValue('refresh_token');
-    if val.Index <> -1 then begin
+    if val.Kind = JVKString then begin
       Result.RefreshToken := json.Output.Strings[val.Index];
     end;
     val := json.GetValue('expires_in');
-    if val.Index <> -1 then begin
+    if val.Kind = JVKNumber then begin
       Result.ExpiresIn := Trunc(json.Output.Numbers[val.Index]);
     end;
     val := json.GetValue(OAUTH2_TOKEN_TYPE);
-    if val.Index <> -1 then begin
+    if val.Kind = JVKString then begin
       Result.TokenType := json.Output.Strings[val.Index];
+    end;
+    val := json.GetValue('scope');
+    if val.Kind = JVKString then begin
+      FScope := json.Output.Strings[val.Index];
     end;
   finally
     json.Free;
@@ -170,27 +171,31 @@ begin
   response := FHttpClient.Post(url);
 
   if response.Code <> HTTP_OK then begin
-
+    raise Exception.CreateFmt('Server returned %d: %s', [response.Code, response.Body]);
   end;
 
   json := TJson.Create;
   try
     json.Parse(response.Body);
     val := json.GetValue('access_token');
-    if val.Index <> -1 then begin
+    if val.Kind = JVKString then begin
       AToken.AccessToken := json.Output.Strings[val.Index];
     end;
     val := json.GetValue('refresh_token');
-    if val.Index <> -1 then begin
+    if val.Kind = JVKString then begin
       AToken.RefreshToken := json.Output.Strings[val.Index];
     end;
     val := json.GetValue('expires_in');
-    if val.Index <> -1 then begin
+    if val.Kind = JVKNumber then begin
       AToken.ExpiresIn := Trunc(json.Output.Numbers[val.Index]);
     end;
     val := json.GetValue(OAUTH2_TOKEN_TYPE);
-    if val.Index <> -1 then begin
+    if val.Kind = JVKString then begin
       AToken.TokenType := json.Output.Strings[val.Index];
+    end;
+    val := json.GetValue('scope');
+    if val.Kind = JVKString then begin
+      FScope := json.Output.Strings[val.Index];
     end;
   finally
     json.Free;
@@ -213,7 +218,7 @@ begin
   url := FSite + APath;
   FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
   response := FHttpClient.Get(url);
-  if response.Code <> 200 then begin
+  if response.Code <> HTTP_OK then begin
     raise Exception.CreateFmt('Server returned %d: %s', [response.Code, response.Body]);
   end;
   Result := response;

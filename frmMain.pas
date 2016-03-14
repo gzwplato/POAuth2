@@ -1,7 +1,7 @@
 {
   Simple OAuth2 client
 
-  (C) 2014, Stefan Ascher
+  (C) 2016, Stefan Ascher
 }
 
 unit frmMain;

@@ -6,13 +6,11 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, uIndyClient,
+  IdBaseComponent, IdComponent, IdHTTP, uIndyClient,
   uOAuth2HttpClient, uOAuth2Client;
 
 type
-
   { TMainForm }
-
   TMainForm = class(TForm)
     Button1: TButton;
     txtResponse: TMemo;

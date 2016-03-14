@@ -6,6 +6,7 @@ object MainForm: TMainForm
   Caption = 'POAuth2 Test'
   ClientHeight = 586
   ClientWidth = 618
+  Constraints.MinWidth = 618
   OnClose = FormClose
   OnCreate = FormCreate
   LCLVersion = '1.6.0.4'
@@ -22,6 +23,7 @@ object MainForm: TMainForm
     Height = 23
     Top = 24
     Width = 600
+    Anchors = [akTop, akLeft, akRight]
     TabOrder = 0
     Text = 'http://localhost/lockdin'
   end
@@ -153,6 +155,7 @@ object MainForm: TMainForm
     Height = 23
     Top = 280
     Width = 480
+    Anchors = [akTop, akLeft, akRight]
     TabOrder = 8
     Text = '/resource?query=somevalue'
   end
@@ -161,6 +164,7 @@ object MainForm: TMainForm
     Height = 25
     Top = 280
     Width = 104
+    Anchors = [akTop, akRight]
     Caption = 'Get Resource'
     OnClick = Button1Click
     TabOrder = 9
@@ -170,6 +174,7 @@ object MainForm: TMainForm
     Height = 266
     Top = 312
     Width = 600
+    Anchors = [akTop, akLeft, akRight, akBottom]
     Color = clBtnFace
     Font.CharSet = ANSI_CHARSET
     Font.Height = -13
