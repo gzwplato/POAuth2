@@ -98,7 +98,7 @@ begin
     start := LCLIntf.GetTickCount;
     res := FOAuthClient.GetResource(txtResource.Text);
     stop := LCLIntf.GetTickCount;
-    txtTook.Text := FloatToStr(stop - start);
+    txtTook.Text := IntToStr(stop - start);
     txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
     txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
     txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
