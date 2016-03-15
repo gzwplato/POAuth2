@@ -49,6 +49,7 @@ begin
     FOwnClient := false;
   end else begin
     FHttp := TIdHttp.Create(nil);
+    FHttp.Request.UserAgent := 'Mozilla/3.0 (compatible; POAuth2)';
     FOwnClient := true;
   end;
 end;

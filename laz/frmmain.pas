@@ -65,6 +65,7 @@ uses
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
   FIdHttp := TIdHTTP.Create(Self);
+  FIdHttp.Request.UserAgent := 'Mozilla/3.0 (compatible; POAuth2)';
   FClient := TIndyHttpClient.Create(FIdHttp);
   FOAuthClient := TOAuth2Client.Create(FClient);
 end;
