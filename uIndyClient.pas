@@ -83,9 +83,12 @@ begin
   try
     SetIOHandler(urlp.Protocol);
 
-    if urlp.Query <> '' then
-      urlp.Query := urlp.Query + '&';
-    urlp.Query := urlp.Query + GetQuery;
+    if FFormFields.Count > 0 then begin
+      // Append form fileds to the URL
+      if urlp.Query <> '' then
+        urlp.Query := urlp.Query + '&';
+      urlp.Query := urlp.Query + GetQuery;
+    end;
     url := TIdURI.URLEncode(BuildUrl(urlp));
     if FHeaders.Count > 0 then
       FHttp.Request.CustomHeaders.AddStrings(FHeaders);
@@ -105,6 +108,7 @@ function TIndyHttpClient.Post(const AUrl: string): TOAuth2Response;
 var
   body: string;
   urlp: TUrlParts;
+  url: string;
 begin
   urlp := ParseUrl(AUrl);
   try
@@ -112,7 +116,8 @@ begin
 
     if FHeaders.Count > 0 then
       FHttp.Request.CustomHeaders.AddStrings(FHeaders);
-    body := FHttp.Post(AUrl, FFormFields);
+    url := TIdURI.URLEncode(AUrl);
+    body := FHttp.Post(url, FFormFields);
     Result.Code := FHttp.ResponseCode;
     Result.ContentType := FHttp.Response.ContentType;
     Result.Body := body;
