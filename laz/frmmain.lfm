@@ -167,7 +167,7 @@ object MainForm: TMainForm
     Top = 280
     Width = 104
     Anchors = [akTop, akRight]
-    Caption = 'Get Resource'
+    Caption = 'Get'
     OnClick = Button1Click
     TabOrder = 9
   end
@@ -185,6 +185,7 @@ object MainForm: TMainForm
     Font.Quality = fqDraft
     ParentFont = False
     ReadOnly = True
+    ScrollBars = ssAutoBoth
     TabOrder = 10
   end
   object Label10: TLabel
@@ -203,5 +204,15 @@ object MainForm: TMainForm
     Color = clBtnFace
     ReadOnly = True
     TabOrder = 11
+  end
+  object Button2: TButton
+    Left = 504
+    Height = 25
+    Top = 254
+    Width = 104
+    Anchors = [akTop, akRight]
+    Caption = 'Post...'
+    OnClick = Button2Click
+    TabOrder = 12
   end
 end

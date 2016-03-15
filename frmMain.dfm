@@ -144,12 +144,12 @@ object MainForm: TMainForm
     OnExit = txtResourceExit
   end
   object Button2: TButton
-    Left = 496
+    Left = 504
     Top = 283
-    Width = 127
+    Width = 119
     Height = 25
     Anchors = [akTop, akRight]
-    Caption = 'Get Resource'
+    Caption = 'Get'
     TabOrder = 5
     OnClick = Button2Click
   end
@@ -203,9 +203,19 @@ object MainForm: TMainForm
     ReadOnly = True
     TabOrder = 10
   end
+  object Button1: TButton
+    Left = 504
+    Top = 252
+    Width = 119
+    Height = 25
+    Anchors = [akTop, akRight]
+    Caption = 'Post'
+    TabOrder = 11
+    OnClick = Button1Click
+  end
   object MainMenu1: TMainMenu
-    Left = 544
-    Top = 216
+    Left = 536
+    Top = 64
     object File1: TMenuItem
       Caption = '&File'
       object Exit1: TMenuItem

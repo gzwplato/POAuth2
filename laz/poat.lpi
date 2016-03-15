@@ -67,7 +67,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="8">
+    <Units Count="9">
       <Unit0>
         <Filename Value="poat.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -103,6 +103,12 @@
         <Filename Value="..\uOAuth2Consts.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
+      <Unit8>
+        <Filename Value="frmformfields.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormFieldsDialog"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit8>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

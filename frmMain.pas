@@ -41,6 +41,7 @@ type
     Exit1: TMenuItem;
     est1: TMenuItem;
     JSON1: TMenuItem;
+    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button2Click(Sender: TObject);
@@ -48,6 +49,7 @@ type
     procedure JSON1Click(Sender: TObject);
     procedure txtSiteExit(Sender: TObject);
     procedure txtResourceExit(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private-Deklarationen }
     FClient: TIndyHttpClient;
@@ -67,6 +69,46 @@ uses
 
 {$R *.dfm}
 
+procedure TMainForm.Button1Click(Sender: TObject);
+var
+  res: TOAuth2Response;
+  formfields: TStringList;
+begin
+  FOAuthClient.Site := txtSite.Text;
+  FOAuthClient.GrantType := 'password';
+  FOAuthClient.UserName := txtUser.Text;
+  FOAuthClient.PassWord := txtPass.Text;
+  FOAuthClient.ClientId := txtClientId.Text;
+  FOAuthClient.ClientSecret := txtClientSecret.Text;
+  formfields := TStringList.Create;
+  try
+  	formfields.NameValueSeparator := '=';
+    formfields.Add(Format('%s=%s', ['testkey', 'testvalue']));
+    try
+      res := FOAuthClient.Post(txtResource.Text, formfields);
+      txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
+      txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
+      txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
+      txtResponse.Lines.Clear;
+      if res.Code = HTTP_OK then begin
+        with TJson.Create do try
+          Parse(res.Body);
+          Print(txtResponse.Lines);
+        finally
+          Free;
+        end;
+      end else begin
+        txtResponse.Text := Format('Error (%d): %s', [res.Code, res.Body]);
+      end;
+    except
+      on E: Exception do
+        txtResponse.Text := Format('Error: %s', [E.Message]);
+    end;
+  finally
+    formfields.Free;
+  end;
+end;
+
 procedure TMainForm.Button2Click(Sender: TObject);
 var
   res: TOAuth2Response;
@@ -78,7 +120,7 @@ begin
   FOAuthClient.ClientId := txtClientId.Text;
   FOAuthClient.ClientSecret := txtClientSecret.Text;
   try
-	  res := FOAuthClient.GetResource(txtResource.Text);
+	  res := FOAuthClient.Get(txtResource.Text);
     txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
     txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
     txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);

@@ -23,7 +23,7 @@ begin
     client.PassWord := 'testpass';
     client.ClientId := 'testclient';
     client.ClientSecret := 'testsecret';
-    resp := client.GetResource('/path/to/resource?name=value');
+    resp := client.Get('/path/to/resource?name=value');
   finally
     client.Free;
     cli.Free;
@@ -57,7 +57,7 @@ begin
     client.PassWord := 'testpass';
     client.ClientId := 'testclient';
     client.ClientSecret := 'testsecret';
-    resp := client.GetResource('/path/to/resource?name=value');
+    resp := client.Get('/path/to/resource?name=value');
   finally
     client.Free;
     cli.Free;

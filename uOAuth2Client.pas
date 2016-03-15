@@ -48,7 +48,8 @@ type
     constructor Create(AClient: TOAuth2HttpClient); overload;
     constructor Create(AConfig: TOAuth2Config; AClient: TOAuth2HttpClient); overload;
     destructor Destroy; override;
-    function GetResource(const APath: string): TOAuth2Response;
+    function Get(const APath: string): TOAuth2Response;
+    function Post(const APath: string; AFormFields: TStringList): TOAuth2Response;
 
     property UserName: string read FUserName write FUserName;
     property PassWord: string read FPassWord write FPassWord;
@@ -219,10 +220,9 @@ begin
 
 end;
 
-function TOAuth2Client.GetResource(const APath: string): TOAuth2Response;
+function TOAuth2Client.Get(const APath: string): TOAuth2Response;
 var
   url: string;
-  response: TOAuth2Response;
 begin
   if not Assigned(FAccessToken) then
     FAccessToken := GetAccessToken;
@@ -233,11 +233,36 @@ begin
   FHttpClient.ClearFormFields;
   url := FSite + APath;
   FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
-  response := FHttpClient.Get(url);
-  if response.Code <> HTTP_OK then begin
-    raise Exception.CreateFmt('Server returned %d: %s', [response.Code, response.Body]);
+  Result := FHttpClient.Get(url);
+  if Result.Code <> HTTP_OK then begin
+    raise Exception.CreateFmt('Server returned %d: %s', [Result.Code, Result.Body]);
   end;
-  Result := response;
+end;
+
+function TOAuth2Client.Post(const APath: string; AFormFields: TStringList): TOAuth2Response;
+var
+  url: string;
+  i: integer;
+  key, value: string;
+begin
+  if not Assigned(FAccessToken) then
+    FAccessToken := GetAccessToken;
+  if FAccessToken.IsExpired then
+    RefreshAccessToken(FAccessToken);
+
+  FHttpClient.ClearHeader;
+  FHttpClient.ClearFormFields;
+  url := FSite + APath;
+  FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
+  for i := 0 to AFormFields.Count - 1 do begin
+    key := AFormFields.Names[i];
+    value := AFormFields.Values[key];
+	  FHttpClient.AddFormField(key, value);
+  end;
+  Result := FHttpClient.Post(url);
+  if Result.Code <> HTTP_OK then begin
+    raise Exception.CreateFmt('Server returned %d: %s', [Result.Code, Result.Body]);
+  end;
 end;
 
 end.

@@ -13,6 +13,7 @@ type
   { TMainForm }
   TMainForm = class(TForm)
     Button1: TButton;
+    Button2: TButton;
     Label10: TLabel;
     txtTook: TEdit;
     txtResponse: TMemo;
@@ -35,6 +36,7 @@ type
     txtPass: TEdit;
     txtClientId: TEdit;
     procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure txtResourceExit(Sender: TObject);
@@ -54,7 +56,7 @@ var
 implementation
 
 uses
-  uOAuth2Tools, uJson, uOAuth2Consts, LCLIntf;
+  uOAuth2Tools, uJson, uOAuth2Consts, LCLIntf, frmformfields;
 
 {$R *.lfm}
 
@@ -96,7 +98,7 @@ begin
   FOAuthClient.ClientSecret := txtClientSecret.Text;
   try
     start := LCLIntf.GetTickCount;
-    res := FOAuthClient.GetResource(txtResource.Text);
+    res := FOAuthClient.Get(txtResource.Text);
     stop := LCLIntf.GetTickCount;
     txtTook.Text := IntToStr(stop - start);
     txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
@@ -116,6 +118,51 @@ begin
   except
     on E: Exception do
       txtResponse.Text := Format('Error: %s', [E.Message]);
+  end;
+end;
+
+procedure TMainForm.Button2Click(Sender: TObject);
+var
+  res: TOAuth2Response;
+  start, stop: DWord;
+  ff: TStringList;
+begin
+  FOAuthClient.Site := txtSite.Text;
+  FOAuthClient.GrantType := 'password';
+  FOAuthClient.UserName := txtUser.Text;
+  FOAuthClient.PassWord := txtPass.Text;
+  FOAuthClient.ClientId := txtClientId.Text;
+  FOAuthClient.ClientSecret := txtClientSecret.Text;
+  if FormFieldsDialog.ShowModal = mrOK then begin
+    ff := TStringList.Create;
+    ff.AddStrings(FormFieldsDialog.txtFormFields.Lines);
+    try
+      try
+        start := LCLIntf.GetTickCount;
+        res := FOAuthClient.Post(txtResource.Text, ff);
+        stop := LCLIntf.GetTickCount;
+        txtTook.Text := IntToStr(stop - start);
+        txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
+        txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
+        txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
+        txtResponse.Lines.Clear;
+        if res.Code = HTTP_OK then begin
+          with TJson.Create do try
+            Parse(res.Body);
+            Print(txtResponse.Lines);
+          finally
+            Free;
+          end;
+        end else begin
+          txtResponse.Text := Format('Error (%d): %s', [res.Code, res.Body]);
+        end;
+      except
+        on E: Exception do
+          txtResponse.Text := Format('Error: %s', [E.Message]);
+      end;
+    finally
+      ff.Free;
+    end;
   end;
 end;
 
