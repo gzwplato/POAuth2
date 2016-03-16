@@ -26,6 +26,10 @@ uses
   SysUtils, Classes, uOAuth2Token, uOAuth2HttpClient, uOAuth2Config;
 
 type
+  TOAuth2GrantType = (
+    gtPassword
+  );
+
   TOAuth2Client = class
   private
     FUserName: string;
@@ -36,7 +40,7 @@ type
     FScope: string;
     FHttpClient: TOAuth2HttpClient;
     FAccessToken: TOAuth2Token;
-    FGrantType: string;
+    FGrantType: TOAuth2GrantType;
     FConfig: TOAuth2Config;
     function GetAuthHeaderForAccessToken(const AAccessToken: string): string;
     function GetBasicAuthHeader(const AUsername, APassword: string): string;
@@ -56,7 +60,7 @@ type
     property ClientId: string read FClientId write FClientId;
     property ClientSecret: string read FClientSecret write FClientSecret;
     property Site: string read FSite write FSite;
-    property GrantType: string read FGrantType write FGrantType;
+    property GrantType: TOAuth2GrantType read FGrantType write FGrantType default gtPassword;
     property AccessToken: TOAuth2Token read FAccessToken write SetAccessToken;
   end;
 
@@ -64,6 +68,9 @@ implementation
 
 uses
   uOAuth2Consts, uOAuth2Tools, uJson;
+
+const
+  GRANT_TYPE_STRINGS: array[TOAuth2GrantType] of string = ('password');
 
 constructor TOAuth2Client.Create(AClient: TOAuth2HttpClient);
 begin
@@ -106,7 +113,7 @@ var
 begin
   FHttpClient.ClearHeader;
   FHttpClient.ClearFormFields;
-  FHttpClient.AddFormField(OAUTH2_GRANT_TYPE, FGrantType);
+  FHttpClient.AddFormField(OAUTH2_GRANT_TYPE, GRANT_TYPE_STRINGS[FGrantType]);
   FHttpClient.AddFormField(OAUTH2_USERNAME, FUserName);
   FHttpClient.AddFormField(OAUTH2_PASSWORD, FPassWord);
   if FClientId <> '' then

@@ -92,7 +92,7 @@ var
   start, stop: DWord;
 begin
   FOAuthClient.Site := txtSite.Text;
-  FOAuthClient.GrantType := 'password';
+  FOAuthClient.GrantType := gtPassword;
   FOAuthClient.UserName := txtUser.Text;
   FOAuthClient.PassWord := txtPass.Text;
   FOAuthClient.ClientId := txtClientId.Text;
@@ -129,7 +129,7 @@ var
   ff: TStringList;
 begin
   FOAuthClient.Site := txtSite.Text;
-  FOAuthClient.GrantType := 'password';
+  FOAuthClient.GrantType := gtPassword;
   FOAuthClient.UserName := txtUser.Text;
   FOAuthClient.PassWord := txtPass.Text;
   FOAuthClient.ClientId := txtClientId.Text;

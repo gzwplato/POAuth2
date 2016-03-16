@@ -18,7 +18,7 @@ begin
   client := TOAuth2Client.Create(cli);
   try
     client.Site := 'http://localhost';
-    client.GrantType := 'password';   // Only password is supported
+    client.GrantType := gtPassword;   // Only password is supported
     client.UserName := 'testuser';
     client.PassWord := 'testpass';
     client.ClientId := 'testclient';
@@ -52,7 +52,7 @@ begin
       ExpiresAt := 42442.406256875
     end;
     client.Site := 'http://localhost';
-    client.GrantType := 'password';   // Only password is supported
+    client.GrantType := gtPassword;   // Only password is supported
     client.UserName := 'testuser';
     client.PassWord := 'testpass';
     client.ClientId := 'testclient';
