@@ -6,6 +6,7 @@ object MainForm: TMainForm
   Caption = 'POAuth2 Test'
   ClientHeight = 586
   ClientWidth = 618
+  Color = clForm
   Constraints.MinWidth = 618
   OnClose = FormClose
   OnCreate = FormCreate

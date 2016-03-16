@@ -107,6 +107,7 @@
         <Filename Value="frmformfields.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FormFieldsDialog"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit8>
     </Units>
