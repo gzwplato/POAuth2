@@ -78,6 +78,7 @@ begin
   FHttpClient := AClient;
   FAccessToken := nil;
   FConfig := DEF_OATUH2_CONFIG;
+  FGrantType := gtPassword;
 end;
 
 constructor TOAuth2Client.Create(AConfig: TOAuth2Config; AClient: TOAuth2HttpClient);
@@ -86,6 +87,7 @@ begin
   FHttpClient := AClient;
   FAccessToken := nil;
   FConfig := AConfig;
+  FGrantType := gtPassword;
 end;
 
 destructor TOAuth2Client.Destroy;
