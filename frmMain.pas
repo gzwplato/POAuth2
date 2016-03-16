@@ -82,7 +82,7 @@ begin
   FOAuthClient.ClientSecret := txtClientSecret.Text;
   formfields := TStringList.Create;
   try
-  	formfields.NameValueSeparator := '=';
+    formfields.NameValueSeparator := '=';
     formfields.Add(Format('%s=%s', ['testkey', 'testvalue']));
     try
       res := FOAuthClient.Post(txtResource.Text, formfields);
@@ -120,7 +120,7 @@ begin
   FOAuthClient.ClientId := txtClientId.Text;
   FOAuthClient.ClientSecret := txtClientSecret.Text;
   try
-	  res := FOAuthClient.Get(txtResource.Text);
+    res := FOAuthClient.Get(txtResource.Text);
     txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
     txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
     txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
@@ -136,8 +136,8 @@ begin
       txtResponse.Text := Format('Error (%d): %s', [res.Code, res.Body]);
     end;
   except
-		on E: Exception do
-    	txtResponse.Text := Format('Error: %s', [E.Message]);
+    on E: Exception do
+      txtResponse.Text := Format('Error: %s', [E.Message]);
   end;
 end;
 

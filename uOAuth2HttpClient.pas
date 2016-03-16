@@ -31,7 +31,6 @@ type
   protected
     FHeaders: TStringList;
     FFormFields: TStringList;
-    FBody: string;
   public
     constructor Create;
     destructor Destroy; override;
@@ -86,15 +85,8 @@ begin
 end;
 
 procedure TOAuth2HttpClient.AddFormField(const AKey, AValue: string);
-var
-  i: integer;
 begin
-  i := FFormFields.IndexOfName(AKey);
-  if i = -1 then begin
-    FFormFields.Add(Format('%s=%s', [AKey, AValue]));
-  end else begin
-    FFormFields[i] := Format('%s=%s', [AKey, AValue]);
-  end;
+  FFormFields.Add(Format('%s=%s', [AKey, AValue]));
 end;
 
 procedure TOAuth2HttpClient.ClearHeader;

@@ -92,7 +92,7 @@ procedure TOAuth2Client.SetAccessToken(Value: TOAuth2Token);
 begin
   if FAccessToken <> Value then begin
     if Assigned(FAccessToken) then
-    	FAccessToken.Free;
+      FAccessToken.Free;
     FAccessToken := Value;
   end;
 end;
@@ -257,7 +257,7 @@ begin
   for i := 0 to AFormFields.Count - 1 do begin
     key := AFormFields.Names[i];
     value := AFormFields.Values[key];
-	  FHttpClient.AddFormField(key, value);
+    FHttpClient.AddFormField(key, value);
   end;
   Result := FHttpClient.Post(url);
   if Result.Code <> HTTP_OK then begin
