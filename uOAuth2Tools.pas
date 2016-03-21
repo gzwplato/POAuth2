@@ -38,6 +38,8 @@ function AddLeadingSlash(const S: string): string;
 function RemoveTrailingSlash(const S: string): string;
 function AddTrailingSlash(const S: string): string;
 
+function IsJson(const AContentType: string): boolean;
+
 implementation
 
 {$IFDEF FPC}
@@ -47,6 +49,27 @@ uses
 
 const
   BASE64_CODES: AnsiString = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
+
+function IsJson(const AContentType: string): boolean;
+const
+  CT_JSON: array[0..4] of string = (
+    'application/json',
+    'application/x-javascript',
+    'text/javascript',
+    'text/x-javascript',
+    'text/x-json'
+  );
+var
+  i: integer;
+begin
+  for i := Low(CT_JSON) to High(CT_JSON) do begin
+    if CompareText(CT_JSON[i], AContentType) = 0 then begin
+      Result := true;
+      Exit;
+    end;
+  end;
+  Result := false;
+end;
 
 function RemoveLeadingSlash(const S: string): string;
 begin

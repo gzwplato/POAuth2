@@ -107,11 +107,15 @@ begin
     txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
     txtResponse.Lines.Clear;
     if res.Code = HTTP_OK then begin
-      with TJson.Create do try
-        Parse(res.Body);
-        Print(txtResponse.Lines);
-      finally
-        Free;
+      if IsJson(res.ContentType) then begin
+        with TJson.Create do try
+          Parse(res.Body);
+          Print(txtResponse.Lines);
+        finally
+          Free;
+        end;
+      end else begin
+        txtResponse.Text := res.Body;
       end;
     end else begin
       txtResponse.Text := Format('Error (%d): %s', [res.Code, res.Body]);
@@ -148,11 +152,15 @@ begin
         txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
         txtResponse.Lines.Clear;
         if res.Code = HTTP_OK then begin
-          with TJson.Create do try
-            Parse(res.Body);
-            Print(txtResponse.Lines);
-          finally
-            Free;
+          if IsJson(res.ContentType) then begin
+            with TJson.Create do try
+              Parse(res.Body);
+              Print(txtResponse.Lines);
+            finally
+              Free;
+            end;
+          end else begin
+            txtResponse.Text := res.Body;
           end;
         end else begin
           txtResponse.Text := Format('Error (%d): %s', [res.Code, res.Body]);

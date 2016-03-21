@@ -130,6 +130,8 @@ begin
   if response.Code <> HTTP_OK then begin
     raise Exception.CreateFmt('Server returned %d: %s', [response.Code, response.Body]);
   end;
+  if not IsJson(response.ContentType) then
+    raise Exception.CreateFmt('JSON required, got %s', [response.ContentType]);
 
   Result := TOAuth2Token.Create;
   json := TJson.Create;
@@ -199,6 +201,8 @@ begin
   if response.Code <> HTTP_OK then begin
     raise Exception.CreateFmt('Server returned %d: %s', [response.Code, response.Body]);
   end;
+  if not IsJson(response.ContentType) then
+    raise Exception.CreateFmt('JSON required, got %s', [response.ContentType]);
 
   json := TJson.Create;
   try
