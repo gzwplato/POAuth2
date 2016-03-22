@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  IniPropStorage, IdBaseComponent, IdComponent, IdHTTP, uIndyClient,
+  IniPropStorage, ComCtrls, IdBaseComponent, IdComponent, IdHTTP, uIndyClient,
   uOAuth2HttpClient, uOAuth2Client;
 
 type
@@ -16,6 +16,7 @@ type
     Button2: TButton;
     IniPropStorage: TIniPropStorage;
     Label10: TLabel;
+    StatusBar: TStatusBar;
     txtTook: TEdit;
     txtResponse: TMemo;
     txtResource: TEdit;
@@ -71,6 +72,7 @@ begin
   FClient := TIndyHttpClient.Create(FIdHttp);
   FOAuthClient := TOAuth2Client.Create(FClient);
   IniPropStorage.IniFileName := GetAppConfigDir(false) + 'poat.ini';
+  StatusBar.SimpleText := 'Settings stored in: ' + IniPropStorage.IniFileName;
   IniPropStorage.Restore;
   IniPropStorage.IniSection := 'general';
   txtSite.Text := IniPropStorage.ReadString('site', txtSite.Text);
@@ -79,6 +81,12 @@ begin
   txtClientId.Text := IniPropStorage.ReadString('client_id', txtClientId.Text);
   txtClientSecret.Text := IniPropStorage.ReadString('client_secret', txtClientSecret.Text);
   txtResource.Text := IniPropStorage.ReadString('resource', txtResource.Text);
+{$IFDEF Linux}
+  // Find a monospace font
+  if Screen.Fonts.IndexOf('DejaVu Sans Mono') <> -1 then
+    txtResponse.Font.Name := 'DejaVu Sans Mono'
+  end;
+{$ENDIF}
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);

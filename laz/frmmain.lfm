@@ -1,10 +1,10 @@
 object MainForm: TMainForm
   Left = 1978
-  Height = 586
+  Height = 618
   Top = 67
   Width = 618
   Caption = 'POAuth2 Test'
-  ClientHeight = 586
+  ClientHeight = 618
   ClientWidth = 618
   Color = clForm
   Constraints.MinWidth = 618
@@ -148,7 +148,7 @@ object MainForm: TMainForm
   object Label9: TLabel
     Left = 8
     Height = 15
-    Top = 264
+    Top = 274
     Width = 51
     Caption = 'Resource:'
     ParentColor = False
@@ -156,7 +156,7 @@ object MainForm: TMainForm
   object txtResource: TEdit
     Left = 8
     Height = 23
-    Top = 280
+    Top = 290
     Width = 480
     Anchors = [akTop, akLeft, akRight]
     OnExit = txtResourceExit
@@ -166,7 +166,7 @@ object MainForm: TMainForm
   object Button1: TButton
     Left = 504
     Height = 25
-    Top = 280
+    Top = 290
     Width = 104
     Anchors = [akTop, akRight]
     Caption = 'Get'
@@ -174,10 +174,11 @@ object MainForm: TMainForm
     TabOrder = 9
   end
   object txtResponse: TMemo
-    Left = 8
-    Height = 266
-    Top = 312
-    Width = 600
+    Left = 0
+    Height = 267
+    Top = 328
+    Width = 618
+    Align = alBottom
     Anchors = [akTop, akLeft, akRight, akBottom]
     Color = clBtnFace
     Font.CharSet = ANSI_CHARSET
@@ -210,12 +211,19 @@ object MainForm: TMainForm
   object Button2: TButton
     Left = 504
     Height = 25
-    Top = 254
+    Top = 256
     Width = 104
     Anchors = [akTop, akRight]
     Caption = 'Post...'
     OnClick = Button2Click
     TabOrder = 12
+  end
+  object StatusBar: TStatusBar
+    Left = 0
+    Height = 23
+    Top = 595
+    Width = 618
+    Panels = <>
   end
   object IniPropStorage: TIniPropStorage
     StoredValues = <>

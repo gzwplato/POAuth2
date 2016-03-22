@@ -1,7 +1,7 @@
 object FormFieldsDialog: TFormFieldsDialog
-  Left = 2740
+  Left = 2650
   Height = 240
-  Top = 371
+  Top = 185
   Width = 320
   BorderIcons = [biSystemMenu]
   Caption = 'Form fields'
