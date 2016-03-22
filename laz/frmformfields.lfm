@@ -26,6 +26,7 @@ object FormFieldsDialog: TFormFieldsDialog
       Height = 25
       Top = 8
       Width = 75
+      Anchors = [akTop, akRight]
       Cancel = True
       Caption = 'Cancel'
       ModalResult = 2
@@ -36,6 +37,7 @@ object FormFieldsDialog: TFormFieldsDialog
       Height = 25
       Top = 8
       Width = 75
+      Anchors = [akTop, akRight]
       Caption = 'OK'
       Default = True
       ModalResult = 1

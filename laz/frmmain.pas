@@ -161,7 +161,7 @@ begin
     end;
   except
     on E: Exception do
-      txtResponse.Text := Format('Error: %s', [E.Message]);
+      txtResponse.Text := Format('%s: %s', [E.ClassName, E.Message]);
   end;
 end;
 
@@ -170,8 +170,6 @@ var
   res: TOAuth2Response;
   start, stop: DWord;
   ff: TStringList;
-  i: integer;
-  c: integer;
 begin
   FOAuthClient.Site := txtSite.Text;
   FOAuthClient.GrantType := gtPassword;
@@ -181,8 +179,8 @@ begin
   FOAuthClient.ClientSecret := txtClientSecret.Text;
   if FormFieldsDialog.ShowModal = mrOK then begin
     ff := TStringList.Create;
-    ff.AddStrings(FormFieldsDialog.txtFormFields.Lines);
     try
+      ff.AddStrings(FormFieldsDialog.txtFormFields.Lines);
       try
         start := LCLIntf.GetTickCount;
         res := FOAuthClient.Post(txtResource.Text, ff);
@@ -208,7 +206,7 @@ begin
         end;
       except
         on E: Exception do
-          txtResponse.Text := Format('Error: %s', [E.Message]);
+          txtResponse.Text := Format('%s: %s', [E.ClassName, E.Message]);
       end;
     finally
       ff.Free;
