@@ -39,16 +39,24 @@ function RemoveTrailingSlash(const S: string): string;
 function AddTrailingSlash(const S: string): string;
 
 function IsJson(const AContentType: string): boolean;
+function IsAccessDenied(const ACode: integer): boolean;
 
 implementation
 
-{$IFDEF FPC}
 uses
-  StrUtils;
+  uOAuth2Consts
+{$IFDEF FPC}
+  , StrUtils
 {$ENDIF}
+  ;
 
 const
   BASE64_CODES: AnsiString = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
+
+function IsAccessDenied(const ACode: integer): boolean;
+begin
+  Result := (ACode = HTTP_UNAUTHORIZED) or (ACode = HTTP_FORBIDDEN);
+end;
 
 function IsJson(const AContentType: string): boolean;
 const

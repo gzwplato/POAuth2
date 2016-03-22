@@ -127,9 +127,23 @@ begin
   url := FSite + FConfig.TokenEndPoint;
   response := FHttpClient.Post(url);
 
+  if IsAccessDenied(response.Code) and
+    (FUserName <> '') and (FPassWord <> '') then begin
+    // Try with Basic Auth
+    FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetBasicAuthHeader(FUserName, FPassWord));
+    response := FHttpClient.Post(url);
+    if IsAccessDenied(response.Code) and
+      (FClientId <> '') and (FClientSecret <> '') then begin
+      // Try with client credentials
+      FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetBasicAuthHeader(FClientId, FClientSecret));
+      response := FHttpClient.Post(url);
+    end;
+  end;
+
   if response.Code <> HTTP_OK then begin
     raise Exception.CreateFmt('Server returned %d: %s', [response.Code, response.Body]);
   end;
+
   if not IsJson(response.ContentType) then
     raise Exception.CreateFmt('JSON required, got %s', [response.ContentType]);
 
@@ -198,6 +212,19 @@ begin
   url := FSite + FConfig.TokenEndPoint;
   response := FHttpClient.Post(url);
 
+  if IsAccessDenied(response.Code) and
+    (FUserName <> '') and (FPassWord <> '') then begin
+    // Try with Basic Auth
+    FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetBasicAuthHeader(FUserName, FPassWord));
+    response := FHttpClient.Post(url);
+    if IsAccessDenied(response.Code) and
+      (FClientId <> '') and (FClientSecret <> '') then begin
+      // Try with client credentials
+      FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetBasicAuthHeader(FClientId, FClientSecret));
+      response := FHttpClient.Post(url);
+    end;
+  end;
+
   if response.Code <> HTTP_OK then begin
     raise Exception.CreateFmt('Server returned %d: %s', [response.Code, response.Body]);
   end;
@@ -245,7 +272,8 @@ begin
   FHttpClient.ClearHeader;
   FHttpClient.ClearFormFields;
   url := FSite + APath;
-  FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
+  FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
+//  FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
   Result := FHttpClient.Get(url);
   if Result.Code <> HTTP_OK then begin
     raise Exception.CreateFmt('Server returned %d: %s', [Result.Code, Result.Body]);
@@ -266,7 +294,8 @@ begin
   FHttpClient.ClearHeader;
   FHttpClient.ClearFormFields;
   url := FSite + APath;
-  FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
+  FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
+//  FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
   for i := 0 to AFormFields.Count - 1 do begin
     key := AFormFields.Names[i];
     value := AFormFields.Values[key];

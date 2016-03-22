@@ -38,10 +38,11 @@ type
     function Post(const AUrl: string): TOAuth2Response; virtual; abstract;
 
     function GetQuery: string;
-    procedure AddFormField(const AKey, AValue: string); virtual;
-    procedure ClearFormFields; virtual;
-    procedure AddHeader(const AKey, AValue: string); virtual;
-    procedure ClearHeader; virtual;
+    procedure AddFormField(const AKey, AValue: string); dynamic;
+    procedure ClearFormFields; dynamic;
+    procedure AddHeader(const AKey, AValue: string); dynamic;
+    procedure RemoveHeader(const AKey: string); dynamic;
+    procedure ClearHeader; dynamic;
   end;
 
 implementation
@@ -50,6 +51,7 @@ constructor TOAuth2HttpClient.Create;
 begin
   inherited;
   FHeaders := TStringList.Create;
+  FHeaders.NameValueSeparator := ':';
   FFormFields := TStringList.Create;
   FFormFields.NameValueSeparator := '=';
   FFormFields.CaseSensitive := false;
@@ -107,6 +109,20 @@ begin
     end;
   end;
   FHeaders.Add(Format('%s: %s', [AKey, AValue]));
+end;
+
+procedure TOAuth2HttpClient.RemoveHeader(const AKey: string);
+var
+  i: integer;
+  key: string;
+begin
+  for i := 0 to FHeaders.Count - 1 do begin
+    key := FHeaders.Names[i];
+    if CompareText(AKey, key) = 0 then begin
+      FHeaders.Delete(i);
+      Break;
+    end;
+  end;
 end;
 
 end.

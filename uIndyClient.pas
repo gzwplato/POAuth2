@@ -90,6 +90,7 @@ begin
       urlp.Query := urlp.Query + GetQuery;
     end;
     url := TIdURI.URLEncode(BuildUrl(urlp));
+    FHttp.Request.CustomHeaders.Clear;
     if FHeaders.Count > 0 then
       FHttp.Request.CustomHeaders.AddStrings(FHeaders);
     body := FHttp.Get(url);
@@ -114,6 +115,7 @@ begin
   try
     SetIOHandler(urlp.Protocol);
 
+    FHttp.Request.CustomHeaders.Clear;
     if FHeaders.Count > 0 then
       FHttp.Request.CustomHeaders.AddStrings(FHeaders);
     url := TIdURI.URLEncode(AUrl);
