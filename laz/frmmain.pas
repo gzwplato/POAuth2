@@ -16,6 +16,8 @@ type
     Button2: TButton;
     IniPropStorage: TIniPropStorage;
     Label10: TLabel;
+    Label11: TLabel;
+    txtFormFields: TMemo;
     StatusBar: TStatusBar;
     txtTook: TEdit;
     txtResponse: TMemo;
@@ -59,13 +61,15 @@ var
 implementation
 
 uses
-  uOAuth2Tools, uJson, uOAuth2Consts, LCLIntf, frmformfields;
+  uOAuth2Tools, uJson, uOAuth2Consts, LCLIntf;
 
 {$R *.lfm}
 
 { TMainForm }
 
 procedure TMainForm.FormCreate(Sender: TObject);
+var
+  i, c: integer;
 begin
   FIdHttp := TIdHTTP.Create(Self);
   FIdHttp.Request.UserAgent := 'Mozilla/3.0 (compatible; POAuth2)';
@@ -81,6 +85,12 @@ begin
   txtClientId.Text := IniPropStorage.ReadString('client_id', txtClientId.Text);
   txtClientSecret.Text := IniPropStorage.ReadString('client_secret', txtClientSecret.Text);
   txtResource.Text := IniPropStorage.ReadString('resource', txtResource.Text);
+  txtFormFields.Lines.Clear;
+  IniPropStorage.IniSection := 'postfields';
+  c := IniPropStorage.ReadInteger('count', 0);
+  for i := 0 to c - 1 do begin
+    txtFormFields.Lines.Add(IniPropStorage.ReadString(IntToStr(i), ''));
+  end;
 {$IFDEF Linux}
   // Find a monospace font
   if Screen.Fonts.IndexOf('DejaVu Sans Mono') <> -1 then begin
@@ -116,9 +126,9 @@ begin
   IniPropStorage.WriteString('client_secret', txtClientSecret.Text);
   IniPropStorage.WriteString('resource', txtResource.Text);
   IniPropStorage.IniSection := 'postfields';
-  IniPropStorage.WriteString('count', IntToStr(FormFieldsDialog.txtFormFields.Lines.Count));
-  for i := 0 to FormFieldsDialog.txtFormFields.Lines.Count - 1 do begin
-    IniPropStorage.WriteString(IntToStr(i), FormFieldsDialog.txtFormFields.Lines[i]);
+  IniPropStorage.WriteString('count', IntToStr(txtFormFields.Lines.Count));
+  for i := 0 to txtFormFields.Lines.Count - 1 do begin
+    IniPropStorage.WriteString(IntToStr(i), txtFormFields.Lines[i]);
   end;
   IniPropStorage.Save;
   FOAuthClient.Free;
@@ -177,40 +187,38 @@ begin
   FOAuthClient.PassWord := txtPass.Text;
   FOAuthClient.ClientId := txtClientId.Text;
   FOAuthClient.ClientSecret := txtClientSecret.Text;
-  if FormFieldsDialog.ShowModal = mrOK then begin
-    ff := TStringList.Create;
+  ff := TStringList.Create;
+  try
+    ff.AddStrings(txtFormFields.Lines);
     try
-      ff.AddStrings(FormFieldsDialog.txtFormFields.Lines);
-      try
-        start := LCLIntf.GetTickCount;
-        res := FOAuthClient.Post(txtResource.Text, ff);
-        stop := LCLIntf.GetTickCount;
-        txtTook.Text := IntToStr(stop - start);
-        txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
-        txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
-        txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
-        txtResponse.Lines.Clear;
-        if res.Code = HTTP_OK then begin
-          if IsJson(res.ContentType) then begin
-            with TJson.Create do try
-              Parse(res.Body);
-              Print(txtResponse.Lines);
-            finally
-              Free;
-            end;
-          end else begin
-            txtResponse.Text := res.Body;
+      start := LCLIntf.GetTickCount;
+      res := FOAuthClient.Post(txtResource.Text, ff);
+      stop := LCLIntf.GetTickCount;
+      txtTook.Text := IntToStr(stop - start);
+      txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
+      txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
+      txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
+      txtResponse.Lines.Clear;
+      if res.Code = HTTP_OK then begin
+        if IsJson(res.ContentType) then begin
+          with TJson.Create do try
+            Parse(res.Body);
+            Print(txtResponse.Lines);
+          finally
+            Free;
           end;
         end else begin
-          txtResponse.Text := Format('Error (%d): %s', [res.Code, res.Body]);
+          txtResponse.Text := res.Body;
         end;
-      except
-        on E: Exception do
-          txtResponse.Text := Format('%s: %s', [E.ClassName, E.Message]);
+      end else begin
+        txtResponse.Text := Format('Error (%d): %s', [res.Code, res.Body]);
       end;
-    finally
-      ff.Free;
+    except
+      on E: Exception do
+        txtResponse.Text := Format('%s: %s', [E.ClassName, E.Message]);
     end;
+  finally
+    ff.Free;
   end;
 end;
 

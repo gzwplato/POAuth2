@@ -2,12 +2,12 @@ object MainForm: TMainForm
   Left = 1978
   Height = 618
   Top = 67
-  Width = 618
+  Width = 664
   Caption = 'POAuth2 Test'
   ClientHeight = 618
-  ClientWidth = 618
+  ClientWidth = 664
   Color = clForm
-  Constraints.MinWidth = 618
+  Constraints.MinWidth = 664
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
@@ -24,7 +24,7 @@ object MainForm: TMainForm
     Left = 8
     Height = 23
     Top = 24
-    Width = 600
+    Width = 442
     Anchors = [akTop, akLeft, akRight]
     OnExit = txtSiteExit
     TabOrder = 0
@@ -42,7 +42,7 @@ object MainForm: TMainForm
     Left = 8
     Height = 23
     Top = 72
-    Width = 232
+    Width = 216
     TabOrder = 1
     Text = 'demouser'
   end
@@ -55,10 +55,10 @@ object MainForm: TMainForm
     ParentColor = False
   end
   object txtPass: TEdit
-    Left = 256
+    Left = 232
     Height = 23
     Top = 72
-    Width = 232
+    Width = 218
     TabOrder = 2
     Text = 'testpass'
   end
@@ -74,15 +74,15 @@ object MainForm: TMainForm
     Left = 8
     Height = 23
     Top = 120
-    Width = 232
+    Width = 216
     TabOrder = 3
     Text = 'demoapp'
   end
   object txtClientSecret: TEdit
-    Left = 256
+    Left = 232
     Height = 23
     Top = 120
-    Width = 232
+    Width = 216
     TabOrder = 4
     Text = 'demopass'
   end
@@ -106,10 +106,10 @@ object MainForm: TMainForm
     Left = 8
     Height = 23
     Top = 176
-    Width = 480
+    Width = 328
     Color = clBtnFace
     ReadOnly = True
-    TabOrder = 5
+    TabOrder = 10
   end
   object Label7: TLabel
     Left = 8
@@ -123,13 +123,13 @@ object MainForm: TMainForm
     Left = 8
     Height = 23
     Top = 224
-    Width = 480
+    Width = 328
     Color = clBtnFace
     ReadOnly = True
-    TabOrder = 6
+    TabOrder = 11
   end
   object Label8: TLabel
-    Left = 504
+    Left = 344
     Height = 15
     Top = 160
     Width = 39
@@ -137,13 +137,13 @@ object MainForm: TMainForm
     ParentColor = False
   end
   object txtExpires: TEdit
-    Left = 504
+    Left = 344
     Height = 23
     Top = 176
     Width = 104
     Color = clBtnFace
     ReadOnly = True
-    TabOrder = 7
+    TabOrder = 12
   end
   object Label9: TLabel
     Left = 8
@@ -157,27 +157,27 @@ object MainForm: TMainForm
     Left = 8
     Height = 23
     Top = 290
-    Width = 480
+    Width = 328
     Anchors = [akTop, akLeft, akRight]
     OnExit = txtResourceExit
-    TabOrder = 8
+    TabOrder = 5
     Text = '/resource?query=somevalue'
   end
   object Button1: TButton
-    Left = 504
+    Left = 346
     Height = 25
-    Top = 290
+    Top = 288
     Width = 104
     Anchors = [akTop, akRight]
     Caption = 'Get'
     OnClick = Button1Click
-    TabOrder = 9
+    TabOrder = 8
   end
   object txtResponse: TMemo
     Left = 0
     Height = 267
     Top = 328
-    Width = 618
+    Width = 664
     Align = alBottom
     Anchors = [akTop, akLeft, akRight, akBottom]
     Color = clBtnFace
@@ -189,10 +189,10 @@ object MainForm: TMainForm
     ParentFont = False
     ReadOnly = True
     ScrollBars = ssAutoBoth
-    TabOrder = 10
+    TabOrder = 9
   end
   object Label10: TLabel
-    Left = 506
+    Left = 346
     Height = 15
     Top = 207
     Width = 57
@@ -200,34 +200,52 @@ object MainForm: TMainForm
     ParentColor = False
   end
   object txtTook: TEdit
-    Left = 504
+    Left = 344
     Height = 23
     Top = 224
     Width = 104
     Color = clBtnFace
     ReadOnly = True
-    TabOrder = 11
+    TabOrder = 13
   end
   object Button2: TButton
-    Left = 504
+    Left = 346
     Height = 25
-    Top = 256
+    Top = 254
     Width = 104
     Anchors = [akTop, akRight]
-    Caption = 'Post...'
+    Caption = 'Post'
     OnClick = Button2Click
-    TabOrder = 12
+    TabOrder = 7
   end
   object StatusBar: TStatusBar
     Left = 0
     Height = 23
     Top = 595
-    Width = 618
+    Width = 664
     Panels = <>
+  end
+  object txtFormFields: TMemo
+    Left = 464
+    Height = 289
+    Top = 24
+    Width = 192
+    Anchors = [akTop, akRight]
+    ScrollBars = ssAutoBoth
+    TabOrder = 6
+  end
+  object Label11: TLabel
+    Left = 464
+    Height = 15
+    Top = 8
+    Width = 88
+    Anchors = [akTop, akRight]
+    Caption = 'Post Form fields:'
+    ParentColor = False
   end
   object IniPropStorage: TIniPropStorage
     StoredValues = <>
-    left = 526
-    top = 77
+    left = 80
+    top = 384
   end
 end
