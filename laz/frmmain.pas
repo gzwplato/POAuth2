@@ -83,7 +83,7 @@ begin
   txtResource.Text := IniPropStorage.ReadString('resource', txtResource.Text);
 {$IFDEF Linux}
   // Find a monospace font
-  if Screen.Fonts.IndexOf('DejaVu Sans Mono') <> -1 then
+  if Screen.Fonts.IndexOf('DejaVu Sans Mono') <> -1 then begin
     txtResponse.Font.Name := 'DejaVu Sans Mono'
   end;
 {$ENDIF}
