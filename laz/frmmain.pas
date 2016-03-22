@@ -179,13 +179,6 @@ begin
   FOAuthClient.PassWord := txtPass.Text;
   FOAuthClient.ClientId := txtClientId.Text;
   FOAuthClient.ClientSecret := txtClientSecret.Text;
-  if FormFieldsDialog.txtFormFields.Text = '' then begin
-    IniPropStorage.IniSection := 'postfields';
-    c := IniPropStorage.ReadInteger('count', 0);
-    for i := 0 to c - 1 do begin
-      FormFieldsDialog.txtFormFields.Lines.Add(IniPropStorage.ReadString(IntToStr(i), ''));
-    end;
-  end;
   if FormFieldsDialog.ShowModal = mrOK then begin
     ff := TStringList.Create;
     ff.AddStrings(FormFieldsDialog.txtFormFields.Lines);

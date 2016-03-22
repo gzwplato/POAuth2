@@ -8,6 +8,7 @@ object FormFieldsDialog: TFormFieldsDialog
   ClientHeight = 240
   ClientWidth = 320
   Color = clForm
+  OnCreate = FormCreate
   Position = poMainFormCenter
   LCLVersion = '1.6.0.4'
   object Panel1: TPanel

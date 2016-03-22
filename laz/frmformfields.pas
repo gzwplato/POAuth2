@@ -15,6 +15,7 @@ type
     Button2: TButton;
     txtFormFields: TMemo;
     Panel1: TPanel;
+    procedure FormCreate(Sender: TObject);
   private
     { private declarations }
   public
@@ -26,7 +27,24 @@ var
 
 implementation
 
+uses
+  frmmain;
+
 {$R *.lfm}
+
+{ TFormFieldsDialog }
+
+procedure TFormFieldsDialog.FormCreate(Sender: TObject);
+var
+  c, i: integer;
+begin
+  txtFormFields.Lines.Clear;
+  MainForm.IniPropStorage.IniSection := 'postfields';
+  c := MainForm.IniPropStorage.ReadInteger('count', 0);
+  for i := 0 to c - 1 do begin
+    txtFormFields.Lines.Add(MainForm.IniPropStorage.ReadString(IntToStr(i), ''));
+  end;
+end;
 
 end.
 
