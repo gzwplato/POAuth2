@@ -52,6 +52,10 @@ begin
     FHttp.Request.UserAgent := 'Mozilla/3.0 (compatible; POAuth2)';
     FOwnClient := true;
   end;
+  with FHttp do begin
+    AllowCookies := True;
+    HandleRedirects := True;
+  end;
 end;
 
 destructor TIndyHttpClient.Destroy;
