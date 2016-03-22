@@ -95,7 +95,17 @@ begin
 end;
 
 procedure TOAuth2HttpClient.AddHeader(const AKey, AValue: string);
+var
+  i: integer;
+  key: string;
 begin
+  for i := 0 to FHeaders.Count - 1 do begin
+    key := FHeaders.Names[i];
+    if CompareText(AKey, key) = 0 then begin
+      FHeaders[i] := Format('%s: %s', [AKey, AValue]);
+      Exit;
+    end;
+  end;
   FHeaders.Add(Format('%s: %s', [AKey, AValue]));
 end;
 
