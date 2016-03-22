@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  IdBaseComponent, IdComponent, IdHTTP, uIndyClient,
+  IniPropStorage, IdBaseComponent, IdComponent, IdHTTP, uIndyClient,
   uOAuth2HttpClient, uOAuth2Client;
 
 type
@@ -14,6 +14,7 @@ type
   TMainForm = class(TForm)
     Button1: TButton;
     Button2: TButton;
+    IniPropStorage: TIniPropStorage;
     Label10: TLabel;
     txtTook: TEdit;
     txtResponse: TMemo;
@@ -39,6 +40,7 @@ type
     procedure Button2Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure txtResourceExit(Sender: TObject);
     procedure txtSiteExit(Sender: TObject);
   private
@@ -68,6 +70,19 @@ begin
   FIdHttp.Request.UserAgent := 'Mozilla/3.0 (compatible; POAuth2)';
   FClient := TIndyHttpClient.Create(FIdHttp);
   FOAuthClient := TOAuth2Client.Create(FClient);
+  IniPropStorage.IniFileName := GetAppConfigDir(false) + 'poat.ini';
+  IniPropStorage.Restore;
+  IniPropStorage.IniSection := 'general';
+  txtSite.Text := IniPropStorage.ReadString('site', txtSite.Text);
+  txtUser.Text := IniPropStorage.ReadString('user', txtUser.Text);
+  txtPass.Text := IniPropStorage.ReadString('pass', txtPass.Text);
+  txtClientId.Text := IniPropStorage.ReadString('client_id', txtClientId.Text);
+  txtClientSecret.Text := IniPropStorage.ReadString('client_secret', txtClientSecret.Text);
+  txtResource.Text := IniPropStorage.ReadString('resource', txtResource.Text);
+end;
+
+procedure TMainForm.FormShow(Sender: TObject);
+begin
 end;
 
 procedure TMainForm.txtResourceExit(Sender: TObject);
@@ -81,7 +96,23 @@ begin
 end;
 
 procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+var
+  i: integer;
 begin
+  IniPropStorage.EraseSections;
+  IniPropStorage.IniSection := 'general';
+  IniPropStorage.WriteString('site', txtSite.Text);
+  IniPropStorage.WriteString('user', txtUser.Text);
+  IniPropStorage.WriteString('pass', txtPass.Text);
+  IniPropStorage.WriteString('client_id', txtClientId.Text);
+  IniPropStorage.WriteString('client_secret', txtClientSecret.Text);
+  IniPropStorage.WriteString('resource', txtResource.Text);
+  IniPropStorage.IniSection := 'postfields';
+  IniPropStorage.WriteString('count', IntToStr(FormFieldsDialog.txtFormFields.Lines.Count));
+  for i := 0 to FormFieldsDialog.txtFormFields.Lines.Count - 1 do begin
+    IniPropStorage.WriteString(IntToStr(i), FormFieldsDialog.txtFormFields.Lines[i]);
+  end;
+  IniPropStorage.Save;
   FOAuthClient.Free;
   FClient.Free;
 end;
@@ -131,6 +162,8 @@ var
   res: TOAuth2Response;
   start, stop: DWord;
   ff: TStringList;
+  i: integer;
+  c: integer;
 begin
   FOAuthClient.Site := txtSite.Text;
   FOAuthClient.GrantType := gtPassword;
@@ -138,6 +171,13 @@ begin
   FOAuthClient.PassWord := txtPass.Text;
   FOAuthClient.ClientId := txtClientId.Text;
   FOAuthClient.ClientSecret := txtClientSecret.Text;
+  if FormFieldsDialog.txtFormFields.Text = '' then begin
+    IniPropStorage.IniSection := 'postfields';
+    c := IniPropStorage.ReadInteger('count', 0);
+    for i := 0 to c - 1 do begin
+      FormFieldsDialog.txtFormFields.Lines.Add(IniPropStorage.ReadString(IntToStr(i), ''));
+    end;
+  end;
   if FormFieldsDialog.ShowModal = mrOK then begin
     ff := TStringList.Create;
     ff.AddStrings(FormFieldsDialog.txtFormFields.Lines);

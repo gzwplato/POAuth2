@@ -10,6 +10,7 @@ object MainForm: TMainForm
   Constraints.MinWidth = 618
   OnClose = FormClose
   OnCreate = FormCreate
+  OnShow = FormShow
   LCLVersion = '1.6.0.4'
   object Label1: TLabel
     Left = 8
@@ -215,5 +216,10 @@ object MainForm: TMainForm
     Caption = 'Post...'
     OnClick = Button2Click
     TabOrder = 12
+  end
+  object IniPropStorage: TIniPropStorage
+    StoredValues = <>
+    left = 526
+    top = 77
   end
 end

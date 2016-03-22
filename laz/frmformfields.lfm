@@ -47,10 +47,6 @@ object FormFieldsDialog: TFormFieldsDialog
     Top = 0
     Width = 320
     Align = alClient
-    Lines.Strings = (
-      'name1=value1'
-      'name2=value2'
-    )
     ScrollBars = ssAutoBoth
     TabOrder = 0
   end
