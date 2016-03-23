@@ -12,8 +12,8 @@ uses
 type
   { TMainForm }
   TMainForm = class(TForm)
-    Button1: TButton;
-    Button2: TButton;
+    btnGet: TButton;
+    btnPost: TButton;
     IniPropStorage: TIniPropStorage;
     Label10: TLabel;
     Label11: TLabel;
@@ -39,11 +39,12 @@ type
     Label1: TLabel;
     txtPass: TEdit;
     txtClientId: TEdit;
-    procedure Button1Click(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
+    procedure btnGetClick(Sender: TObject);
+    procedure btnPostClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure txtFormFieldsExit(Sender: TObject);
     procedure txtResourceExit(Sender: TObject);
     procedure txtSiteExit(Sender: TObject);
   private
@@ -70,6 +71,7 @@ uses
 procedure TMainForm.FormCreate(Sender: TObject);
 var
   i, c: integer;
+  s: string;
 begin
   FIdHttp := TIdHTTP.Create(Self);
   FIdHttp.Request.UserAgent := 'Mozilla/3.0 (compatible; POAuth2)';
@@ -89,7 +91,9 @@ begin
   IniPropStorage.IniSection := 'postfields';
   c := IniPropStorage.ReadInteger('count', 0);
   for i := 0 to c - 1 do begin
-    txtFormFields.Lines.Add(IniPropStorage.ReadString(IntToStr(i), ''));
+    s := IniPropStorage.ReadString(IntToStr(i), '');
+    if s <> '' then
+      txtFormFields.Lines.Add(s);
   end;
 {$IFDEF Linux}
   // Find a monospace font
@@ -101,6 +105,17 @@ end;
 
 procedure TMainForm.FormShow(Sender: TObject);
 begin
+end;
+
+procedure TMainForm.txtFormFieldsExit(Sender: TObject);
+var
+  i, c: integer;
+begin
+  c := txtFormFields.Lines.Count;
+  for i := c - 1 downto 0 do begin
+    if Trim(txtFormFields.Lines[i]) = '' then
+      txtFormFields.Lines.Delete(i);
+  end;
 end;
 
 procedure TMainForm.txtResourceExit(Sender: TObject);
@@ -115,7 +130,8 @@ end;
 
 procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 var
-  i: integer;
+  i, c: integer;
+  s: string;
 begin
   IniPropStorage.EraseSections;
   IniPropStorage.IniSection := 'general';
@@ -126,16 +142,21 @@ begin
   IniPropStorage.WriteString('client_secret', txtClientSecret.Text);
   IniPropStorage.WriteString('resource', txtResource.Text);
   IniPropStorage.IniSection := 'postfields';
-  IniPropStorage.WriteString('count', IntToStr(txtFormFields.Lines.Count));
+  c := 0;
   for i := 0 to txtFormFields.Lines.Count - 1 do begin
-    IniPropStorage.WriteString(IntToStr(i), txtFormFields.Lines[i]);
+    s := txtFormFields.Lines[i];
+    if s <> '' then begin
+      IniPropStorage.WriteString(IntToStr(i), s);
+      Inc(c);
+    end;
   end;
+  IniPropStorage.WriteString('count', IntToStr(c));
   IniPropStorage.Save;
   FOAuthClient.Free;
   FClient.Free;
 end;
 
-procedure TMainForm.Button1Click(Sender: TObject);
+procedure TMainForm.btnGetClick(Sender: TObject);
 var
   res: TOAuth2Response;
   start, stop: DWord;
@@ -175,7 +196,7 @@ begin
   end;
 end;
 
-procedure TMainForm.Button2Click(Sender: TObject);
+procedure TMainForm.btnPostClick(Sender: TObject);
 var
   res: TOAuth2Response;
   start, stop: DWord;

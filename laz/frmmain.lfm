@@ -47,7 +47,7 @@ object MainForm: TMainForm
     Text = 'demouser'
   end
   object Label3: TLabel
-    Left = 256
+    Left = 232
     Height = 15
     Top = 56
     Width = 53
@@ -87,7 +87,7 @@ object MainForm: TMainForm
     Text = 'demopass'
   end
   object Label5: TLabel
-    Left = 256
+    Left = 232
     Height = 15
     Top = 104
     Width = 69
@@ -132,8 +132,8 @@ object MainForm: TMainForm
     Left = 344
     Height = 15
     Top = 160
-    Width = 39
-    Caption = 'Expires:'
+    Width = 55
+    Caption = 'Expires (s):'
     ParentColor = False
   end
   object txtExpires: TEdit
@@ -163,14 +163,14 @@ object MainForm: TMainForm
     TabOrder = 5
     Text = '/resource?query=somevalue'
   end
-  object Button1: TButton
+  object btnGet: TButton
     Left = 346
     Height = 25
     Top = 288
     Width = 104
     Anchors = [akTop, akRight]
     Caption = 'Get'
-    OnClick = Button1Click
+    OnClick = btnGetClick
     TabOrder = 8
   end
   object txtResponse: TMemo
@@ -208,14 +208,14 @@ object MainForm: TMainForm
     ReadOnly = True
     TabOrder = 13
   end
-  object Button2: TButton
+  object btnPost: TButton
     Left = 346
     Height = 25
     Top = 254
     Width = 104
     Anchors = [akTop, akRight]
     Caption = 'Post'
-    OnClick = Button2Click
+    OnClick = btnPostClick
     TabOrder = 7
   end
   object StatusBar: TStatusBar
@@ -231,6 +231,7 @@ object MainForm: TMainForm
     Top = 24
     Width = 192
     Anchors = [akTop, akRight]
+    OnExit = txtFormFieldsExit
     ScrollBars = ssAutoBoth
     TabOrder = 6
   end
