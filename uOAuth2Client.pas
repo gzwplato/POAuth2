@@ -338,6 +338,7 @@ begin
   FHttpClient.ClearHeader;
   FHttpClient.ClearFormFields;
   url := FSite + APath;
+  Result.Code := 0;
   case FAccessTokenLoc of
     atlUnknown:
       begin
@@ -357,10 +358,11 @@ begin
         FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
         Result := FHttpClient.Get(url);
       end;
-    atlFormfield: begin
-      FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
-      Result := FHttpClient.Get(url);
-    end;
+    atlFormfield:
+      begin
+        FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
+        Result := FHttpClient.Get(url);
+      end;
   end;
   if Result.Code <> HTTP_OK then begin
     raise Exception.CreateFmt('Server returned %d: %s', [Result.Code, Result.Body]);
@@ -386,6 +388,7 @@ begin
     FHttpClient.AddFormField(key, value);
   end;
   url := FSite + APath;
+  Result.Code := 0;
   case FAccessTokenLoc of
     atlUnknown:
       begin
@@ -405,10 +408,11 @@ begin
         FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
         Result := FHttpClient.Post(url);
       end;
-    atlFormfield: begin
-      FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
-      Result := FHttpClient.Post(url);
-    end;
+    atlFormfield:
+      begin
+        FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
+        Result := FHttpClient.Post(url);
+      end;
   end;
   if Result.Code <> HTTP_OK then begin
     raise Exception.CreateFmt('Server returned %d: %s', [Result.Code, Result.Body]);
