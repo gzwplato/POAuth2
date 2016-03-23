@@ -11,6 +11,7 @@ object MainForm: TMainForm
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
+  Position = poDefaultPosOnly
   LCLVersion = '1.6.0.4'
   object Label1: TLabel
     Left = 8
