@@ -90,6 +90,18 @@ begin
   Result := StringOfChar(' ', Indent * 2);
 end;
 
+function WideChr(const w: Word): WideChar;
+var
+  WChar: packed record
+    case Byte of
+      0: (Value: WideChar);
+      1: (Code: Word);
+  end;
+begin
+  WChar.Code := w;
+  Result := WChar.Value;
+end;
+
 { TJson }
 
 constructor TJson.Create;
@@ -206,7 +218,7 @@ begin
             HexDigit := StrToInt('0x' + Next(#0));
             HexValue := HexValue * 16 + HexDigit;
           end;
-          Result := Result + Chr(HexValue);
+          Result := Result + WideChr(HexValue);
         end
         else
         begin
