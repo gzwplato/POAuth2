@@ -29,9 +29,11 @@ type
   TOAuth2GrantType = (
     gtPassword
   );
+  TAccessTokenLoc = (atlUnknown, atlHeader, atlFormfield);
 
   TOAuth2Client = class
   private
+    FAccessTokenLoc: TAccessTokenLoc;
     FUserName: string;
     FPassWord: string;
     FClientId: string;
@@ -86,6 +88,7 @@ begin
   FAccessToken := nil;
   FConfig := DEF_OATUH2_CONFIG;
   FGrantType := gtPassword;
+  FAccessTokenLoc := atlUnknown;
 end;
 
 constructor TOAuth2Client.Create(AConfig: TOAuth2Config; AClient: TOAuth2HttpClient);
@@ -95,6 +98,7 @@ begin
   FAccessToken := nil;
   FConfig := AConfig;
   FGrantType := gtPassword;
+  FAccessTokenLoc := atlUnknown;
 end;
 
 destructor TOAuth2Client.Destroy;
@@ -155,6 +159,7 @@ procedure TOAuth2Client.SetSite(Value: string);
 begin
   if FSite <> Value then begin
     FSite := Value;
+    FAccessTokenLoc := atlUnknown;
     InvalidateToken;
   end;
 end;
@@ -333,13 +338,29 @@ begin
   FHttpClient.ClearHeader;
   FHttpClient.ClearFormFields;
   url := FSite + APath;
-  FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
-  Result := FHttpClient.Get(url);
-  if IsAccessDenied(Result.Code) then begin
-    // Maybe passing access token as formfield helps
-    FHttpClient.RemoveHeader(OAUTH2_AUTHORIZATION);
-    FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
-    Result := FHttpClient.Get(url);
+  case FAccessTokenLoc of
+    atlUnknown:
+      begin
+        FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
+        Result := FHttpClient.Get(url);
+        if IsAccessDenied(Result.Code) then begin
+          // Maybe passing access token as formfield helps
+          FHttpClient.RemoveHeader(OAUTH2_AUTHORIZATION);
+          FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
+          Result := FHttpClient.Get(url);
+          FAccessTokenLoc := atlFormfield;
+        end else
+          FAccessTokenLoc := atlHeader;
+      end;
+    atlHeader:
+      begin
+        FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
+        Result := FHttpClient.Get(url);
+      end;
+    atlFormfield: begin
+      FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
+      Result := FHttpClient.Get(url);
+    end;
   end;
   if Result.Code <> HTTP_OK then begin
     raise Exception.CreateFmt('Server returned %d: %s', [Result.Code, Result.Body]);
@@ -359,19 +380,35 @@ begin
 
   FHttpClient.ClearHeader;
   FHttpClient.ClearFormFields;
-  url := FSite + APath;
-  FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
   for i := 0 to AFormFields.Count - 1 do begin
     key := AFormFields.Names[i];
     value := AFormFields.Values[key];
     FHttpClient.AddFormField(key, value);
   end;
-  Result := FHttpClient.Post(url);
-  if IsAccessDenied(Result.Code) then begin
-    // Maybe passing access token as formfield helps
-    FHttpClient.RemoveHeader(OAUTH2_AUTHORIZATION);
-    FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
-    Result := FHttpClient.Post(url);
+  url := FSite + APath;
+  case FAccessTokenLoc of
+    atlUnknown:
+      begin
+        FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
+        Result := FHttpClient.Post(url);
+        if IsAccessDenied(Result.Code) then begin
+          // Maybe passing access token as formfield helps
+          FHttpClient.RemoveHeader(OAUTH2_AUTHORIZATION);
+          FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
+          Result := FHttpClient.Post(url);
+          FAccessTokenLoc := atlFormfield;
+        end else
+          FAccessTokenLoc := atlHeader;
+      end;
+    atlHeader:
+      begin
+        FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
+        Result := FHttpClient.Post(url);
+      end;
+    atlFormfield: begin
+      FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
+      Result := FHttpClient.Post(url);
+    end;
   end;
   if Result.Code <> HTTP_OK then begin
     raise Exception.CreateFmt('Server returned %d: %s', [Result.Code, Result.Body]);
