@@ -349,7 +349,8 @@ begin
           FHttpClient.RemoveHeader(OAUTH2_AUTHORIZATION);
           FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
           Result := FHttpClient.Get(url);
-          FAccessTokenLoc := atlFormfield;
+          if not IsAccessDenied(Result.Code) then
+            FAccessTokenLoc := atlFormfield;
         end else
           FAccessTokenLoc := atlHeader;
       end;
@@ -399,7 +400,8 @@ begin
           FHttpClient.RemoveHeader(OAUTH2_AUTHORIZATION);
           FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
           Result := FHttpClient.Post(url);
-          FAccessTokenLoc := atlFormfield;
+          if not IsAccessDenied(Result.Code) then
+            FAccessTokenLoc := atlFormfield;
         end else
           FAccessTokenLoc := atlHeader;
       end;
