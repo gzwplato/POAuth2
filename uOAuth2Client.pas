@@ -48,19 +48,26 @@ type
     procedure RefreshAccessToken(AToken: TOAuth2Token);
     function GetAccessToken: TOAuth2Token;
     procedure SetAccessToken(Value: TOAuth2Token);
+    procedure SetUserName(Value: string);
+    procedure SetPassWord(Value: string);
+    procedure SetClientId(Value: string);
+    procedure SetClientSecret(Value: string);
+    procedure SetSite(Value: string);
+    procedure SetGrantType(Value: TOAuth2GrantType);
   public
     constructor Create(AClient: TOAuth2HttpClient); overload;
     constructor Create(AConfig: TOAuth2Config; AClient: TOAuth2HttpClient); overload;
     destructor Destroy; override;
     function Get(const APath: string): TOAuth2Response;
     function Post(const APath: string; AFormFields: TStringList): TOAuth2Response;
+    procedure InvalidateToken;
 
-    property UserName: string read FUserName write FUserName;
-    property PassWord: string read FPassWord write FPassWord;
-    property ClientId: string read FClientId write FClientId;
-    property ClientSecret: string read FClientSecret write FClientSecret;
-    property Site: string read FSite write FSite;
-    property GrantType: TOAuth2GrantType read FGrantType write FGrantType default gtPassword;
+    property UserName: string read FUserName write SetUserName;
+    property PassWord: string read FPassWord write SetPassWord;
+    property ClientId: string read FClientId write SetClientId;
+    property ClientSecret: string read FClientSecret write SetClientSecret;
+    property Site: string read FSite write SetSite;
+    property GrantType: TOAuth2GrantType read FGrantType write SetGrantType default gtPassword;
     property AccessToken: TOAuth2Token read FAccessToken write SetAccessToken;
   end;
 
@@ -97,12 +104,66 @@ begin
   inherited;
 end;
 
+procedure TOAuth2Client.InvalidateToken;
+begin
+  if Assigned(FAccessToken) then
+    FreeAndNil(FAccessToken);
+end;
+
 procedure TOAuth2Client.SetAccessToken(Value: TOAuth2Token);
 begin
   if FAccessToken <> Value then begin
     if Assigned(FAccessToken) then
       FAccessToken.Free;
     FAccessToken := Value;
+  end;
+end;
+
+procedure TOAuth2Client.SetUserName(Value: string);
+begin
+  if FUserName <> Value then begin
+    FUserName := Value;
+    InvalidateToken;
+  end;
+end;
+
+procedure TOAuth2Client.SetPassWord(Value: string);
+begin
+  if FPassWord <> Value then begin
+    FPassWord := Value;
+    InvalidateToken;
+  end;
+end;
+
+procedure TOAuth2Client.SetClientId(Value: string);
+begin
+  if FClientId <> Value then begin
+    FClientId := Value;
+    InvalidateToken;
+  end;
+end;
+
+procedure TOAuth2Client.SetClientSecret(Value: string);
+begin
+  if FClientSecret <> Value then begin
+    FClientSecret := Value;
+    InvalidateToken;
+  end;
+end;
+
+procedure TOAuth2Client.SetSite(Value: string);
+begin
+  if FSite <> Value then begin
+    FSite := Value;
+    InvalidateToken;
+  end;
+end;
+
+procedure TOAuth2Client.SetGrantType(Value: TOAuth2GrantType);
+begin
+  if FGrantType <> Value then begin
+    FGrantType := Value;
+    InvalidateToken;
   end;
 end;
 
@@ -273,8 +334,13 @@ begin
   FHttpClient.ClearFormFields;
   url := FSite + APath;
   FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
-//  FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
   Result := FHttpClient.Get(url);
+  if IsAccessDenied(Result.Code) then begin
+    // Maybe passing access token as formfield helps
+    FHttpClient.RemoveHeader(OAUTH2_AUTHORIZATION);
+    FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
+    Result := FHttpClient.Get(url);
+  end;
   if Result.Code <> HTTP_OK then begin
     raise Exception.CreateFmt('Server returned %d: %s', [Result.Code, Result.Body]);
   end;
@@ -295,13 +361,18 @@ begin
   FHttpClient.ClearFormFields;
   url := FSite + APath;
   FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
-//  FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
   for i := 0 to AFormFields.Count - 1 do begin
     key := AFormFields.Names[i];
     value := AFormFields.Values[key];
     FHttpClient.AddFormField(key, value);
   end;
   Result := FHttpClient.Post(url);
+  if IsAccessDenied(Result.Code) then begin
+    // Maybe passing access token as formfield helps
+    FHttpClient.RemoveHeader(OAUTH2_AUTHORIZATION);
+    FHttpClient.AddFormField(OATUH2_ACCESS_TOKEN, FAccessToken.AccessToken);
+    Result := FHttpClient.Post(url);
+  end;
   if Result.Code <> HTTP_OK then begin
     raise Exception.CreateFmt('Server returned %d: %s', [Result.Code, Result.Body]);
   end;

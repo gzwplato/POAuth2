@@ -2,10 +2,10 @@ object MainForm: TMainForm
   Left = 1978
   Height = 618
   Top = 67
-  Width = 664
+  Width = 712
   Caption = 'POAuth2 Test'
   ClientHeight = 618
-  ClientWidth = 664
+  ClientWidth = 712
   Color = clForm
   Constraints.MinWidth = 664
   OnClose = FormClose
@@ -164,7 +164,7 @@ object MainForm: TMainForm
     Text = '/resource?query=somevalue'
   end
   object btnGet: TButton
-    Left = 346
+    Left = 344
     Height = 25
     Top = 288
     Width = 104
@@ -177,7 +177,7 @@ object MainForm: TMainForm
     Left = 0
     Height = 267
     Top = 328
-    Width = 664
+    Width = 712
     Align = alBottom
     Anchors = [akTop, akLeft, akRight, akBottom]
     Color = clBtnFace
@@ -209,7 +209,7 @@ object MainForm: TMainForm
     TabOrder = 13
   end
   object btnPost: TButton
-    Left = 346
+    Left = 344
     Height = 25
     Top = 254
     Width = 104
@@ -222,14 +222,14 @@ object MainForm: TMainForm
     Left = 0
     Height = 23
     Top = 595
-    Width = 664
+    Width = 712
     Panels = <>
   end
   object txtFormFields: TMemo
     Left = 464
     Height = 289
     Top = 24
-    Width = 192
+    Width = 240
     Anchors = [akTop, akRight]
     OnExit = txtFormFieldsExit
     ScrollBars = ssAutoBoth
