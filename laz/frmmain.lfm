@@ -152,7 +152,7 @@ object MainForm: TMainForm
   object Label9: TLabel
     Left = 8
     Height = 15
-    Top = 248
+    Top = 256
     Width = 51
     Caption = 'Resource:'
     ParentColor = False
@@ -160,7 +160,7 @@ object MainForm: TMainForm
   object btnGet: TButton
     Left = 464
     Height = 25
-    Top = 262
+    Top = 270
     Width = 112
     Anchors = [akTop, akRight]
     Caption = 'Get'
@@ -169,8 +169,8 @@ object MainForm: TMainForm
   end
   object txtResponse: TMemo
     Left = 0
-    Height = 269
-    Top = 296
+    Height = 261
+    Top = 304
     Width = 712
     Align = alBottom
     Anchors = [akTop, akLeft, akRight, akBottom]
@@ -206,7 +206,7 @@ object MainForm: TMainForm
   object btnPost: TButton
     Left = 592
     Height = 25
-    Top = 262
+    Top = 270
     Width = 112
     Anchors = [akTop, akRight]
     Caption = 'Post'
@@ -242,9 +242,10 @@ object MainForm: TMainForm
   object cboResource: TComboBox
     Left = 8
     Height = 23
-    Top = 264
+    Top = 272
     Width = 442
     ItemHeight = 15
+    OnChange = cboResourceChange
     TabOrder = 5
     Text = '/resource?query=somevalue'
   end

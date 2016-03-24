@@ -41,6 +41,7 @@ type
     txtClientId: TEdit;
     procedure btnGetClick(Sender: TObject);
     procedure btnPostClick(Sender: TObject);
+    procedure cboResourceChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -52,7 +53,9 @@ type
     FClient: TIndyHttpClient;
     FOAuthClient: TOAuth2Client;
     FIdHttp: TIdHTTP;
+    FFormFields: TStringList;
     procedure AddHistory;
+    function GetFormFields: string;
   public
     { public declarations }
   end;
@@ -67,6 +70,9 @@ uses
 
 {$R *.lfm}
 
+const
+  MAX_HISTORY = 30;
+
 { TMainForm }
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -74,6 +80,8 @@ var
   i, c: integer;
   s: string;
 begin
+  FFormFields := TStringList.Create;
+  FFormFields.Delimiter := '&';
   FIdHttp := TIdHTTP.Create(Self);
   FIdHttp.Request.UserAgent := 'Mozilla/3.0 (compatible; POAuth2)';
   FClient := TIndyHttpClient.Create(FIdHttp);
@@ -99,9 +107,11 @@ begin
   IniPropStorage.IniSection := 'history';
   c := IniPropStorage.ReadInteger('count', 0);
   for i := 0 to c - 1 do begin
-    s := IniPropStorage.ReadString(IntToStr(i), '');
-    if s <> '' then
+    s := IniPropStorage.ReadString('res' + IntToStr(i), '');
+    if s <> '' then begin
       cboResource.Items.Add(s);
+      FFormFields.Add(IniPropStorage.ReadString('ff' + IntToStr(i), ''));
+    end;
   end;
 {$IFDEF Linux}
   // Find a monospace font
@@ -164,12 +174,14 @@ begin
   for i := 0 to cboResource.Items.Count - 1 do begin
     s := cboResource.Items[i];
     if s <> '' then begin
-      IniPropStorage.WriteString(IntToStr(i), s);
+      IniPropStorage.WriteString('res' + IntToStr(i), s);
+      IniPropStorage.WriteString('ff' + IntToStr(i), FFormFields[i]);
       Inc(c);
     end;
   end;
   IniPropStorage.WriteString('count', IntToStr(c));
 
+  FFormFields.Free;
   IniPropStorage.Save;
   FOAuthClient.Free;
   FClient.Free;
@@ -180,61 +192,18 @@ var
   res: TOAuth2Response;
   start, stop: DWord;
 begin
-  AddHistory;
-  FOAuthClient.Site := txtSite.Text;
-  FOAuthClient.GrantType := gtPassword;
-  FOAuthClient.UserName := txtUser.Text;
-  FOAuthClient.PassWord := txtPass.Text;
-  FOAuthClient.ClientId := txtClientId.Text;
-  FOAuthClient.ClientSecret := txtClientSecret.Text;
+  Screen.Cursor := crHourGlass;
   try
-    start := LCLIntf.GetTickCount;
-    res := FOAuthClient.Get(cboResource.Text);
-    stop := LCLIntf.GetTickCount;
-    txtTook.Text := IntToStr(stop - start);
-    txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
-    txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
-    txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
-    txtResponse.Lines.Clear;
-    if res.Code = HTTP_OK then begin
-      if IsJson(res.ContentType) then begin
-        with TJson.Create do try
-          Parse(res.Body);
-          Print(txtResponse.Lines);
-        finally
-          Free;
-        end;
-      end else begin
-        txtResponse.Text := res.Body;
-      end;
-    end else begin
-      txtResponse.Text := Format('Error (%d): %s', [res.Code, res.Body]);
-    end;
-  except
-    on E: Exception do
-      txtResponse.Text := Format('%s: %s', [E.ClassName, E.Message]);
-  end;
-end;
-
-procedure TMainForm.btnPostClick(Sender: TObject);
-var
-  res: TOAuth2Response;
-  start, stop: DWord;
-  ff: TStringList;
-begin
-  AddHistory;
-  FOAuthClient.Site := txtSite.Text;
-  FOAuthClient.GrantType := gtPassword;
-  FOAuthClient.UserName := txtUser.Text;
-  FOAuthClient.PassWord := txtPass.Text;
-  FOAuthClient.ClientId := txtClientId.Text;
-  FOAuthClient.ClientSecret := txtClientSecret.Text;
-  ff := TStringList.Create;
-  try
-    ff.AddStrings(txtFormFields.Lines);
+    AddHistory;
+    FOAuthClient.Site := txtSite.Text;
+    FOAuthClient.GrantType := gtPassword;
+    FOAuthClient.UserName := txtUser.Text;
+    FOAuthClient.PassWord := txtPass.Text;
+    FOAuthClient.ClientId := txtClientId.Text;
+    FOAuthClient.ClientSecret := txtClientSecret.Text;
     try
       start := LCLIntf.GetTickCount;
-      res := FOAuthClient.Post(cboResource.Text, ff);
+      res := FOAuthClient.Get(cboResource.Text);
       stop := LCLIntf.GetTickCount;
       txtTook.Text := IntToStr(stop - start);
       txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
@@ -260,7 +229,79 @@ begin
         txtResponse.Text := Format('%s: %s', [E.ClassName, E.Message]);
     end;
   finally
-    ff.Free;
+    Screen.Cursor := crDefault;
+  end;
+end;
+
+procedure TMainForm.btnPostClick(Sender: TObject);
+var
+  res: TOAuth2Response;
+  start, stop: DWord;
+  ff: TStringList;
+begin
+  Screen.Cursor := crHourGlass;
+  try
+    AddHistory;
+    FOAuthClient.Site := txtSite.Text;
+    FOAuthClient.GrantType := gtPassword;
+    FOAuthClient.UserName := txtUser.Text;
+    FOAuthClient.PassWord := txtPass.Text;
+    FOAuthClient.ClientId := txtClientId.Text;
+    FOAuthClient.ClientSecret := txtClientSecret.Text;
+    ff := TStringList.Create;
+    try
+      ff.AddStrings(txtFormFields.Lines);
+      try
+        start := LCLIntf.GetTickCount;
+        res := FOAuthClient.Post(cboResource.Text, ff);
+        stop := LCLIntf.GetTickCount;
+        txtTook.Text := IntToStr(stop - start);
+        txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
+        txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
+        txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
+        txtResponse.Lines.Clear;
+        if res.Code = HTTP_OK then begin
+          if IsJson(res.ContentType) then begin
+            with TJson.Create do try
+              Parse(res.Body);
+              Print(txtResponse.Lines);
+            finally
+              Free;
+            end;
+          end else begin
+            txtResponse.Text := res.Body;
+          end;
+        end else begin
+          txtResponse.Text := Format('Error (%d): %s', [res.Code, res.Body]);
+        end;
+      except
+        on E: Exception do
+          txtResponse.Text := Format('%s: %s', [E.ClassName, E.Message]);
+      end;
+    finally
+      ff.Free;
+    end;
+  finally
+    Screen.Cursor := crDefault;
+  end;
+end;
+
+procedure TMainForm.cboResourceChange(Sender: TObject);
+var
+  i: integer;
+  sl: TStringList;
+begin
+  i := cboResource.ItemIndex;
+  if (i <> -1) and (i < FFormFields.Count) then begin
+    sl := TStringList.Create;
+    try
+      sl.Delimiter := '&';
+      sl.DelimitedText := FFormFields[i];
+      txtFormFields.Clear;
+      txtFormFields.Lines.AddStrings(sl);
+    finally
+      sl.Free;
+    end;
   end;
 end;
 
@@ -277,6 +318,32 @@ begin
     end else begin
       cboResource.Items.Insert(0, s);
     end;
+
+    s := GetFormFields;
+    i := FFormFields.IndexOf(s);
+    if i <> -1 then begin
+      FFormFields.Move(i, 0);
+    end else begin
+      FFormFields.Insert(0, s);
+    end;
+  end;
+  for i := cboResource.Items.Count - 1 downto MAX_HISTORY do begin
+    cboResource.Items.Delete(i);
+    FFormFields.Delete(i);
+  end;
+end;
+
+function TMainForm.GetFormFields: string;
+var
+  i: integer;
+begin
+  Result := '';
+  for i := 0 to txtFormFields.Lines.Count - 1 do begin
+    Result := Result + txtFormFields.Lines[i] + '&';
+  end;
+  if Result <> '' then begin
+    if Result[Length(Result)] = '&' then
+      Delete(Result, Length(Result), 1);
   end;
 end;
 
