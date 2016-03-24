@@ -53,7 +53,7 @@ type
     FClient: TIndyHttpClient;
     FOAuthClient: TOAuth2Client;
     FIdHttp: TIdHTTP;
-    FFormFields: TStringList;
+    FHistroy: TStringList;
     procedure AddHistory;
     function GetFormFields: string;
   public
@@ -80,9 +80,9 @@ var
   i, c: integer;
   s: string;
 begin
-  FFormFields := TStringList.Create;
-  FFormFields.Delimiter := '&';
-  FFormFields.NameValueSeparator := '|';
+  FHistroy := TStringList.Create;
+  FHistroy.Delimiter := '&';
+  FHistroy.NameValueSeparator := '|';
   FIdHttp := TIdHTTP.Create(Self);
   FIdHttp.Request.UserAgent := 'Mozilla/3.0 (compatible; POAuth2)';
   FClient := TIndyHttpClient.Create(FIdHttp);
@@ -108,11 +108,13 @@ begin
   IniPropStorage.IniSection := 'history';
   c := IniPropStorage.ReadInteger('count', 0);
   for i := 0 to c - 1 do begin
-    s := IniPropStorage.ReadString('res' + IntToStr(i), '');
+    s := IniPropStorage.ReadString(IntToStr(i), '');
     if s <> '' then begin
-      cboResource.Items.Add(s);
-      FFormFields.Add(Format('%s|%s', [s, IniPropStorage.ReadString('ff' + IntToStr(i), '')]));
+      FHistroy.Add(s);
     end;
+  end;
+  for i := 0 to FHistroy.Count - 1 do begin
+    cboResource.Items.Add(FHistroy.Names[i]);
   end;
   cboResource.ItemIndex := cboResource.Items.IndexOf(cboResource.Text);
 {$IFDEF Linux}
@@ -173,17 +175,18 @@ begin
   IniPropStorage.WriteString('count', IntToStr(c));
   IniPropStorage.IniSection := 'history';
   c := 0;
-  for i := 0 to cboResource.Items.Count - 1 do begin
-    s := cboResource.Items[i];
+  for i := 0 to FHistroy.Count - 1 do begin
+    s := FHistroy[i];
     if s <> '' then begin
-      IniPropStorage.WriteString('res' + IntToStr(i), s);
-      IniPropStorage.WriteString('ff' + IntToStr(i), FFormFields.Values[s]);
+      IniPropStorage.WriteString(IntToStr(i), s);
       Inc(c);
+      if c >= MAX_HISTORY then
+        break;
     end;
   end;
   IniPropStorage.WriteString('count', IntToStr(c));
 
-  FFormFields.Free;
+  FHistroy.Free;
   IniPropStorage.Save;
   FOAuthClient.Free;
   FClient.Free;
@@ -297,11 +300,11 @@ begin
   i := cboResource.ItemIndex;
   if (i <> -1) then begin
     s := cboResource.Items[i];
-    if FFormFields.IndexOfName(s) <> -1 then begin
+    if FHistroy.IndexOfName(s) <> -1 then begin
       sl := TStringList.Create;
       try
         sl.Delimiter := '&';
-        sl.DelimitedText := FFormFields.Values[s];
+        sl.DelimitedText := FHistroy.Values[s];
         txtFormFields.Clear;
         txtFormFields.Lines.AddStrings(sl);
       finally
@@ -326,16 +329,13 @@ begin
     end;
 
     s := GetFormFields;
-    j := FFormFields.IndexOfName(r);
+    j := FHistroy.IndexOfName(r);
     if j = -1 then begin
-      FFormFields.Add(Format('%s|%s', [r, s]));
+      FHistroy.Insert(0, Format('%s|%s', [r, s]));
     end else begin
-      FFormFields[j] := Format('%s|%s', [r, s]);
+      FHistroy[j] := Format('%s|%s', [r, s]);
+      FHistroy.Move(j, 0);
     end;
-  end;
-  for i := cboResource.Items.Count - 1 downto MAX_HISTORY do begin
-    cboResource.Items.Delete(i);
-    FFormFields.Delete(i);
   end;
   cboResource.ItemIndex := 0;
   cboResource.Text := r;
