@@ -32,6 +32,8 @@ function BuildUrl(const AParts: TUrlParts): string;
 
 function EncodeBase64(const S: string): AnsiString;
 function DecodeBase64(const S: AnsiString): string;
+function EncodeCredentials(const AUsername, APassword: string): string;
+function GetBasicAuthHeader(const AUsername, APassword: string): string;
 
 function RemoveLeadingSlash(const S: string): string;
 function AddLeadingSlash(const S: string): string;
@@ -52,6 +54,19 @@ uses
 
 const
   BASE64_CODES: AnsiString = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
+
+function GetBasicAuthHeader(const AUsername, APassword: string): string;
+begin
+  Result := Format('%s %s', [OATUH2_BASIC, EncodeCredentials(AUsername, APassword)]);
+end;
+
+function EncodeCredentials(const AUsername, APassword: string): string;
+var
+  cred: string;
+begin
+  cred := Format('%s:%s', [AUsername, APassword]);
+  Result := string(EncodeBase64(cred));
+end;
 
 function IsAccessDenied(const ACode: integer): boolean;
 begin

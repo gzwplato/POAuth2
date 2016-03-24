@@ -54,7 +54,8 @@ begin
   end;
   with FHttp do begin
     AllowCookies := True;
-    HandleRedirects := True;
+    HandleRedirects := false;
+    HTTPOptions := HTTPOptions + [hoKeepOrigProtocol];
   end;
 end;
 

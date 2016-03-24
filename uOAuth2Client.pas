@@ -45,8 +45,6 @@ type
     FGrantType: TOAuth2GrantType;
     FConfig: TOAuth2Config;
     function GetAuthHeaderForAccessToken(const AAccessToken: string): string;
-    function GetBasicAuthHeader(const AUsername, APassword: string): string;
-    function EncodeCredentials(const AUsername, APassword: string): string;
     procedure RefreshAccessToken(AToken: TOAuth2Token);
     function GetAccessToken: TOAuth2Token;
     procedure SetAccessToken(Value: TOAuth2Token);
@@ -193,19 +191,6 @@ begin
   url := FSite + FConfig.TokenEndPoint;
   response := FHttpClient.Post(url);
 
-  if IsAccessDenied(response.Code) and
-    (FUserName <> '') and (FPassWord <> '') then begin
-    // Try with Basic Auth
-    FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetBasicAuthHeader(FUserName, FPassWord));
-    response := FHttpClient.Post(url);
-    if IsAccessDenied(response.Code) and
-      (FClientId <> '') and (FClientSecret <> '') then begin
-      // Try with client credentials
-      FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetBasicAuthHeader(FClientId, FClientSecret));
-      response := FHttpClient.Post(url);
-    end;
-  end;
-
   if response.Code <> HTTP_OK then begin
     raise Exception.CreateFmt('Server returned %d: %s', [response.Code, response.Body]);
   end;
@@ -247,19 +232,6 @@ begin
   Result := Format('%s %s', [OAUTH2_BEARER, AAccessToken]);
 end;
 
-function TOAuth2Client.GetBasicAuthHeader(const AUsername, APassword: string): string;
-begin
-  Result := Format('%s %s', [OATUH2_BASIC, EncodeCredentials(AUsername, APassword)]);
-end;
-
-function TOAuth2Client.EncodeCredentials(const AUsername, APassword: string): string;
-var
-  cred: string;
-begin
-  cred := Format('%s:%s', [AUsername, APassword]);
-  Result := string(EncodeBase64(cred));
-end;
-
 procedure TOAuth2Client.RefreshAccessToken(AToken: TOAuth2Token);
 var
   url: string;
@@ -277,19 +249,6 @@ begin
     FHttpClient.AddFormField(OAUTH2_CLIENT_SECRET, FClientSecret);
   url := FSite + FConfig.TokenEndPoint;
   response := FHttpClient.Post(url);
-
-  if IsAccessDenied(response.Code) and
-    (FUserName <> '') and (FPassWord <> '') then begin
-    // Try with Basic Auth
-    FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetBasicAuthHeader(FUserName, FPassWord));
-    response := FHttpClient.Post(url);
-    if IsAccessDenied(response.Code) and
-      (FClientId <> '') and (FClientSecret <> '') then begin
-      // Try with client credentials
-      FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetBasicAuthHeader(FClientId, FClientSecret));
-      response := FHttpClient.Post(url);
-    end;
-  end;
 
   if response.Code <> HTTP_OK then begin
     raise Exception.CreateFmt('Server returned %d: %s', [response.Code, response.Body]);

@@ -1,13 +1,13 @@
 object MainForm: TMainForm
   Left = 1978
-  Height = 618
+  Height = 588
   Top = 67
   Width = 712
   Caption = 'POAuth2 Test'
-  ClientHeight = 618
+  ClientHeight = 588
   ClientWidth = 712
   Color = clForm
-  Constraints.MinWidth = 664
+  Constraints.MinWidth = 712
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
@@ -83,7 +83,7 @@ object MainForm: TMainForm
     Left = 232
     Height = 23
     Top = 120
-    Width = 216
+    Width = 218
     TabOrder = 4
     Text = 'demopass'
   end
@@ -110,6 +110,7 @@ object MainForm: TMainForm
     Width = 328
     Color = clBtnFace
     ReadOnly = True
+    TabStop = False
     TabOrder = 10
   end
   object Label7: TLabel
@@ -127,6 +128,7 @@ object MainForm: TMainForm
     Width = 328
     Color = clBtnFace
     ReadOnly = True
+    TabStop = False
     TabOrder = 11
   end
   object Label8: TLabel
@@ -141,43 +143,34 @@ object MainForm: TMainForm
     Left = 344
     Height = 23
     Top = 176
-    Width = 104
+    Width = 106
     Color = clBtnFace
     ReadOnly = True
+    TabStop = False
     TabOrder = 12
   end
   object Label9: TLabel
     Left = 8
     Height = 15
-    Top = 274
+    Top = 248
     Width = 51
     Caption = 'Resource:'
     ParentColor = False
   end
-  object txtResource: TEdit
-    Left = 8
-    Height = 23
-    Top = 290
-    Width = 328
-    Anchors = [akTop, akLeft, akRight]
-    OnExit = txtResourceExit
-    TabOrder = 5
-    Text = '/resource?query=somevalue'
-  end
   object btnGet: TButton
-    Left = 344
+    Left = 464
     Height = 25
-    Top = 288
-    Width = 104
+    Top = 262
+    Width = 112
     Anchors = [akTop, akRight]
     Caption = 'Get'
     OnClick = btnGetClick
-    TabOrder = 8
+    TabOrder = 7
   end
   object txtResponse: TMemo
     Left = 0
-    Height = 267
-    Top = 328
+    Height = 269
+    Top = 296
     Width = 712
     Align = alBottom
     Anchors = [akTop, akLeft, akRight, akBottom]
@@ -204,31 +197,32 @@ object MainForm: TMainForm
     Left = 344
     Height = 23
     Top = 224
-    Width = 104
+    Width = 106
     Color = clBtnFace
     ReadOnly = True
+    TabStop = False
     TabOrder = 13
   end
   object btnPost: TButton
-    Left = 344
+    Left = 592
     Height = 25
-    Top = 254
-    Width = 104
+    Top = 262
+    Width = 112
     Anchors = [akTop, akRight]
     Caption = 'Post'
     OnClick = btnPostClick
-    TabOrder = 7
+    TabOrder = 8
   end
   object StatusBar: TStatusBar
     Left = 0
     Height = 23
-    Top = 595
+    Top = 565
     Width = 712
     Panels = <>
   end
   object txtFormFields: TMemo
     Left = 464
-    Height = 289
+    Height = 224
     Top = 24
     Width = 240
     Anchors = [akTop, akRight]
@@ -244,6 +238,15 @@ object MainForm: TMainForm
     Anchors = [akTop, akRight]
     Caption = 'Post Form fields:'
     ParentColor = False
+  end
+  object cboResource: TComboBox
+    Left = 8
+    Height = 23
+    Top = 264
+    Width = 442
+    ItemHeight = 15
+    TabOrder = 5
+    Text = '/resource?query=somevalue'
   end
   object IniPropStorage: TIniPropStorage
     StoredValues = <>

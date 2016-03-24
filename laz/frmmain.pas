@@ -14,6 +14,7 @@ type
   TMainForm = class(TForm)
     btnGet: TButton;
     btnPost: TButton;
+    cboResource: TComboBox;
     IniPropStorage: TIniPropStorage;
     Label10: TLabel;
     Label11: TLabel;
@@ -21,7 +22,6 @@ type
     StatusBar: TStatusBar;
     txtTook: TEdit;
     txtResponse: TMemo;
-    txtResource: TEdit;
     Label9: TLabel;
     txtExpires: TEdit;
     Label7: TLabel;
@@ -52,6 +52,7 @@ type
     FClient: TIndyHttpClient;
     FOAuthClient: TOAuth2Client;
     FIdHttp: TIdHTTP;
+    procedure AddHistory;
   public
     { public declarations }
   end;
@@ -86,7 +87,7 @@ begin
   txtPass.Text := IniPropStorage.ReadString('pass', txtPass.Text);
   txtClientId.Text := IniPropStorage.ReadString('client_id', txtClientId.Text);
   txtClientSecret.Text := IniPropStorage.ReadString('client_secret', txtClientSecret.Text);
-  txtResource.Text := IniPropStorage.ReadString('resource', txtResource.Text);
+  cboResource.Text := IniPropStorage.ReadString('resource', cboResource.Text);
   txtFormFields.Lines.Clear;
   IniPropStorage.IniSection := 'postfields';
   c := IniPropStorage.ReadInteger('count', 0);
@@ -94,6 +95,13 @@ begin
     s := IniPropStorage.ReadString(IntToStr(i), '');
     if s <> '' then
       txtFormFields.Lines.Add(s);
+  end;
+  IniPropStorage.IniSection := 'history';
+  c := IniPropStorage.ReadInteger('count', 0);
+  for i := 0 to c - 1 do begin
+    s := IniPropStorage.ReadString(IntToStr(i), '');
+    if s <> '' then
+      cboResource.Items.Add(s);
   end;
 {$IFDEF Linux}
   // Find a monospace font
@@ -120,7 +128,7 @@ end;
 
 procedure TMainForm.txtResourceExit(Sender: TObject);
 begin
-  txtResource.Text := AddLeadingSlash(txtResource.Text);
+  cboResource.Text := AddLeadingSlash(cboResource.Text);
 end;
 
 procedure TMainForm.txtSiteExit(Sender: TObject);
@@ -140,7 +148,7 @@ begin
   IniPropStorage.WriteString('pass', txtPass.Text);
   IniPropStorage.WriteString('client_id', txtClientId.Text);
   IniPropStorage.WriteString('client_secret', txtClientSecret.Text);
-  IniPropStorage.WriteString('resource', txtResource.Text);
+  IniPropStorage.WriteString('resource', cboResource.Text);
   IniPropStorage.IniSection := 'postfields';
   c := 0;
   for i := 0 to txtFormFields.Lines.Count - 1 do begin
@@ -151,6 +159,17 @@ begin
     end;
   end;
   IniPropStorage.WriteString('count', IntToStr(c));
+  IniPropStorage.IniSection := 'history';
+  c := 0;
+  for i := 0 to cboResource.Items.Count - 1 do begin
+    s := cboResource.Items[i];
+    if s <> '' then begin
+      IniPropStorage.WriteString(IntToStr(i), s);
+      Inc(c);
+    end;
+  end;
+  IniPropStorage.WriteString('count', IntToStr(c));
+
   IniPropStorage.Save;
   FOAuthClient.Free;
   FClient.Free;
@@ -161,6 +180,7 @@ var
   res: TOAuth2Response;
   start, stop: DWord;
 begin
+  AddHistory;
   FOAuthClient.Site := txtSite.Text;
   FOAuthClient.GrantType := gtPassword;
   FOAuthClient.UserName := txtUser.Text;
@@ -169,7 +189,7 @@ begin
   FOAuthClient.ClientSecret := txtClientSecret.Text;
   try
     start := LCLIntf.GetTickCount;
-    res := FOAuthClient.Get(txtResource.Text);
+    res := FOAuthClient.Get(cboResource.Text);
     stop := LCLIntf.GetTickCount;
     txtTook.Text := IntToStr(stop - start);
     txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
@@ -202,6 +222,7 @@ var
   start, stop: DWord;
   ff: TStringList;
 begin
+  AddHistory;
   FOAuthClient.Site := txtSite.Text;
   FOAuthClient.GrantType := gtPassword;
   FOAuthClient.UserName := txtUser.Text;
@@ -213,7 +234,7 @@ begin
     ff.AddStrings(txtFormFields.Lines);
     try
       start := LCLIntf.GetTickCount;
-      res := FOAuthClient.Post(txtResource.Text, ff);
+      res := FOAuthClient.Post(cboResource.Text, ff);
       stop := LCLIntf.GetTickCount;
       txtTook.Text := IntToStr(stop - start);
       txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
@@ -240,6 +261,22 @@ begin
     end;
   finally
     ff.Free;
+  end;
+end;
+
+procedure TMainForm.AddHistory;
+var
+  s: string;
+  i: integer;
+begin
+  s := cboResource.Text;
+  if s <> '' then begin
+    i := cboResource.Items.IndexOf(s);
+    if i <> -1 then begin
+      cboResource.Items.Move(i, 0);
+    end else begin
+      cboResource.Items.Insert(0, s);
+    end;
   end;
 end;
 
