@@ -245,7 +245,7 @@ object MainForm: TMainForm
     Top = 272
     Width = 442
     ItemHeight = 15
-    OnChange = cboResourceChange
+    OnSelect = cboResourceSelect
     TabOrder = 5
     Text = '/resource?query=somevalue'
   end

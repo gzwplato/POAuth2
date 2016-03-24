@@ -41,7 +41,7 @@ type
     txtClientId: TEdit;
     procedure btnGetClick(Sender: TObject);
     procedure btnPostClick(Sender: TObject);
-    procedure cboResourceChange(Sender: TObject);
+    procedure cboResourceSelect(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -82,6 +82,7 @@ var
 begin
   FFormFields := TStringList.Create;
   FFormFields.Delimiter := '&';
+  FFormFields.NameValueSeparator := '|';
   FIdHttp := TIdHTTP.Create(Self);
   FIdHttp.Request.UserAgent := 'Mozilla/3.0 (compatible; POAuth2)';
   FClient := TIndyHttpClient.Create(FIdHttp);
@@ -110,9 +111,10 @@ begin
     s := IniPropStorage.ReadString('res' + IntToStr(i), '');
     if s <> '' then begin
       cboResource.Items.Add(s);
-      FFormFields.Add(IniPropStorage.ReadString('ff' + IntToStr(i), ''));
+      FFormFields.Add(Format('%s|%s', [s, IniPropStorage.ReadString('ff' + IntToStr(i), '')]));
     end;
   end;
+  cboResource.ItemIndex := cboResource.Items.IndexOf(cboResource.Text);
 {$IFDEF Linux}
   // Find a monospace font
   if Screen.Fonts.IndexOf('DejaVu Sans Mono') <> -1 then begin
@@ -175,7 +177,7 @@ begin
     s := cboResource.Items[i];
     if s <> '' then begin
       IniPropStorage.WriteString('res' + IntToStr(i), s);
-      IniPropStorage.WriteString('ff' + IntToStr(i), FFormFields[i]);
+      IniPropStorage.WriteString('ff' + IntToStr(i), FFormFields.Values[s]);
       Inc(c);
     end;
   end;
@@ -286,51 +288,57 @@ begin
   end;
 end;
 
-procedure TMainForm.cboResourceChange(Sender: TObject);
+procedure TMainForm.cboResourceSelect(Sender: TObject);
 var
   i: integer;
+  s: string;
   sl: TStringList;
 begin
   i := cboResource.ItemIndex;
-  if (i <> -1) and (i < FFormFields.Count) then begin
-    sl := TStringList.Create;
-    try
-      sl.Delimiter := '&';
-      sl.DelimitedText := FFormFields[i];
-      txtFormFields.Clear;
-      txtFormFields.Lines.AddStrings(sl);
-    finally
-      sl.Free;
+  if (i <> -1) then begin
+    s := cboResource.Items[i];
+    if FFormFields.IndexOfName(s) <> -1 then begin
+      sl := TStringList.Create;
+      try
+        sl.Delimiter := '&';
+        sl.DelimitedText := FFormFields.Values[s];
+        txtFormFields.Clear;
+        txtFormFields.Lines.AddStrings(sl);
+      finally
+        sl.Free;
+      end;
     end;
   end;
 end;
 
 procedure TMainForm.AddHistory;
 var
-  s: string;
-  i: integer;
+  r, s: string;
+  i, j: integer;
 begin
-  s := cboResource.Text;
-  if s <> '' then begin
-    i := cboResource.Items.IndexOf(s);
+  r := cboResource.Text;
+  if r <> '' then begin
+    i := cboResource.Items.IndexOf(r);
     if i <> -1 then begin
       cboResource.Items.Move(i, 0);
     end else begin
-      cboResource.Items.Insert(0, s);
+      cboResource.Items.Insert(0, r);
     end;
 
     s := GetFormFields;
-    i := FFormFields.IndexOf(s);
-    if i <> -1 then begin
-      FFormFields.Move(i, 0);
+    j := FFormFields.IndexOfName(r);
+    if j = -1 then begin
+      FFormFields.Add(Format('%s|%s', [r, s]));
     end else begin
-      FFormFields.Insert(0, s);
+      FFormFields[j] := Format('%s|%s', [r, s]);
     end;
   end;
   for i := cboResource.Items.Count - 1 downto MAX_HISTORY do begin
     cboResource.Items.Delete(i);
     FFormFields.Delete(i);
   end;
+  cboResource.ItemIndex := 0;
+  cboResource.Text := r;
 end;
 
 function TMainForm.GetFormFields: string;
