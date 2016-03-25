@@ -1,0 +1,1 @@
+lazbuild ./poat.lpi
