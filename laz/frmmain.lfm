@@ -3,177 +3,22 @@ object MainForm: TMainForm
   Height = 588
   Top = 67
   Width = 712
-  Caption = 'POAuth2 Test'
-  ClientHeight = 588
+  Caption = 'POAuth2'
+  ClientHeight = 568
   ClientWidth = 712
   Color = clForm
-  Constraints.MinWidth = 712
+  Menu = mnuMain
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poDefaultPosOnly
   LCLVersion = '1.6.0.4'
-  object Label1: TLabel
-    Left = 8
-    Height = 15
-    Top = 8
-    Width = 22
-    Caption = 'Site:'
-    ParentColor = False
-  end
-  object txtSite: TEdit
-    Left = 8
-    Height = 23
-    Top = 24
-    Width = 442
-    Anchors = [akTop, akLeft, akRight]
-    OnExit = txtSiteExit
-    TabOrder = 0
-    Text = 'http://localhost/lockdin'
-  end
-  object Label2: TLabel
-    Left = 8
-    Height = 15
-    Top = 56
-    Width = 56
-    Caption = 'Username:'
-    ParentColor = False
-  end
-  object txtUser: TEdit
-    Left = 8
-    Height = 23
-    Top = 72
-    Width = 216
-    TabOrder = 1
-    Text = 'demouser'
-  end
-  object Label3: TLabel
-    Left = 232
-    Height = 15
-    Top = 56
-    Width = 53
-    Caption = 'Password:'
-    ParentColor = False
-  end
-  object txtPass: TEdit
-    Left = 232
-    Height = 23
-    Top = 72
-    Width = 218
-    TabOrder = 2
-    Text = 'testpass'
-  end
-  object Label4: TLabel
-    Left = 8
-    Height = 15
-    Top = 104
-    Width = 48
-    Caption = 'Client ID:'
-    ParentColor = False
-  end
-  object txtClientId: TEdit
-    Left = 8
-    Height = 23
-    Top = 120
-    Width = 216
-    TabOrder = 3
-    Text = 'demoapp'
-  end
-  object txtClientSecret: TEdit
-    Left = 232
-    Height = 23
-    Top = 120
-    Width = 218
-    TabOrder = 4
-    Text = 'demopass'
-  end
-  object Label5: TLabel
-    Left = 232
-    Height = 15
-    Top = 104
-    Width = 69
-    Caption = 'Client Secret:'
-    ParentColor = False
-  end
-  object Label6: TLabel
-    Left = 8
-    Height = 15
-    Top = 160
-    Width = 75
-    Caption = 'Access Token:'
-    ParentColor = False
-  end
-  object txtAccessToken: TEdit
-    Left = 8
-    Height = 23
-    Top = 176
-    Width = 328
-    Color = clBtnFace
-    ReadOnly = True
-    TabStop = False
-    TabOrder = 10
-  end
-  object Label7: TLabel
-    Left = 8
-    Height = 15
-    Top = 208
-    Width = 78
-    Caption = 'Refresh Token:'
-    ParentColor = False
-  end
-  object txtRefreshToken: TEdit
-    Left = 8
-    Height = 23
-    Top = 224
-    Width = 328
-    Color = clBtnFace
-    ReadOnly = True
-    TabStop = False
-    TabOrder = 11
-  end
-  object Label8: TLabel
-    Left = 344
-    Height = 15
-    Top = 160
-    Width = 55
-    Caption = 'Expires (s):'
-    ParentColor = False
-  end
-  object txtExpires: TEdit
-    Left = 344
-    Height = 23
-    Top = 176
-    Width = 106
-    Color = clBtnFace
-    ReadOnly = True
-    TabStop = False
-    TabOrder = 12
-  end
-  object Label9: TLabel
-    Left = 8
-    Height = 15
-    Top = 256
-    Width = 51
-    Caption = 'Resource:'
-    ParentColor = False
-  end
-  object btnGet: TButton
-    Left = 464
-    Height = 25
-    Top = 270
-    Width = 112
-    Anchors = [akTop, akRight]
-    Caption = 'Get'
-    OnClick = btnGetClick
-    TabOrder = 7
-  end
   object txtResponse: TMemo
     Left = 0
-    Height = 261
-    Top = 304
+    Height = 244
+    Top = 301
     Width = 712
-    Align = alBottom
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    Align = alClient
     Color = clBtnFace
     Font.CharSet = ANSI_CHARSET
     Font.Height = -13
@@ -183,75 +28,300 @@ object MainForm: TMainForm
     ParentFont = False
     ReadOnly = True
     ScrollBars = ssAutoBoth
-    TabOrder = 9
-  end
-  object Label10: TLabel
-    Left = 346
-    Height = 15
-    Top = 207
-    Width = 57
-    Caption = 'Took (ms):'
-    ParentColor = False
-  end
-  object txtTook: TEdit
-    Left = 344
-    Height = 23
-    Top = 224
-    Width = 106
-    Color = clBtnFace
-    ReadOnly = True
+    TabOrder = 2
     TabStop = False
-    TabOrder = 13
-  end
-  object btnPost: TButton
-    Left = 592
-    Height = 25
-    Top = 270
-    Width = 112
-    Anchors = [akTop, akRight]
-    Caption = 'Post'
-    OnClick = btnPostClick
-    TabOrder = 8
   end
   object StatusBar: TStatusBar
     Left = 0
     Height = 23
-    Top = 565
+    Top = 545
     Width = 712
     Panels = <>
   end
-  object txtFormFields: TMemo
-    Left = 464
-    Height = 224
-    Top = 24
-    Width = 240
-    Anchors = [akTop, akRight]
-    OnExit = txtFormFieldsExit
-    ScrollBars = ssAutoBoth
-    TabOrder = 6
+  object pnlTop: TPanel
+    Left = 0
+    Height = 296
+    Top = 0
+    Width = 712
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 296
+    ClientWidth = 712
+    TabOrder = 1
+    object pnlClient: TPanel
+      Left = 0
+      Height = 296
+      Top = 0
+      Width = 459
+      Align = alClient
+      BevelOuter = bvNone
+      ClientHeight = 296
+      ClientWidth = 459
+      TabOrder = 0
+      object Label1: TLabel
+        Left = 8
+        Height = 15
+        Top = 8
+        Width = 22
+        Caption = 'Site:'
+        ParentColor = False
+      end
+      object txtSite: TEdit
+        Left = 8
+        Height = 23
+        Top = 24
+        Width = 443
+        Anchors = [akTop, akLeft, akRight]
+        OnExit = txtSiteExit
+        TabOrder = 0
+        Text = 'http://localhost/lockdin'
+      end
+      object txtUser: TEdit
+        Left = 8
+        Height = 23
+        Top = 72
+        Width = 216
+        TabOrder = 1
+        Text = 'demouser'
+      end
+      object Label2: TLabel
+        Left = 8
+        Height = 15
+        Top = 56
+        Width = 56
+        Caption = 'Username:'
+        ParentColor = False
+      end
+      object Label3: TLabel
+        Left = 232
+        Height = 15
+        Top = 56
+        Width = 53
+        Caption = 'Password:'
+        ParentColor = False
+      end
+      object txtPass: TEdit
+        Left = 232
+        Height = 23
+        Top = 72
+        Width = 218
+        TabOrder = 2
+        Text = 'testpass'
+      end
+      object Label4: TLabel
+        Left = 8
+        Height = 15
+        Top = 104
+        Width = 48
+        Caption = 'Client ID:'
+        ParentColor = False
+      end
+      object txtClientId: TEdit
+        Left = 8
+        Height = 23
+        Top = 120
+        Width = 216
+        TabOrder = 3
+        Text = 'demoapp'
+      end
+      object Label5: TLabel
+        Left = 232
+        Height = 15
+        Top = 104
+        Width = 69
+        Caption = 'Client Secret:'
+        ParentColor = False
+      end
+      object txtClientSecret: TEdit
+        Left = 232
+        Height = 23
+        Top = 120
+        Width = 218
+        TabOrder = 4
+        Text = 'demopass'
+      end
+      object Label6: TLabel
+        Left = 8
+        Height = 15
+        Top = 160
+        Width = 75
+        Caption = 'Access Token:'
+        ParentColor = False
+      end
+      object txtAccessToken: TEdit
+        Left = 8
+        Height = 23
+        Top = 176
+        Width = 328
+        Color = clBtnFace
+        ReadOnly = True
+        TabStop = False
+        TabOrder = 5
+      end
+      object Label8: TLabel
+        Left = 344
+        Height = 15
+        Top = 160
+        Width = 55
+        Caption = 'Expires (s):'
+        ParentColor = False
+      end
+      object txtExpires: TEdit
+        Left = 344
+        Height = 23
+        Top = 176
+        Width = 106
+        Color = clBtnFace
+        ReadOnly = True
+        TabStop = False
+        TabOrder = 6
+      end
+      object Label7: TLabel
+        Left = 8
+        Height = 15
+        Top = 208
+        Width = 78
+        Caption = 'Refresh Token:'
+        ParentColor = False
+      end
+      object txtRefreshToken: TEdit
+        Left = 8
+        Height = 23
+        Top = 224
+        Width = 328
+        Color = clBtnFace
+        ReadOnly = True
+        TabStop = False
+        TabOrder = 7
+      end
+      object txtTook: TEdit
+        Left = 344
+        Height = 23
+        Top = 224
+        Width = 106
+        Color = clBtnFace
+        ReadOnly = True
+        TabStop = False
+        TabOrder = 8
+      end
+      object Label10: TLabel
+        Left = 346
+        Height = 15
+        Top = 207
+        Width = 57
+        Caption = 'Took (ms):'
+        ParentColor = False
+      end
+      object Label9: TLabel
+        Left = 8
+        Height = 15
+        Top = 256
+        Width = 51
+        Anchors = [akLeft, akBottom]
+        Caption = 'Resource:'
+        ParentColor = False
+      end
+      object cboResource: TComboBox
+        Left = 8
+        Height = 23
+        Top = 272
+        Width = 443
+        Anchors = [akLeft, akRight, akBottom]
+        ItemHeight = 15
+        OnSelect = cboResourceSelect
+        TabOrder = 9
+        Text = '/resource?query=somevalue'
+      end
+    end
+    object Splitter1: TSplitter
+      Left = 459
+      Height = 296
+      Top = 0
+      Width = 5
+      Align = alRight
+      ResizeAnchor = akRight
+    end
+    object pnlForm: TPanel
+      Left = 464
+      Height = 296
+      Top = 0
+      Width = 248
+      Align = alRight
+      BevelOuter = bvNone
+      Caption = 'pnlForm'
+      ClientHeight = 296
+      ClientWidth = 248
+      TabOrder = 2
+      object Label11: TLabel
+        Left = 3
+        Height = 15
+        Top = 8
+        Width = 88
+        Caption = 'Post Form fields:'
+        ParentColor = False
+      end
+      object txtFormFields: TMemo
+        Left = 3
+        Height = 198
+        Top = 24
+        Width = 239
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        OnExit = txtFormFieldsExit
+        ScrollBars = ssAutoBoth
+        TabOrder = 0
+      end
+      object btnGet: TButton
+        Left = 3
+        Height = 25
+        Top = 232
+        Width = 240
+        Anchors = [akLeft, akRight, akBottom]
+        Caption = 'Get'
+        OnClick = btnGetClick
+        TabOrder = 1
+      end
+      object btnPost: TButton
+        Left = 3
+        Height = 25
+        Top = 268
+        Width = 240
+        Anchors = [akLeft, akRight, akBottom]
+        Caption = 'Post'
+        OnClick = btnPostClick
+        TabOrder = 2
+      end
+    end
   end
-  object Label11: TLabel
-    Left = 464
-    Height = 15
-    Top = 8
-    Width = 88
-    Anchors = [akTop, akRight]
-    Caption = 'Post Form fields:'
-    ParentColor = False
-  end
-  object cboResource: TComboBox
-    Left = 8
-    Height = 23
-    Top = 272
-    Width = 442
-    ItemHeight = 15
-    OnSelect = cboResourceSelect
-    TabOrder = 5
-    Text = '/resource?query=somevalue'
+  object Splitter2: TSplitter
+    Cursor = crVSplit
+    Left = 0
+    Height = 5
+    Top = 296
+    Width = 712
+    Align = alTop
+    ResizeAnchor = akTop
   end
   object IniPropStorage: TIniPropStorage
     StoredValues = <>
     left = 80
     top = 384
+  end
+  object mnuMain: TMainMenu
+    left = 206
+    top = 155
+    object MenuItem1: TMenuItem
+      Caption = '&File'
+      object MenuItem2: TMenuItem
+        Caption = 'Exit'
+        OnClick = MenuItem2Click
+      end
+    end
+    object MenuItem3: TMenuItem
+      Caption = '&View'
+      object MenuItem4: TMenuItem
+        Caption = 'Log'
+        OnClick = MenuItem4Click
+      end
+    end
   end
 end

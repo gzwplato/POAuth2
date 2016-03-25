@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  IniPropStorage, ComCtrls, IdBaseComponent, IdComponent, IdHTTP, uIndyClient,
-  uOAuth2HttpClient, uOAuth2Client;
+  IniPropStorage, ComCtrls, ExtCtrls, Menus, IdBaseComponent, IdComponent,
+  IdHTTP, uIndyClient, uOAuth2HttpClient, uOAuth2Client, IdLogStream;
 
 type
   { TMainForm }
@@ -16,35 +16,47 @@ type
     btnPost: TButton;
     cboResource: TComboBox;
     IniPropStorage: TIniPropStorage;
+    Label1: TLabel;
     Label10: TLabel;
     Label11: TLabel;
-    txtFormFields: TMemo;
-    StatusBar: TStatusBar;
-    txtTook: TEdit;
-    txtResponse: TMemo;
-    Label9: TLabel;
-    txtExpires: TEdit;
-    Label7: TLabel;
-    Label8: TLabel;
-    txtAccessToken: TEdit;
+    Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
-    txtRefreshToken: TEdit;
-    txtClientSecret: TEdit;
-    txtUser: TEdit;
-    Label2: TLabel;
-    txtSite: TEdit;
-    Label1: TLabel;
-    txtPass: TEdit;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
+    mnuMain: TMainMenu;
+    pnlForm: TPanel;
+    pnlClient: TPanel;
+    pnlTop: TPanel;
+    Splitter1: TSplitter;
+    Splitter2: TSplitter;
+    StatusBar: TStatusBar;
+    txtAccessToken: TEdit;
     txtClientId: TEdit;
+    txtClientSecret: TEdit;
+    txtExpires: TEdit;
+    txtFormFields: TMemo;
+    txtPass: TEdit;
+    txtRefreshToken: TEdit;
+    txtResponse: TMemo;
+    txtSite: TEdit;
+    txtTook: TEdit;
+    txtUser: TEdit;
     procedure btnGetClick(Sender: TObject);
     procedure btnPostClick(Sender: TObject);
     procedure cboResourceSelect(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure MenuItem2Click(Sender: TObject);
+    procedure MenuItem4Click(Sender: TObject);
     procedure txtFormFieldsExit(Sender: TObject);
     procedure txtResourceExit(Sender: TObject);
     procedure txtSiteExit(Sender: TObject);
@@ -54,8 +66,12 @@ type
     FOAuthClient: TOAuth2Client;
     FIdHttp: TIdHTTP;
     FHistroy: TStringList;
+    FSendStream: TMemoryStream;
+    FReceiveStream: TMemoryStream;
+    FIdlog: TIdLogStream;
     procedure AddHistory;
     function GetFormFields: string;
+    procedure ReadStreams;
   public
     { public declarations }
   end;
@@ -66,7 +82,7 @@ var
 implementation
 
 uses
-  uOAuth2Tools, uJson, uOAuth2Consts, LCLIntf;
+  uOAuth2Tools, uJson, uOAuth2Consts, LCLIntf, frmlog;
 
 {$R *.lfm}
 
@@ -80,6 +96,9 @@ var
   i, c: integer;
   s: string;
 begin
+  Constraints.MinWidth := Width;
+  pnlclient.Constraints.MinWidth := pnlClient.Width;
+  pnlTop.Constraints.MinHeight := pnlTop.Height;
   FHistroy := TStringList.Create;
   FHistroy.Delimiter := '&';
   FHistroy.NameValueSeparator := '|';
@@ -87,6 +106,15 @@ begin
   FIdHttp.Request.UserAgent := 'Mozilla/3.0 (compatible; POAuth2)';
   FClient := TIndyHttpClient.Create(FIdHttp);
   FOAuthClient := TOAuth2Client.Create(FClient);
+  FSendStream := TMemoryStream.Create;
+  FReceiveStream := TMemoryStream.Create;
+  FIdLog := TIdLogStream.Create(nil);
+  FIdLog.SendStream := FSendStream;
+  FIdLog.ReceiveStream := FReceiveStream;
+  FIdLog.FreeStreams := false;
+  FIdHttp.Intercept := FIdLog;
+  FIdLog.Active := true;
+
   IniPropStorage.IniFileName := GetAppConfigDir(false) + 'poat.ini';
   StatusBar.SimpleText := 'Settings stored in: ' + IniPropStorage.IniFileName;
   IniPropStorage.Restore;
@@ -123,10 +151,21 @@ begin
     txtResponse.Font.Name := 'DejaVu Sans Mono'
   end;
 {$ENDIF}
+  Application.Title := Caption;
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);
 begin
+end;
+
+procedure TMainForm.MenuItem2Click(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TMainForm.MenuItem4Click(Sender: TObject);
+begin
+  LogForm.Show;
 end;
 
 procedure TMainForm.txtFormFieldsExit(Sender: TObject);
@@ -190,6 +229,9 @@ begin
   IniPropStorage.Save;
   FOAuthClient.Free;
   FClient.Free;
+  FSendStream.Free;
+  FReceiveStream.Free;
+  FIdlog.Free;
 end;
 
 procedure TMainForm.btnGetClick(Sender: TObject);
@@ -200,6 +242,8 @@ begin
   Screen.Cursor := crHourGlass;
   try
     AddHistory;
+    FSendStream.Clear;
+    FReceiveStream.Clear;
     FOAuthClient.Site := txtSite.Text;
     FOAuthClient.GrantType := gtPassword;
     FOAuthClient.UserName := txtUser.Text;
@@ -234,6 +278,7 @@ begin
         txtResponse.Text := Format('%s: %s', [E.ClassName, E.Message]);
     end;
   finally
+    ReadStreams;
     Screen.Cursor := crDefault;
   end;
 end;
@@ -247,6 +292,8 @@ begin
   Screen.Cursor := crHourGlass;
   try
     AddHistory;
+    FSendStream.Clear;
+    FReceiveStream.Clear;
     FOAuthClient.Site := txtSite.Text;
     FOAuthClient.GrantType := gtPassword;
     FOAuthClient.UserName := txtUser.Text;
@@ -287,6 +334,7 @@ begin
       ff.Free;
     end;
   finally
+    ReadStreams;
     Screen.Cursor := crDefault;
   end;
 end;
@@ -352,6 +400,37 @@ begin
   if Result <> '' then begin
     if Result[Length(Result)] = '&' then
       Delete(Result, Length(Result), 1);
+  end;
+end;
+
+procedure TMainForm.ReadStreams;
+var
+  sent, recv: string;
+  sl: TStringList;
+begin
+  sl := TStringList.Create;
+  try
+    if FSendStream.Size > 0 then begin
+      SetLength(sent, FSendStream.Size);
+      FSendStream.Position := 0;
+      FSendStream.Read(sent[1], FSendStream.Size);
+      LogForm.txtLog.Lines.Add('---------------------Send---------------------');
+      sent := StringReplace(sent, '<EOL>', LineEnding, [rfReplaceAll]);
+      sl.Text := sent;
+      LogForm.txtLog.Lines.AddStrings(sl);
+    end;
+    if FReceiveStream.Size > 0 then begin
+      SetLength(recv, FReceiveStream.Size);
+      FReceiveStream.Position := 0;
+      FReceiveStream.Read(recv[1], FReceiveStream.Size);
+      LogForm.txtLog.Lines.Add('-------------------Received-------------------');
+      recv := StringReplace(recv, '<EOL>', LineEnding, [rfReplaceAll]);
+      sl.Text := recv;
+      LogForm.txtLog.Lines.AddStrings(sl);
+    end;
+    LogForm.txtLog.Lines.Add('----------------------8<----------------------');
+  finally
+    sl.Free;
   end;
 end;
 
