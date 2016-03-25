@@ -88,6 +88,7 @@ uses
 
 const
   MAX_HISTORY = 30;
+  MAX_LOGLINES = 300;
 
 { TMainForm }
 
@@ -432,6 +433,8 @@ begin
   finally
     sl.Free;
   end;
+  while LogForm.txtLog.Lines.Count > MAX_LOGLINES do
+    LogForm.txtLog.Lines.Delete(0);
 end;
 
 end.
