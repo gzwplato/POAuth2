@@ -115,6 +115,7 @@
         <Filename Value="frmlog.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="LogForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit10>
     </Units>
