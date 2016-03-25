@@ -1,1 +1,1 @@
-lazbuild ./poat.lpi --build-mode=Release
+lazbuild ./poat.lpi --build-all --build-mode=Release
