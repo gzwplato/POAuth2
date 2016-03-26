@@ -8,6 +8,7 @@ object HistoryForm: THistoryForm
   ClientWidth = 280
   OnClose = FormClose
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   LCLVersion = '1.6.0.4'
   object lstHistory: TListBox
     Left = 0

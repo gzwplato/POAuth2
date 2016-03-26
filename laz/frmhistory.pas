@@ -23,6 +23,7 @@ type
     lstHistory: TListBox;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure lstHistoryClick(Sender: TObject);
     procedure lstHistoryDrawItem(Control: TWinControl; Index: Integer;
       ARect: TRect; State: TOwnerDrawState);
@@ -109,6 +110,33 @@ begin
   lstHistory.Canvas.Font.Assign(lstHistory.Font);
 end;
 
+procedure THistoryForm.FormDestroy(Sender: TObject);
+var
+  i, c: integer;
+  s: string;
+  hi: THistoryItem;
+begin
+  MainForm.IniPropStorage.IniSection := 'history';
+  c := 0;
+  for i := 0 to FHistory.Count - 1 do begin
+    hi := THistoryItem(FHistory[i]);
+    s := hi.Url;
+    if hi.Fields.DelimitedText <> '' then
+      s := s + '|' + hi.Fields.DelimitedText;
+    MainForm.IniPropStorage.WriteString(IntToStr(i), s);
+    Inc(c);
+    if c >= MAX_HISTORY then
+      Break;
+  end;
+  MainForm.IniPropStorage.WriteString('count', IntToStr(c));
+
+  for i := 0 to FHistory.Count - 1 do begin
+    hi := THistoryItem(FHistory[i]);
+    hi.Free;
+  end;
+  FHistory.Free;
+end;
+
 procedure THistoryForm.lstHistoryClick(Sender: TObject);
 begin
   if Assigned(FOnSelect) then
@@ -143,30 +171,8 @@ begin
 end;
 
 procedure THistoryForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-var
-  i, c: integer;
-  s: string;
-  hi: THistoryItem;
 begin
-  MainForm.IniPropStorage.IniSection := 'history';
-  c := 0;
-  for i := 0 to FHistory.Count - 1 do begin
-    hi := THistoryItem(FHistory[i]);
-    s := hi.Url;
-    if hi.Fields.DelimitedText <> '' then
-      s := s + '|' + hi.Fields.DelimitedText;
-    MainForm.IniPropStorage.WriteString(IntToStr(i), s);
-    Inc(c);
-    if c >= MAX_HISTORY then
-      Break;
-  end;
-  MainForm.IniPropStorage.WriteString('count', IntToStr(c));
-
-  for i := 0 to FHistory.Count - 1 do begin
-    hi := THistoryItem(FHistory[i]);
-    hi.Free;
-  end;
-  FHistory.Free;
+  CloseAction := caHide;
 end;
 
 procedure THistoryForm.Add(const AUrl, AFields: string);

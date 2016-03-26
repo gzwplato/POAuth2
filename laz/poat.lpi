@@ -122,6 +122,7 @@
         <Filename Value="frmhistory.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="HistoryForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit11>
     </Units>
