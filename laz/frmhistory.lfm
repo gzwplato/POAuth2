@@ -1,0 +1,25 @@
+object HistoryForm: THistoryForm
+  Left = 2742
+  Height = 472
+  Top = 169
+  Width = 280
+  Caption = 'History'
+  ClientHeight = 472
+  ClientWidth = 280
+  OnClose = FormClose
+  OnCreate = FormCreate
+  LCLVersion = '1.6.0.4'
+  object lstHistory: TListBox
+    Left = 0
+    Height = 472
+    Top = 0
+    Width = 280
+    Align = alClient
+    ItemHeight = 0
+    OnClick = lstHistoryClick
+    OnDrawItem = lstHistoryDrawItem
+    OnMeasureItem = lstHistoryMeasureItem
+    Style = lbOwnerDrawFixed
+    TabOrder = 0
+  end
+end

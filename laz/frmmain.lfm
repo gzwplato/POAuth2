@@ -221,14 +221,11 @@ object MainForm: TMainForm
         Caption = 'Resource:'
         ParentColor = False
       end
-      object cboResource: TComboBox
+      object txtResource: TEdit
         Left = 8
         Height = 23
-        Top = 275
+        Top = 273
         Width = 443
-        Anchors = [akLeft, akRight, akBottom]
-        ItemHeight = 15
-        OnSelect = cboResourceSelect
         TabOrder = 9
         Text = '/resource?query=somevalue'
       end
@@ -318,6 +315,10 @@ object MainForm: TMainForm
     end
     object MenuItem3: TMenuItem
       Caption = '&View'
+      object MenuItem5: TMenuItem
+        Caption = 'History'
+        OnClick = MenuItem5Click
+      end
       object MenuItem4: TMenuItem
         Caption = 'Log'
         OnClick = MenuItem4Click

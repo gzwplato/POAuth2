@@ -7,13 +7,39 @@ object LogForm: TLogForm
   ClientHeight = 184
   ClientWidth = 524
   OnCreate = FormCreate
+  OnResize = FormResize
   Position = poDefaultPosOnly
   LCLVersion = '1.6.0.4'
-  object txtLog: TMemo
+  object txtSent: TMemo
     Left = 0
     Height = 184
     Top = 0
-    Width = 524
+    Width = 276
+    Align = alLeft
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    ParentFont = False
+    PopupMenu = PopupMenu1
+    ReadOnly = True
+    ScrollBars = ssAutoBoth
+    TabOrder = 1
+    TabStop = False
+    WordWrap = False
+  end
+  object Splitter1: TSplitter
+    Left = 276
+    Height = 184
+    Top = 0
+    Width = 5
+  end
+  object txtRecv: TMemo
+    Left = 281
+    Height = 184
+    Top = 0
+    Width = 243
     Align = alClient
     Font.CharSet = ANSI_CHARSET
     Font.Height = -13

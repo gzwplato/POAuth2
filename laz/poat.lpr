@@ -8,7 +8,7 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, frmmain, uOAuth2Token, uIndyClient, uOAuth2HttpClient, uOAuth2Config,
-  uOAuth2Client, uJson, frmlog;
+  uOAuth2Client, uJson, frmlog, frmhistory;
 
 {$R *.res}
 

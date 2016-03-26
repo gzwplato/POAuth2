@@ -7,14 +7,14 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
   IniPropStorage, ComCtrls, ExtCtrls, Menus, IdBaseComponent, IdComponent,
-  IdHTTP, uIndyClient, uOAuth2HttpClient, uOAuth2Client, IdLogStream;
+  IdHTTP, uIndyClient, uOAuth2HttpClient, uOAuth2Client, IdLogStream, frmhistory;
 
 type
   { TMainForm }
   TMainForm = class(TForm)
     btnGet: TButton;
     btnPost: TButton;
-    cboResource: TComboBox;
+    txtResource: TEdit;
     IniPropStorage: TIniPropStorage;
     Label1: TLabel;
     Label10: TLabel;
@@ -31,6 +31,7 @@ type
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
+    MenuItem5: TMenuItem;
     mnuMain: TMainMenu;
     pnlForm: TPanel;
     pnlClient: TPanel;
@@ -51,12 +52,12 @@ type
     txtUser: TEdit;
     procedure btnGetClick(Sender: TObject);
     procedure btnPostClick(Sender: TObject);
-    procedure cboResourceSelect(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
+    procedure MenuItem5Click(Sender: TObject);
     procedure txtFormFieldsExit(Sender: TObject);
     procedure txtResourceExit(Sender: TObject);
     procedure txtSiteExit(Sender: TObject);
@@ -65,13 +66,14 @@ type
     FClient: TIndyHttpClient;
     FOAuthClient: TOAuth2Client;
     FIdHttp: TIdHTTP;
-    FHistroy: TStringList;
     FSendStream: TMemoryStream;
     FReceiveStream: TMemoryStream;
     FIdlog: TIdLogStream;
+    FHistoryForm: THistoryForm;
     procedure AddHistory;
     function GetFormFields: string;
     procedure ReadStreams;
+    procedure History_Select(Sender: TObject);
   public
     { public declarations }
   end;
@@ -87,7 +89,6 @@ uses
 {$R *.lfm}
 
 const
-  MAX_HISTORY = 30;
   MAX_LOGLINES = 300;
 
 { TMainForm }
@@ -100,9 +101,6 @@ begin
   Constraints.MinWidth := Width;
   pnlclient.Constraints.MinWidth := pnlClient.Width;
   pnlTop.Constraints.MinHeight := pnlTop.Height;
-  FHistroy := TStringList.Create;
-  FHistroy.Delimiter := '&';
-  FHistroy.NameValueSeparator := '|';
   FIdHttp := TIdHTTP.Create(Self);
   FIdHttp.Request.UserAgent := 'Mozilla/3.0 (compatible; POAuth2)';
   FClient := TIndyHttpClient.Create(FIdHttp);
@@ -125,7 +123,7 @@ begin
   txtPass.Text := IniPropStorage.ReadString('pass', txtPass.Text);
   txtClientId.Text := IniPropStorage.ReadString('client_id', txtClientId.Text);
   txtClientSecret.Text := IniPropStorage.ReadString('client_secret', txtClientSecret.Text);
-  cboResource.Text := IniPropStorage.ReadString('resource', cboResource.Text);
+  txtResource.Text := IniPropStorage.ReadString('resource', txtResource.Text);
   txtFormFields.Lines.Clear;
   IniPropStorage.IniSection := 'postfields';
   c := IniPropStorage.ReadInteger('count', 0);
@@ -134,18 +132,10 @@ begin
     if s <> '' then
       txtFormFields.Lines.Add(s);
   end;
-  IniPropStorage.IniSection := 'history';
-  c := IniPropStorage.ReadInteger('count', 0);
-  for i := 0 to c - 1 do begin
-    s := IniPropStorage.ReadString(IntToStr(i), '');
-    if s <> '' then begin
-      FHistroy.Add(s);
-    end;
-  end;
-  for i := 0 to FHistroy.Count - 1 do begin
-    cboResource.Items.Add(FHistroy.Names[i]);
-  end;
-  cboResource.ItemIndex := cboResource.Items.IndexOf(cboResource.Text);
+
+  FHistoryForm := THistoryForm.Create(Self);
+  FHistoryForm.OnSelect := @History_Select;
+
 {$IFDEF Linux}
   // Find a monospace font
   if Screen.Fonts.IndexOf('DejaVu Sans Mono') <> -1 then begin
@@ -155,8 +145,24 @@ begin
   Application.Title := Caption;
 end;
 
+procedure TMainForm.History_Select(Sender: TObject);
+var
+  hi: THistoryItem;
+begin
+  hi := FHistoryForm.GetSelected;
+  if hi <> nil then begin
+    txtResource.Text := hi.Url;
+    txtFormFields.Lines.Clear;
+    txtFormFields.Lines.AddStrings(hi.Fields);
+  end;
+end;
+
 procedure TMainForm.FormShow(Sender: TObject);
 begin
+  FHistoryForm.Left := Left - FHistoryForm.Width - 20;
+  FHistoryForm.Top := Top;
+  FHistoryForm.Height := Height;
+  FHistoryForm.Show;
 end;
 
 procedure TMainForm.MenuItem2Click(Sender: TObject);
@@ -167,6 +173,11 @@ end;
 procedure TMainForm.MenuItem4Click(Sender: TObject);
 begin
   LogForm.Show;
+end;
+
+procedure TMainForm.MenuItem5Click(Sender: TObject);
+begin
+  FHistoryForm.Show;
 end;
 
 procedure TMainForm.txtFormFieldsExit(Sender: TObject);
@@ -182,7 +193,7 @@ end;
 
 procedure TMainForm.txtResourceExit(Sender: TObject);
 begin
-  cboResource.Text := AddLeadingSlash(cboResource.Text);
+  txtResource.Text := AddLeadingSlash(txtResource.Text);
 end;
 
 procedure TMainForm.txtSiteExit(Sender: TObject);
@@ -202,7 +213,7 @@ begin
   IniPropStorage.WriteString('pass', txtPass.Text);
   IniPropStorage.WriteString('client_id', txtClientId.Text);
   IniPropStorage.WriteString('client_secret', txtClientSecret.Text);
-  IniPropStorage.WriteString('resource', cboResource.Text);
+  IniPropStorage.WriteString('resource', txtResource.Text);
   IniPropStorage.IniSection := 'postfields';
   c := 0;
   for i := 0 to txtFormFields.Lines.Count - 1 do begin
@@ -213,20 +224,9 @@ begin
     end;
   end;
   IniPropStorage.WriteString('count', IntToStr(c));
-  IniPropStorage.IniSection := 'history';
-  c := 0;
-  for i := 0 to FHistroy.Count - 1 do begin
-    s := FHistroy[i];
-    if s <> '' then begin
-      IniPropStorage.WriteString(IntToStr(i), s);
-      Inc(c);
-      if c >= MAX_HISTORY then
-        break;
-    end;
-  end;
-  IniPropStorage.WriteString('count', IntToStr(c));
 
-  FHistroy.Free;
+  FHistoryForm.Close;
+  FHistoryForm.Free;
   IniPropStorage.Save;
   FOAuthClient.Free;
   FClient.Free;
@@ -253,7 +253,7 @@ begin
     FOAuthClient.ClientSecret := txtClientSecret.Text;
     try
       start := LCLIntf.GetTickCount;
-      res := FOAuthClient.Get(cboResource.Text);
+      res := FOAuthClient.Get(txtResource.Text);
       stop := LCLIntf.GetTickCount;
       txtTook.Text := IntToStr(stop - start);
       txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
@@ -306,7 +306,7 @@ begin
       ff.AddStrings(txtFormFields.Lines);
       try
         start := LCLIntf.GetTickCount;
-        res := FOAuthClient.Post(cboResource.Text, ff);
+        res := FOAuthClient.Post(txtResource.Text, ff);
         stop := LCLIntf.GetTickCount;
         txtTook.Text := IntToStr(stop - start);
         txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
@@ -340,54 +340,14 @@ begin
   end;
 end;
 
-procedure TMainForm.cboResourceSelect(Sender: TObject);
-var
-  i: integer;
-  s: string;
-  sl: TStringList;
-begin
-  i := cboResource.ItemIndex;
-  if (i <> -1) then begin
-    s := cboResource.Items[i];
-    if FHistroy.IndexOfName(s) <> -1 then begin
-      sl := TStringList.Create;
-      try
-        sl.Delimiter := '&';
-        sl.DelimitedText := FHistroy.Values[s];
-        txtFormFields.Clear;
-        txtFormFields.Lines.AddStrings(sl);
-      finally
-        sl.Free;
-      end;
-    end;
-  end;
-end;
-
 procedure TMainForm.AddHistory;
 var
   r, s: string;
-  i, j: integer;
 begin
-  r := cboResource.Text;
+  r := txtResource.Text;
   if r <> '' then begin
-    i := cboResource.Items.IndexOf(r);
-    if i <> -1 then begin
-      cboResource.Items.Move(i, 0);
-    end else begin
-      cboResource.Items.Insert(0, r);
-    end;
-
-    s := GetFormFields;
-    j := FHistroy.IndexOfName(r);
-    if j = -1 then begin
-      FHistroy.Insert(0, Format('%s|%s', [r, s]));
-    end else begin
-      FHistroy[j] := Format('%s|%s', [r, s]);
-      FHistroy.Move(j, 0);
-    end;
+    FHistoryForm.Add(r, GetFormFields);
   end;
-  cboResource.ItemIndex := 0;
-  cboResource.Text := r;
 end;
 
 function TMainForm.GetFormFields: string;
@@ -415,26 +375,27 @@ begin
       SetLength(sent, FSendStream.Size);
       FSendStream.Position := 0;
       FSendStream.Read(sent[1], FSendStream.Size);
-      LogForm.txtLog.Lines.Add('---------------------Send---------------------');
       sent := StringReplace(sent, '<EOL>', LineEnding, [rfReplaceAll]);
       sl.Text := sent;
-      LogForm.txtLog.Lines.AddStrings(sl);
+      LogForm.txtSent.Lines.AddStrings(sl);
     end;
     if FReceiveStream.Size > 0 then begin
       SetLength(recv, FReceiveStream.Size);
       FReceiveStream.Position := 0;
       FReceiveStream.Read(recv[1], FReceiveStream.Size);
-      LogForm.txtLog.Lines.Add('-------------------Received-------------------');
       recv := StringReplace(recv, '<EOL>', LineEnding, [rfReplaceAll]);
       sl.Text := recv;
-      LogForm.txtLog.Lines.AddStrings(sl);
+      LogForm.txtRecv.Lines.AddStrings(sl);
     end;
-    LogForm.txtLog.Lines.Add('----------------------8<----------------------');
+    LogForm.txtSent.Lines.Add('----------------------8<----------------------');
+    LogForm.txtRecv.Lines.Add('----------------------8<----------------------');
   finally
     sl.Free;
   end;
-  while LogForm.txtLog.Lines.Count > MAX_LOGLINES do
-    LogForm.txtLog.Lines.Delete(0);
+  while LogForm.txtSent.Lines.Count > MAX_LOGLINES do
+    LogForm.txtSent.Lines.Delete(0);
+  while LogForm.txtRecv.Lines.Count > MAX_LOGLINES do
+    LogForm.txtRecv.Lines.Delete(0);
 end;
 
 end.
