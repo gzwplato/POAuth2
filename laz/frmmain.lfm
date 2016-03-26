@@ -162,8 +162,8 @@ object MainForm: TMainForm
         Left = 344
         Height = 15
         Top = 160
-        Width = 55
-        Caption = 'Expires (s):'
+        Width = 39
+        Caption = 'Expires:'
         ParentColor = False
       end
       object txtExpires: TEdit
