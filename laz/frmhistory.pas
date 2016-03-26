@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls, Types,
-  LCLType;
+  LCLType, Menus;
 
 type
   THistoryItem = class
@@ -21,6 +21,9 @@ type
   { THistoryForm }
   THistoryForm = class(TForm)
     lstHistory: TListBox;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    PopupMenu1: TPopupMenu;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -29,6 +32,8 @@ type
       ARect: TRect; State: TOwnerDrawState);
     procedure lstHistoryMeasureItem(Control: TWinControl; Index: Integer;
       var AHeight: Integer);
+    procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItem2Click(Sender: TObject);
   private
     { private declarations }
     FHistory: TList;
@@ -51,9 +56,6 @@ uses
   frmmain;
 
 {$R *.lfm}
-
-const
-  MAX_HISTORY = 30;
 
 { THistoryItem }
 
@@ -125,8 +127,6 @@ begin
       s := s + '|' + hi.Fields.DelimitedText;
     MainForm.IniPropStorage.WriteString(IntToStr(i), s);
     Inc(c);
-    if c >= MAX_HISTORY then
-      Break;
   end;
   MainForm.IniPropStorage.WriteString('count', IntToStr(c));
 
@@ -168,6 +168,34 @@ procedure THistoryForm.lstHistoryMeasureItem(Control: TWinControl;
   Index: Integer; var AHeight: Integer);
 begin
   AHeight := lstHistory.Canvas.TextHeight('^_') * 2;
+end;
+
+procedure THistoryForm.MenuItem1Click(Sender: TObject);
+var
+  i: integer;
+  hi: THistoryItem;
+begin
+  i := lstHistory.ItemIndex;
+  if i <> -1 then begin
+    hi := Get(i);
+    if hi <> nil then
+      hi.Free;
+    FHistory.Delete(i);
+    lstHistory.Items.Delete(i);
+  end;
+end;
+
+procedure THistoryForm.MenuItem2Click(Sender: TObject);
+var
+  i: integer;
+  hi: THistoryItem;
+begin
+  for i := 0 to FHistory.Count - 1 do begin
+    hi := THistoryItem(FHistory[i]);
+    hi.Free;
+  end;
+  FHistory.Clear;
+  lstHistory.Clear;
 end;
 
 procedure THistoryForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);

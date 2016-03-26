@@ -158,8 +158,14 @@ begin
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);
+var
+  l: integer;
 begin
-  FHistoryForm.Left := Left - FHistoryForm.Width - 20;
+  l := Left - FHistoryForm.Width - 20;
+  if l < 0 then begin
+    l := Left + Width + 20;
+  end;
+  FhistoryForm.Left := l;
   FHistoryForm.Top := Top;
   FHistoryForm.Height := Height;
   FHistoryForm.Show;

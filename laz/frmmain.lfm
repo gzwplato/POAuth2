@@ -226,6 +226,7 @@ object MainForm: TMainForm
         Height = 23
         Top = 272
         Width = 443
+        Anchors = [akLeft, akBottom]
         TabOrder = 9
         Text = '/resource?query=somevalue'
       end
