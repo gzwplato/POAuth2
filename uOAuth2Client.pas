@@ -239,6 +239,9 @@ var
   json: TJson;
   val: TJsonValue;
 begin
+  if AToken.RefreshToken = '' then
+    raise Exception.Create('No Refresh token');
+
   FHttpClient.ClearHeader;
   FHttpClient.ClearFormFields;
   FHttpClient.AddFormField(OAUTH2_GRANT_TYPE, OAUTH2_REFRESH_TOKEN);

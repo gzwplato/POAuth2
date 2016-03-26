@@ -129,7 +129,7 @@ begin
   end;
   lstHistory.Canvas.FillRect(ARect);
   lstHistory.Canvas.Font.Color := clWindowText;
-  lstHistory.Canvas.TextOut(ARect.Left, ARect.Top, hi.Url);
+  lstHistory.Canvas.TextOut(ARect.Left + 3, ARect.Top, hi.Url);
   y := ARect.Top;
   Inc(y, lstHistory.Canvas.TextHeight('^_'));
   lstHistory.Canvas.Font.Color := clGrayText;
