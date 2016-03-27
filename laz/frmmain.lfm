@@ -15,8 +15,8 @@ object MainForm: TMainForm
   LCLVersion = '1.6.0.4'
   object txtResponse: TMemo
     Left = 0
-    Height = 235
-    Top = 310
+    Height = 230
+    Top = 315
     Width = 712
     Align = alClient
     Color = clBtnFace
@@ -40,22 +40,22 @@ object MainForm: TMainForm
   end
   object pnlTop: TPanel
     Left = 0
-    Height = 305
+    Height = 310
     Top = 0
     Width = 712
     Align = alTop
     BevelOuter = bvNone
-    ClientHeight = 305
+    ClientHeight = 310
     ClientWidth = 712
     TabOrder = 1
     object pnlClient: TPanel
       Left = 0
-      Height = 305
+      Height = 310
       Top = 0
       Width = 459
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 305
+      ClientHeight = 310
       ClientWidth = 459
       TabOrder = 0
       object Label1: TLabel
@@ -64,6 +64,7 @@ object MainForm: TMainForm
         Top = 8
         Width = 22
         Caption = 'Site:'
+        FocusControl = txtSite
         ParentColor = False
       end
       object txtSite: TEdit
@@ -90,6 +91,7 @@ object MainForm: TMainForm
         Top = 56
         Width = 56
         Caption = 'Username:'
+        FocusControl = txtUser
         ParentColor = False
       end
       object Label3: TLabel
@@ -98,6 +100,7 @@ object MainForm: TMainForm
         Top = 56
         Width = 53
         Caption = 'Password:'
+        FocusControl = txtPass
         ParentColor = False
       end
       object txtPass: TEdit
@@ -114,6 +117,7 @@ object MainForm: TMainForm
         Top = 104
         Width = 48
         Caption = 'Client ID:'
+        FocusControl = txtClientId
         ParentColor = False
       end
       object txtClientId: TEdit
@@ -130,6 +134,7 @@ object MainForm: TMainForm
         Top = 104
         Width = 69
         Caption = 'Client Secret:'
+        FocusControl = txtClientSecret
         ParentColor = False
       end
       object txtClientSecret: TEdit
@@ -215,25 +220,27 @@ object MainForm: TMainForm
       object Label9: TLabel
         Left = 8
         Height = 15
-        Top = 251
+        Top = 256
         Width = 51
         Anchors = [akLeft, akBottom]
         Caption = 'Resource:'
+        FocusControl = txtResource
         ParentColor = False
       end
       object txtResource: TEdit
         Left = 8
         Height = 23
-        Top = 272
+        Top = 277
         Width = 443
         Anchors = [akLeft, akBottom]
+        OnExit = txtResourceExit
         TabOrder = 9
         Text = '/resource?query=somevalue'
       end
     end
     object Splitter1: TSplitter
       Left = 459
-      Height = 305
+      Height = 310
       Top = 0
       Width = 5
       Align = alRight
@@ -241,13 +248,13 @@ object MainForm: TMainForm
     end
     object pnlForm: TPanel
       Left = 464
-      Height = 305
+      Height = 310
       Top = 0
       Width = 248
       Align = alRight
       BevelOuter = bvNone
       Caption = 'pnlForm'
-      ClientHeight = 305
+      ClientHeight = 310
       ClientWidth = 248
       TabOrder = 2
       object Label11: TLabel
@@ -260,7 +267,7 @@ object MainForm: TMainForm
       end
       object txtFormFields: TMemo
         Left = 3
-        Height = 207
+        Height = 212
         Top = 24
         Width = 239
         Anchors = [akTop, akLeft, akRight, akBottom]
@@ -271,7 +278,7 @@ object MainForm: TMainForm
       object btnGet: TButton
         Left = 3
         Height = 25
-        Top = 241
+        Top = 246
         Width = 240
         Anchors = [akLeft, akRight, akBottom]
         Caption = 'Get'
@@ -281,7 +288,7 @@ object MainForm: TMainForm
       object btnPost: TButton
         Left = 3
         Height = 25
-        Top = 277
+        Top = 282
         Width = 240
         Anchors = [akLeft, akRight, akBottom]
         Caption = 'Post'
@@ -294,7 +301,7 @@ object MainForm: TMainForm
     Cursor = crVSplit
     Left = 0
     Height = 5
-    Top = 305
+    Top = 310
     Width = 712
     Align = alTop
     ResizeAnchor = akTop
@@ -323,6 +330,13 @@ object MainForm: TMainForm
       object MenuItem4: TMenuItem
         Caption = 'Log'
         OnClick = MenuItem4Click
+      end
+    end
+    object MenuItem6: TMenuItem
+      Caption = '&Tools'
+      object MenuItem7: TMenuItem
+        Caption = 'Options...'
+        OnClick = MenuItem7Click
       end
     end
   end

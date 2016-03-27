@@ -18,7 +18,7 @@ unit uIndyClient;
 interface
 
 uses
-  SysUtils, Classes, IdHttp, uOAuth2HttpClient, IdIOHandler;
+  SysUtils, Classes, IdHttp, uOAuth2HttpClient, IdIOHandler, IdAuthentication;
 
 type
   TIndyHttpClient = class(TOAuth2HttpClient)
@@ -28,11 +28,18 @@ type
     FIOHandler: TIdIOHandler;
     FSSLIOHandler: TIdIOHandler;
     procedure SetIOHandler(const AProt: string);
+    function GetUsername: string;
+    procedure SetUsername(Value: string);
+    function GetPassword: string;
+    procedure SetPassword(Value: string);
   public
     constructor Create(AHttp: TIdHttp);
     destructor Destroy; override;
     function Get(const AUrl: string): TOAuth2Response; override;
     function Post(const AUrl: string): TOAuth2Response; override;
+
+    property Username: string read GetUsername write SetUsername;
+    property Password: string read GetPassword write SetPassword;
   end;
 
 implementation
@@ -64,6 +71,28 @@ begin
   if FOwnClient then
     FHttp.Free;
   inherited;
+end;
+
+function TIndyHttpClient.GetUsername: string;
+begin
+  Result := FHttp.Request.Username;
+end;
+
+procedure TIndyHttpClient.SetUsername(Value: string);
+begin
+  FHttp.Request.Username := Value;
+  FHttp.Request.BasicAuthentication := (FHttp.Request.Username <> '') and (FHttp.Request.Password <> '');
+end;
+
+function TIndyHttpClient.GetPassword: string;
+begin
+  Result := FHttp.Request.Password;
+end;
+
+procedure TIndyHttpClient.SetPassword(Value: string);
+begin
+  FHttp.Request.Password := Value;
+  FHttp.Request.BasicAuthentication := (FHttp.Request.Username <> '') and (FHttp.Request.Password <> '');
 end;
 
 procedure TIndyHttpClient.SetIOHandler(const AProt: string);

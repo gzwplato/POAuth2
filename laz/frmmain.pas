@@ -14,6 +14,8 @@ type
   TMainForm = class(TForm)
     btnGet: TButton;
     btnPost: TButton;
+    MenuItem6: TMenuItem;
+    MenuItem7: TMenuItem;
     txtResource: TEdit;
     IniPropStorage: TIniPropStorage;
     Label1: TLabel;
@@ -58,6 +60,7 @@ type
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
+    procedure MenuItem7Click(Sender: TObject);
     procedure txtFormFieldsExit(Sender: TObject);
     procedure txtResourceExit(Sender: TObject);
     procedure txtSiteExit(Sender: TObject);
@@ -84,7 +87,7 @@ var
 implementation
 
 uses
-  uOAuth2Tools, uJson, uOAuth2Consts, LCLIntf, frmlog;
+  uOAuth2Tools, uJson, uOAuth2Consts, LCLIntf, frmlog, dlgoptions, uOAuth2Config;
 
 {$R *.lfm}
 
@@ -97,6 +100,7 @@ procedure TMainForm.FormCreate(Sender: TObject);
 var
   i, c: integer;
   s: string;
+  cfg: TOAuth2Config;
 begin
   Constraints.MinWidth := Width;
   pnlclient.Constraints.MinWidth := pnlClient.Width;
@@ -104,7 +108,6 @@ begin
   FIdHttp := TIdHTTP.Create(Self);
   FIdHttp.Request.UserAgent := 'Mozilla/3.0 (compatible; POAuth2)';
   FClient := TIndyHttpClient.Create(FIdHttp);
-  FOAuthClient := TOAuth2Client.Create(FClient);
   FSendStream := TMemoryStream.Create;
   FReceiveStream := TMemoryStream.Create;
   FIdLog := TIdLogStream.Create(nil);
@@ -124,6 +127,13 @@ begin
   txtClientId.Text := IniPropStorage.ReadString('client_id', txtClientId.Text);
   txtClientSecret.Text := IniPropStorage.ReadString('client_secret', txtClientSecret.Text);
   txtResource.Text := IniPropStorage.ReadString('resource', txtResource.Text);
+
+  IniPropStorage.IniSection := 'options';
+  cfg.TokenEndPoint := IniPropStorage.ReadString('at_endpoint', DEF_OATUH2_CONFIG.TokenEndPoint);
+  FOAuthClient := TOAuth2Client.Create(cfg, FClient);
+  FClient.Username := IniPropStorage.ReadString('ba_username', '');
+  FClient.Password := IniPropStorage.ReadString('ba_password', '');
+
   txtFormFields.Lines.Clear;
   IniPropStorage.IniSection := 'postfields';
   c := IniPropStorage.ReadInteger('count', 0);
@@ -186,6 +196,26 @@ begin
   FHistoryForm.Show;
 end;
 
+procedure TMainForm.MenuItem7Click(Sender: TObject);
+var
+  cfg: TOAuth2Config;
+begin
+  with TOptionsDialog.Create(Self) do try
+    cfg := FOAuthClient.Config;
+    txtAccessTokenEndpoint.Text := cfg.TokenEndPoint;
+    txtUsername.Text := FClient.Username;
+    txtPassword.Text := FClient.Password;
+    if ShowModal = mrOK then begin
+      cfg.TokenEndPoint := txtAccessTokenEndpoint.Text;
+      FOAuthClient.Config := cfg;
+      FClient.Username := txtUsername.Text;
+      FClient.Password := txtPassword.Text;
+    end;
+  finally
+    Free;
+  end;
+end;
+
 procedure TMainForm.txtFormFieldsExit(Sender: TObject);
 var
   i, c: integer;
@@ -220,6 +250,12 @@ begin
   IniPropStorage.WriteString('client_id', txtClientId.Text);
   IniPropStorage.WriteString('client_secret', txtClientSecret.Text);
   IniPropStorage.WriteString('resource', txtResource.Text);
+
+  IniPropStorage.IniSection := 'options';
+  IniPropStorage.WriteString('at_endpoint', FOAuthClient.Config.TokenEndPoint);
+  IniPropStorage.WriteString('ba_username', FClient.Username);
+  IniPropStorage.WriteString('ba_password', FClient.Password);
+
   IniPropStorage.IniSection := 'postfields';
   c := 0;
   for i := 0 to txtFormFields.Lines.Count - 1 do begin

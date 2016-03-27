@@ -68,6 +68,7 @@ type
     property Site: string read FSite write SetSite;
     property GrantType: TOAuth2GrantType read FGrantType write SetGrantType default gtPassword;
     property AccessToken: TOAuth2Token read FAccessToken write SetAccessToken;
+    property Config: TOAuth2Config read FConfig write FConfig;
   end;
 
 implementation
