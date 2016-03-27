@@ -17,7 +17,7 @@ unit uOAuth2Client;
   Limitations:
     * Only the password GrantType (i.e. user credentials) is supported.
     * Server must return JSON
-    * Refress token must be returned with the access token
+    * Refresh token must be returned with the access token
 }
 
 interface
@@ -44,7 +44,6 @@ type
     FAccessToken: TOAuth2Token;
     FGrantType: TOAuth2GrantType;
     FConfig: TOAuth2Config;
-    function GetAuthHeaderForAccessToken(const AAccessToken: string): string;
     procedure RefreshAccessToken(AToken: TOAuth2Token);
     function GetAccessToken: TOAuth2Token;
     procedure SetAccessToken(Value: TOAuth2Token);
@@ -217,6 +216,8 @@ begin
     val := json.GetValue(OAUTH2_TOKEN_TYPE);
     if val.Kind = JVKString then begin
       Result.TokenType := json.Output.Strings[val.Index];
+      if Result.TokenType <> OAUTH2_BEARER then
+        raise Exception.Create(OAUTH2_BEARER + ' Token type required');
     end;
     val := json.GetValue(OAUTH2_SCOPE);
     if val.Kind = JVKString then begin
@@ -225,11 +226,6 @@ begin
   finally
     json.Free;
   end;
-end;
-
-function TOAuth2Client.GetAuthHeaderForAccessToken(const AAccessToken: string): string;
-begin
-  Result := Format('%s %s', [OAUTH2_BEARER, AAccessToken]);
 end;
 
 procedure TOAuth2Client.RefreshAccessToken(AToken: TOAuth2Token);
@@ -277,6 +273,8 @@ begin
     val := json.GetValue(OAUTH2_TOKEN_TYPE);
     if val.Kind = JVKString then begin
       AToken.TokenType := json.Output.Strings[val.Index];
+      if AToken.TokenType <> OAUTH2_BEARER then
+        raise Exception.Create(OAUTH2_BEARER + ' Token type required');
     end;
     val := json.GetValue(OAUTH2_SCOPE);
     if val.Kind = JVKString then begin
@@ -304,7 +302,7 @@ begin
   case FAccessTokenLoc of
     atlUnknown:
       begin
-        FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
+        FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, FAccessToken.GetAuthHeader);
         Result := FHttpClient.Get(url);
         if IsAccessDenied(Result.Code) then begin
           // Maybe passing access token as formfield helps
@@ -318,7 +316,7 @@ begin
       end;
     atlHeader:
       begin
-        FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
+        FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, FAccessToken.GetAuthHeader);
         Result := FHttpClient.Get(url);
       end;
     atlFormfield:
@@ -355,7 +353,7 @@ begin
   case FAccessTokenLoc of
     atlUnknown:
       begin
-        FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
+        FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, FAccessToken.GetAuthHeader);
         Result := FHttpClient.Post(url);
         if IsAccessDenied(Result.Code) then begin
           // Maybe passing access token as formfield helps
@@ -369,7 +367,7 @@ begin
       end;
     atlHeader:
       begin
-        FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, GetAuthHeaderForAccessToken(FAccessToken.AccessToken));
+        FHttpClient.AddHeader(OAUTH2_AUTHORIZATION, FAccessToken.GetAuthHeader);
         Result := FHttpClient.Post(url);
       end;
     atlFormfield:

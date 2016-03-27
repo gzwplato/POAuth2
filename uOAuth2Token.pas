@@ -27,6 +27,7 @@ type
     procedure SetExpiresIn(Value: integer);
   public
     function IsExpired: boolean;
+    function GetAuthHeader: string;
 
     property ExpiresIn: integer read FExpiresIn write SetExpiresIn;
     property ExpiresAt: TDateTime read FExpiresAt write FExpiresAt;
@@ -39,6 +40,11 @@ implementation
 
 uses
   DateUtils;
+
+function TOAuth2Token.GetAuthHeader: string;
+begin
+  Result := Format('%s %s', [FTokenType, FAccessToken]);
+end;
 
 procedure TOAuth2Token.SetExpiresIn(Value: integer);
 begin
