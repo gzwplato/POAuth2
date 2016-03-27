@@ -36,7 +36,6 @@ type
     procedure MenuItem2Click(Sender: TObject);
   private
     { private declarations }
-    FHistory: TList;
     FOnSelect: TNotifyEvent;
   public
     { public declarations }
@@ -91,8 +90,8 @@ procedure THistoryForm.FormCreate(Sender: TObject);
 var
   i, c, p: integer;
   url, fields, s: string;
+  hi: THistoryItem;
 begin
-  FHistory := TList.Create;
   MainForm.IniPropStorage.IniSection := 'history';
   c := MainForm.IniPropStorage.ReadInteger('count', 0);
   for i := 0 to c - 1 do begin
@@ -106,7 +105,8 @@ begin
         url := s;
         fields := '';
       end;
-      Add(url, fields);
+      hi := THistoryItem.Create(url, fields);
+      lstHistory.Items.AddObject(hi.Url, hi);
     end;
   end;
   lstHistory.Canvas.Font.Assign(lstHistory.Font);
@@ -120,8 +120,8 @@ var
 begin
   MainForm.IniPropStorage.IniSection := 'history';
   c := 0;
-  for i := 0 to FHistory.Count - 1 do begin
-    hi := THistoryItem(FHistory[i]);
+  for i := 0 to lstHistory.Count - 1 do begin
+    hi := THistoryItem(lstHistory.Items.Objects[i]);
     s := hi.Url;
     if hi.Fields.DelimitedText <> '' then
       s := s + '|' + hi.Fields.DelimitedText;
@@ -130,11 +130,10 @@ begin
   end;
   MainForm.IniPropStorage.WriteString('count', IntToStr(c));
 
-  for i := 0 to FHistory.Count - 1 do begin
-    hi := THistoryItem(FHistory[i]);
+  for i := 0 to lstHistory.Count - 1 do begin
+    hi := THistoryItem(lstHistory.Items.Objects[i]);
     hi.Free;
   end;
-  FHistory.Free;
 end;
 
 procedure THistoryForm.lstHistoryClick(Sender: TObject);
@@ -149,7 +148,7 @@ var
   hi: THistoryItem;
   y: integer;
 begin
-  hi := THistoryItem(FHistory[Index]);
+  hi := THistoryItem(lstHistory.Items.Objects[Index]);
   if (odSelected in State) then begin
     lstHistory.Canvas.Brush.Color := clHighlight;
   end else begin
@@ -180,7 +179,6 @@ begin
     hi := Get(i);
     if hi <> nil then
       hi.Free;
-    FHistory.Delete(i);
     lstHistory.Items.Delete(i);
   end;
 end;
@@ -190,11 +188,10 @@ var
   i: integer;
   hi: THistoryItem;
 begin
-  for i := 0 to FHistory.Count - 1 do begin
-    hi := THistoryItem(FHistory[i]);
+  for i := 0 to lstHistory.Count - 1 do begin
+    hi := THistoryItem(lstHistory.Items.Objects[i]);
     hi.Free;
   end;
-  FHistory.Clear;
   lstHistory.Clear;
 end;
 
@@ -216,17 +213,15 @@ begin
       s := Format('%s?%s', [AUrl, AFields])
   end else
     s := AUrl;
-  for i := 0 to FHistory.Count - 1 do begin
-    hi := THistoryItem(FHistory[i]);
+  for i := 0 to lstHistory.Count - 1 do begin
+    hi := THistoryItem(lstHistory.Items.Objects[i]);
     if hi.GetText = s then begin
-      FHistory.Move(i, 0);
       lstHistory.Items.Move(i, 0);
       Exit;
     end;
   end;
   hi := THistoryItem.Create(AUrl, AFields);
-  FHistory.Insert(0, hi);
-  lstHistory.Items.Insert(0, hi.Url);
+  lstHistory.Items.InsertObject(0, hi.Url, hi);
   lstHistory.ItemIndex := 0;
 end;
 
@@ -240,8 +235,8 @@ end;
 
 function THistoryForm.Get(const Index: integer): THistoryItem;
 begin
-  if (Index > -1) and (Index < FHistory.Count) then
-    Result := THistoryItem(FHistory[Index])
+  if (Index > -1) and (Index < lstHistory.Count) then
+    Result := THistoryItem(lstHistory.Items.Objects[Index])
   else
     Result := nil;
 end;
