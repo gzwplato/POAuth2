@@ -63,7 +63,7 @@ object OptionsDialog: TOptionsDialog
   object GroupBox1: TGroupBox
     Left = 8
     Height = 136
-    Top = 56
+    Top = 64
     Width = 392
     Anchors = [akTop, akLeft, akRight]
     Caption = 'HTTP Basic Authentication'
