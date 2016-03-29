@@ -8,7 +8,7 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, frmmain, uOAuth2Token, uIndyClient, uOAuth2HttpClient, uOAuth2Config,
-  uOAuth2Client, uJson, frmlog, frmhistory, dlgoptions;
+  uOAuth2Client, uJson, frmlog, frmhistory, dlgoptions, frmhash;
 
 {$R *.res}
 
@@ -17,6 +17,7 @@ begin
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TLogForm, LogForm);
+  Application.CreateForm(THashForm, HashForm);
   Application.Run;
 end.
 

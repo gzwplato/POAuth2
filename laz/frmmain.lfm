@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 1978
+  Left = 3380
   Height = 588
-  Top = 67
+  Top = 147
   Width = 712
   Caption = 'POAuth2'
   ClientHeight = 568
@@ -334,6 +334,10 @@ object MainForm: TMainForm
     end
     object MenuItem6: TMenuItem
       Caption = '&Tools'
+      object MenuItem8: TMenuItem
+        Caption = 'Hashes'
+        OnClick = MenuItem8Click
+      end
       object MenuItem7: TMenuItem
         Caption = 'Options...'
         OnClick = MenuItem7Click

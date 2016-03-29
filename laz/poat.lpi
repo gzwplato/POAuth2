@@ -67,7 +67,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="13">
+    <Units Count="15">
       <Unit0>
         <Filename Value="poat.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -129,8 +129,20 @@
         <Filename Value="dlgoptions.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="OptionsDialog"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit12>
+      <Unit13>
+        <Filename Value="frmhash.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="HashForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="..\uOAuth2Hmac.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit14>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -16,6 +16,7 @@ type
     btnPost: TButton;
     MenuItem6: TMenuItem;
     MenuItem7: TMenuItem;
+    MenuItem8: TMenuItem;
     txtResource: TEdit;
     IniPropStorage: TIniPropStorage;
     Label1: TLabel;
@@ -61,6 +62,7 @@ type
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
     procedure MenuItem7Click(Sender: TObject);
+    procedure MenuItem8Click(Sender: TObject);
     procedure txtFormFieldsExit(Sender: TObject);
     procedure txtResourceExit(Sender: TObject);
     procedure txtSiteExit(Sender: TObject);
@@ -87,7 +89,8 @@ var
 implementation
 
 uses
-  uOAuth2Tools, uJson, uOAuth2Consts, LCLIntf, frmlog, dlgoptions, uOAuth2Config;
+  uOAuth2Tools, uJson, uOAuth2Consts, LCLIntf, frmlog, dlgoptions, uOAuth2Config,
+  frmhash;
 
 {$R *.lfm}
 
@@ -214,6 +217,11 @@ begin
   finally
     Free;
   end;
+end;
+
+procedure TMainForm.MenuItem8Click(Sender: TObject);
+begin
+  HashForm.Show;
 end;
 
 procedure TMainForm.txtFormFieldsExit(Sender: TObject);
@@ -384,7 +392,7 @@ end;
 
 procedure TMainForm.AddHistory;
 var
-  r, s: string;
+  r: string;
 begin
   r := txtResource.Text;
   if r <> '' then begin

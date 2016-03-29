@@ -1,0 +1,94 @@
+object HashForm: THashForm
+  Left = 2066
+  Height = 412
+  Top = 197
+  Width = 528
+  Caption = 'Hash'
+  ClientHeight = 412
+  ClientWidth = 528
+  OnCreate = FormCreate
+  Position = poDefaultPosOnly
+  LCLVersion = '1.6.0.4'
+  object txtInput: TMemo
+    Left = 0
+    Height = 304
+    Top = 0
+    Width = 528
+    Align = alClient
+    ScrollBars = ssAutoBoth
+    TabOrder = 0
+    WordWrap = False
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 74
+    Top = 338
+    Width = 528
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 74
+    ClientWidth = 528
+    TabOrder = 1
+    object cboHashes: TComboBox
+      Left = 8
+      Height = 23
+      Top = 9
+      Width = 316
+      Anchors = [akTop, akLeft, akRight]
+      ItemHeight = 15
+      Style = csDropDownList
+      TabOrder = 0
+    end
+    object Button1: TButton
+      Left = 332
+      Height = 25
+      Top = 9
+      Width = 91
+      Anchors = [akTop, akRight]
+      Caption = 'Hash'
+      OnClick = Button1Click
+      TabOrder = 1
+    end
+    object txtResult: TEdit
+      Left = 8
+      Height = 23
+      Top = 40
+      Width = 511
+      Anchors = [akTop, akLeft, akRight]
+      Color = clBtnFace
+      ReadOnly = True
+      TabStop = False
+      TabOrder = 3
+    end
+    object Button2: TButton
+      Left = 428
+      Height = 25
+      Top = 9
+      Width = 91
+      Anchors = [akTop, akRight]
+      Caption = 'HMAC'
+      OnClick = Button2Click
+      TabOrder = 2
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 34
+    Top = 304
+    Width = 528
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 34
+    ClientWidth = 528
+    TabOrder = 2
+    object txtHmacKey: TEdit
+      Left = 8
+      Height = 23
+      Top = 8
+      Width = 511
+      Anchors = [akTop, akLeft, akRight]
+      TabOrder = 0
+      TextHint = 'HMAC Key'
+    end
+  end
+end

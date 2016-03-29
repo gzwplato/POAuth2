@@ -14,7 +14,7 @@ unit uOAuth2Tools;
 interface
 
 uses
-  SysUtils;
+  SysUtils, Hash;
 
 type
   TUrlParts = record
@@ -43,6 +43,9 @@ function AddTrailingSlash(const S: string): string;
 function IsJson(const AContentType: string): boolean;
 function IsAccessDenied(const ACode: integer): boolean;
 
+function DateTimeToUnix(ADateTime: TDateTime): Longint;
+function UnixToDateTime(ATimestamp: Longint): TDateTime;
+
 implementation
 
 uses
@@ -54,6 +57,17 @@ uses
 
 const
   BASE64_CODES: AnsiString = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
+  UNIX_STARTDATE: TDateTime = 25569.0;
+
+function DateTimeToUnix(ADateTime: TDateTime): LongInt;
+begin
+  Result := Round((ADateTime - UNIX_STARTDATE) * 86400);
+end;
+
+function UnixToDateTime(ATimestamp: LongInt): TDateTime;
+begin
+  Result := (ATimestamp / 86400) + UNIX_STARTDATE;
+end;
 
 function GetBasicAuthHeader(const AUsername, APassword: string): string;
 begin

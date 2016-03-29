@@ -3,6 +3,7 @@ object HistoryForm: THistoryForm
   Height = 472
   Top = 169
   Width = 280
+  BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'History'
   ClientHeight = 472
   ClientWidth = 280
