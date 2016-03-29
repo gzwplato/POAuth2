@@ -51,6 +51,7 @@ begin
     cboHashes.AddItem(ht^.Name, TObject(ht));
   end;
   cboHashes.ItemIndex := cboHashes.Items.IndexOf('SHA-256');
+  HmacSelfTest;
 end;
 
 procedure THashForm.Button1Click(Sender: TObject);
