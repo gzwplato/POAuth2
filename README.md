@@ -74,6 +74,7 @@ implements the methods `Get` and `Post`.
 ## Limitations
 
 * Only the password GrantType (i.e. user credentials) is supported.
+* Supported token types: Bearer, MAC (untested)
 * Server must return JSON
 * Refresh token must be returned with the access token
 
