@@ -85,3 +85,4 @@ implements the methods `Get` and `Post`.
 ## Get it
 
 * [GitHub](https://github.com/stievie/POAuth2)
+* [Lazarus Win32 Demo binary](https://0x2a.wtf/files/poat.zip)
