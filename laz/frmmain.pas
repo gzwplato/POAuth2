@@ -14,9 +14,11 @@ type
   TMainForm = class(TForm)
     btnGet: TButton;
     btnPost: TButton;
+    MenuItem10: TMenuItem;
     MenuItem6: TMenuItem;
     MenuItem7: TMenuItem;
     MenuItem8: TMenuItem;
+    MenuItem9: TMenuItem;
     txtResource: TEdit;
     IniPropStorage: TIniPropStorage;
     Label1: TLabel;
@@ -58,6 +60,7 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure MenuItem10Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
@@ -90,7 +93,7 @@ implementation
 
 uses
   uOAuth2Tools, uJson, uOAuth2Consts, LCLIntf, frmlog, dlgoptions, uOAuth2Config,
-  frmhash;
+  frmhash, dlgabout;
 
 {$R *.lfm}
 
@@ -182,6 +185,15 @@ begin
   FHistoryForm.Top := Top;
   FHistoryForm.Height := Height;
   FHistoryForm.Show;
+end;
+
+procedure TMainForm.MenuItem10Click(Sender: TObject);
+begin
+  with TAboutDialog.Create(Self) do try
+    ShowModal;
+  finally
+    Free;
+  end;
 end;
 
 procedure TMainForm.MenuItem2Click(Sender: TObject);

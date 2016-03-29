@@ -343,5 +343,12 @@ object MainForm: TMainForm
         OnClick = MenuItem7Click
       end
     end
+    object MenuItem9: TMenuItem
+      Caption = '&Help'
+      object MenuItem10: TMenuItem
+        Caption = 'About...'
+        OnClick = MenuItem10Click
+      end
+    end
   end
 end
