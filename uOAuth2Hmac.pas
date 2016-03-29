@@ -93,11 +93,11 @@ begin
     raise Exception.CreateFmt('Unknown/unsupported Hash %s', [AHashName]);
   end;
   // Blocksize is 64 (bytes) when using one of the following hash functions: SHA-1, MD5, RIPEMD-128/160
-  if (ht^.HashClass.ClassType = THashSHA1) or
-    (ht^.HashClass.ClassType = THashSHA256) or
-    (ht^.HashClass.ClassType = THashMD5) or
-    (ht^.HashClass.ClassType = THashRipeMD128) or
-    (ht^.HashClass.ClassType = THashRipeMD160) then
+  if ht^.HashClass.InheritsFrom(THashSHA1) or
+    ht^.HashClass.InheritsFrom(THashSHA256) or
+    ht^.HashClass.InheritsFrom(THashMD5) or
+    ht^.HashClass.InheritsFrom(THashRipeMD128) or
+    ht^.HashClass.InheritsFrom(THashRipeMD160) then
     size := 64
   else
     size := ht^.HashClass.GetSize;

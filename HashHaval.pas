@@ -22,8 +22,8 @@ type
     procedure Compress;
   protected
     fLenHi, fLenLo: Cardinal;
-    fIndex: DWord;
-    fCurHash: array[0..7] of DWord;
+    fIndex: Cardinal;
+    fCurHash: array[0..7] of Cardinal;
     fHashBuff: array[0..127] of byte;
   public
     procedure Init; override;
@@ -62,9 +62,9 @@ end;
 
 procedure THashHaval.Compress;
 var
-  t7, t6, t5, t4, t3, t2, t1, t0: DWord;
-  W: array[0..31] of DWord;
-  Temp: dword;
+  t7, t6, t5, t4, t3, t2, t1, t0: Cardinal;
+  W: array[0..31] of Cardinal;
+  Temp: Cardinal;
 begin
   t0 := fCurHash[0];
   t1 := fCurHash[1];
@@ -453,7 +453,7 @@ begin
 
   PBuf:= @Buffer;
   while Size> 0 do begin
-    if (SizeOf(fHashBuff) - fIndex) <= DWord(Size) then begin
+    if (SizeOf(fHashBuff) - fIndex) <= Cardinal(Size) then begin
       Move(PBuf^, fHashBuff[fIndex], Sizeof(fHashBuff) - fIndex);
       Dec(Size, SizeOf(fHashBuff) - fIndex);
       Inc(PBuf, SizeOf(fHashBuff) - fIndex);
@@ -474,8 +474,8 @@ begin
 
   fHashBuff[118]:= ((256 and 3) shl 6) or (5 shl 3) or 1;
   fHashBuff[119]:= (256 shr 2) and $FF;
-  PDWord(@fHashBuff[120])^:= fLenLo;
-  PDWord(@fHashBuff[124])^:= fLenHi;
+  PCardinal(@fHashBuff[120])^:= fLenLo;
+  PCardinal(@fHashBuff[124])^:= fLenHi;
   Compress;
 
   Move(fCurHash, Digest, 256 div 8);

@@ -22,8 +22,8 @@ type
     procedure Compress;
   protected
     fLenHi, fLenLo: Cardinal;
-    fIndex: DWord;
-    fCurHash: array[0..4] of DWord;
+    fIndex: Cardinal;
+    fCurHash: array[0..4] of Cardinal;
     fHashBuff: array[0..63] of byte;
   public
     procedure Init; override;
@@ -39,7 +39,7 @@ type
 implementation
 {$R-}{$Q-}
 
-function SwapDWord(a: dword): dword;
+function SwapDWord(a: Cardinal): Cardinal;
 begin
   Result:= ((a and $FF) shl 24) or ((a and $FF00) shl 8) or ((a and $FF0000) shr 8)
     or ((a and $FF000000) shr 24);
@@ -66,8 +66,8 @@ end;
 
 procedure THashSHA1.Compress;
 var
-  A, B, C, D, E: DWord;
-  W: array[0..79] of DWord;
+  A, B, C, D, E: Cardinal;
+  W: array[0..79] of Cardinal;
   i: longword;
 begin
   fIndex:= 0;
@@ -193,7 +193,7 @@ begin
   PBuf:= @Buffer;
   while Size> 0 do
   begin
-    if (Sizeof(fHashBuff)-fIndex)<= DWord(Size) then
+    if (Sizeof(fHashBuff)-fIndex)<= Cardinal(Size) then
     begin
       Move(PBuf^,fHashBuff[fIndex],Sizeof(fHashBuff)-fIndex);
       Dec(Size,Sizeof(fHashBuff)-fIndex);
@@ -214,8 +214,8 @@ begin
   fHashBuff[fIndex]:= $80;
   if fIndex>= 56 then
     Compress;
-  PDWord(@fHashBuff[56])^:= SwapDWord(fLenHi);
-  PDWord(@fHashBuff[60])^:= SwapDWord(fLenLo);
+  PCardinal(@fHashBuff[56])^:= SwapDWord(fLenHi);
+  PCardinal(@fHashBuff[60])^:= SwapDWord(fLenLo);
   Compress;
   fCurHash[0]:= SwapDWord(fCurHash[0]);
   fCurHash[1]:= SwapDWord(fCurHash[1]);
@@ -236,7 +236,7 @@ end;
 
 class function THashSHA1.GetSize: integer;
 begin
-  Result := SizeOf(DWord) * 5;
+  Result := SizeOf(Cardinal) * 5;
 end;
 
 initialization

@@ -147,6 +147,7 @@
         <Filename Value="dlgabout.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="AboutDialog"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit15>
     </Units>

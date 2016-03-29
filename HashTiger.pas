@@ -22,7 +22,7 @@ type
     procedure Compress;
   protected
     fLen: Int64;
-    fIndex: DWord;
+    fIndex: Cardinal;
     fCurHash: array[0..2] of Int64;
     fHashBuff: array[0..63] of byte;
   public
@@ -743,7 +743,7 @@ begin
   PBuf:= @Buffer;
   while Size> 0 do
   begin
-    if (Sizeof(fHashBuff)-fIndex)<= DWord(Size) then
+    if (Sizeof(fHashBuff)-fIndex)<= Cardinal(Size) then
     begin
       Move(PBuf^,fHashBuff[fIndex],Sizeof(fHashBuff)-fIndex);
       Dec(Size,Sizeof(fHashBuff)-fIndex);

@@ -22,8 +22,8 @@ type
     procedure Compress;
   protected
     fLenHi, fLenLo: Cardinal;
-    fIndex: DWord;
-    fCurHash: array[0..3] of DWord;
+    fIndex: Cardinal;
+    fCurHash: array[0..3] of Cardinal;
     fHashBuff: array[0..63] of byte;
   public
     procedure Init; override;
@@ -60,8 +60,8 @@ end;
 
 procedure THashRipeMD128.Compress;
 var
-  X: array[0..15] of DWord;
-  a, aa, b, bb, c, cc, d, dd, t: dword;
+  X: array[0..15] of Cardinal;
+  a, aa, b, bb, c, cc, d, dd, t: Cardinal;
 begin
   Move(fHashBuff,X,Sizeof(X));
   a:= fCurHash[0]; aa:= a;
@@ -237,7 +237,7 @@ begin
   PBuf:= @Buffer;
   while Size> 0 do
   begin
-    if (Sizeof(fHashBuff)-fIndex)<= DWord(Size) then
+    if (Sizeof(fHashBuff)-fIndex)<= Cardinal(Size) then
     begin
       Move(PBuf^,fHashBuff[fIndex],Sizeof(fHashBuff)-fIndex);
       Dec(Size,Sizeof(fHashBuff)-fIndex);
@@ -258,8 +258,8 @@ begin
   fHashBuff[fIndex]:= $80;
   if fIndex>= 56 then
     Compress;
-  PDWord(@fHashBuff[56])^:= fLenLo;
-  PDWord(@fHashBuff[60])^:= fLenHi;
+  PCardinal(@fHashBuff[56])^:= fLenLo;
+  PCardinal(@fHashBuff[60])^:= fLenHi;
   Compress;
   Move(fCurHash,Digest,Sizeof(fCurHash));
   Burn;
@@ -275,7 +275,7 @@ end;
 
 class function THashRipeMD128.GetSize: integer;
 begin
-  Result := SizeOf(DWord) * 4;
+  Result := SizeOf(Cardinal) * 4;
 end;
 
 initialization

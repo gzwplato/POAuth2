@@ -21,7 +21,7 @@ type
   private
   protected
     fLenHi, fLenLo: Int64;
-    fIndex: DWord;
+    fIndex: Cardinal;
     fCurHash: array[0..7] of Int64;
     fHashBuff: array[0..127] of byte;
     procedure Compress;
@@ -163,7 +163,7 @@ begin
   PBuf:= @Buffer;
   while Size> 0 do
   begin
-    if (Sizeof(fHashBuff)-fIndex)<= DWord(Size) then
+    if (Sizeof(fHashBuff)-fIndex)<= Cardinal(Size) then
     begin
       Move(PBuf^,fHashBuff[fIndex],Sizeof(fHashBuff)-fIndex);
       Dec(Size,Sizeof(fHashBuff)-fIndex);
