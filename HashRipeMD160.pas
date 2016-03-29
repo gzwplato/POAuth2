@@ -14,7 +14,7 @@ unit HashRipeMD160;
 interface
 
 uses
-  SysUtils, Classes, Windows, Hash;
+  SysUtils, Classes, Hash;
 
 type
   THashRipeMD160 = class(THash)

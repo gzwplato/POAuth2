@@ -18,10 +18,6 @@ unit HashSHA512;
 interface
 
 uses
-{$IFNDEF FPC}
-  Windows,
-{$ELSE}
-{$ENDIF}
   SysUtils, Classes, Hash, HashSHA512Base;
 
 type

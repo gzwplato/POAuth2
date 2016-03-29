@@ -14,7 +14,7 @@ unit HashSHA1;
 interface
 
 uses
-  SysUtils, Classes, Windows, Hash;
+  SysUtils, Classes, Hash;
 
 type
   THashSHA1 = class(THash)

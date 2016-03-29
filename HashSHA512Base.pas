@@ -14,7 +14,7 @@ unit HashSHA512Base;
 interface
 
 uses
-  SysUtils, Classes, Windows, Hash;
+  SysUtils, Classes, Hash;
 
 type
   THashSHA512Base = class(THash)

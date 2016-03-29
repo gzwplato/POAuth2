@@ -14,7 +14,7 @@ unit HashSHA256;
 interface
 
 uses
-  SysUtils, Classes, Windows, Hash;
+  SysUtils, Classes, Hash;
 
 type
   THashSHA256 = class(THash)

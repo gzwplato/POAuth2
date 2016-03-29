@@ -14,7 +14,7 @@ unit HashHaval;
 interface
 
 uses
-  SysUtils, Classes, Windows, Hash;
+  SysUtils, Classes, Hash;
 
 type
   THashHaval = class(THash)

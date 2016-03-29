@@ -14,7 +14,7 @@ unit HashMD5;
 interface
 
 uses
-  SysUtils, Classes, Windows, Hash;
+  SysUtils, Classes, Hash;
 
 type
   THashMD5 = class(THash)

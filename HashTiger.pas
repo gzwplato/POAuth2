@@ -14,7 +14,7 @@ unit HashTiger;
 interface
 
 uses
-  SysUtils, Classes, Windows, Hash;
+  SysUtils, Classes, Hash;
 
 type
   THashTiger = class(THash)

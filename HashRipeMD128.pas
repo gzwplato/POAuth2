@@ -14,7 +14,7 @@ unit HashRipeMD128;
 interface
 
 uses
-  SysUtils, Classes, Windows, Hash;
+  SysUtils, Classes, Hash;
 
 type
   THashRipeMD128 = class(THash)
