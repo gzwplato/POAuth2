@@ -224,6 +224,7 @@ object MainForm: TMainForm
         Height = 15
         Top = 8
         Width = 61
+        Anchors = [akTop, akRight]
         Caption = 'Grant Type:'
         FocusControl = cboGrantType
         ParentColor = False
