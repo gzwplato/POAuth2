@@ -551,7 +551,7 @@ var
   i: integer;
   O: TJsonPair;
 begin
-  for i := 0 to Length(FOutput.Objects[0]) do begin
+  for i := Low(FOutput.Objects[0]) to High(FOutput.Objects[0]) do begin
     O := FOutput.Objects[0][i];
     if O.Key = Key then begin
       Result := O.Value;

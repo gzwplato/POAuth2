@@ -14,18 +14,27 @@ type
   TMainForm = class(TForm)
     btnGet: TButton;
     btnPost: TButton;
+    cboGrantType: TComboBox;
+    Label13: TLabel;
+    pgClient: TPage;
+    txtAuthCode: TEdit;
+    Label12: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
     MenuItem10: TMenuItem;
     MenuItem6: TMenuItem;
     MenuItem7: TMenuItem;
     MenuItem8: TMenuItem;
     MenuItem9: TMenuItem;
+    nbCredentials: TNotebook;
+    pgAuthCode: TPage;
+    pgUser: TPage;
+    txtPass: TEdit;
     txtResource: TEdit;
     IniPropStorage: TIniPropStorage;
     Label1: TLabel;
     Label10: TLabel;
     Label11: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
@@ -49,7 +58,6 @@ type
     txtClientSecret: TEdit;
     txtExpires: TEdit;
     txtFormFields: TMemo;
-    txtPass: TEdit;
     txtRefreshToken: TEdit;
     txtResponse: TMemo;
     txtSite: TEdit;
@@ -57,6 +65,7 @@ type
     txtUser: TEdit;
     procedure btnGetClick(Sender: TObject);
     procedure btnPostClick(Sender: TObject);
+    procedure cboGrantTypeSelect(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -82,6 +91,7 @@ type
     function GetFormFields: string;
     procedure ReadStreams;
     procedure History_Select(Sender: TObject);
+    procedure SelectGrantType;
   public
     { public declarations }
   end;
@@ -133,6 +143,8 @@ begin
   txtClientId.Text := IniPropStorage.ReadString('client_id', txtClientId.Text);
   txtClientSecret.Text := IniPropStorage.ReadString('client_secret', txtClientSecret.Text);
   txtResource.Text := IniPropStorage.ReadString('resource', txtResource.Text);
+  cboGrantType.ItemIndex := IniPropStorage.ReadInteger('grant_type', 0);
+  SelectGrantType;
 
   IniPropStorage.IniSection := 'options';
   cfg.TokenEndPoint := IniPropStorage.ReadString('at_endpoint', DEF_OATUH2_CONFIG.TokenEndPoint);
@@ -270,6 +282,7 @@ begin
   IniPropStorage.WriteString('client_id', txtClientId.Text);
   IniPropStorage.WriteString('client_secret', txtClientSecret.Text);
   IniPropStorage.WriteString('resource', txtResource.Text);
+  IniPropStorage.WriteInteger('grant_type', cboGrantType.ItemIndex);
 
   IniPropStorage.IniSection := 'options';
   IniPropStorage.WriteString('at_endpoint', FOAuthClient.Config.TokenEndPoint);
@@ -308,9 +321,10 @@ begin
     FSendStream.Clear;
     FReceiveStream.Clear;
     FOAuthClient.Site := txtSite.Text;
-    FOAuthClient.GrantType := gtPassword;
+    FOAuthClient.GrantType := TOAuth2GrantType(cboGrantType.ItemIndex);
     FOAuthClient.UserName := txtUser.Text;
     FOAuthClient.PassWord := txtPass.Text;
+    FOAuthClient.AuthCode := txtAuthCode.Text;
     FOAuthClient.ClientId := txtClientId.Text;
     FOAuthClient.ClientSecret := txtClientSecret.Text;
     try
@@ -358,9 +372,10 @@ begin
     FSendStream.Clear;
     FReceiveStream.Clear;
     FOAuthClient.Site := txtSite.Text;
-    FOAuthClient.GrantType := gtPassword;
+    FOAuthClient.GrantType := TOAuth2GrantType(cboGrantType.ItemIndex);
     FOAuthClient.UserName := txtUser.Text;
     FOAuthClient.PassWord := txtPass.Text;
+    FOAuthClient.AuthCode := txtAuthCode.Text;
     FOAuthClient.ClientId := txtClientId.Text;
     FOAuthClient.ClientSecret := txtClientSecret.Text;
     ff := TStringList.Create;
@@ -400,6 +415,11 @@ begin
     ReadStreams;
     Screen.Cursor := crDefault;
   end;
+end;
+
+procedure TMainForm.cboGrantTypeSelect(Sender: TObject);
+begin
+  SelectGrantType;
 end;
 
 procedure TMainForm.AddHistory;
@@ -458,6 +478,11 @@ begin
     LogForm.txtSent.Lines.Delete(0);
   while LogForm.txtRecv.Lines.Count > MAX_LOGLINES do
     LogForm.txtRecv.Lines.Delete(0);
+end;
+
+procedure TMainForm.SelectGrantType;
+begin
+  nbCredentials.PageIndex := cboGrantType.ItemIndex;
 end;
 
 end.

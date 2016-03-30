@@ -18,7 +18,7 @@ begin
   client := TOAuth2Client.Create(cli);
   try
     client.Site := 'http://localhost';
-    client.GrantType := gtPassword;   // Only password is supported
+    client.GrantType := gtPassword;
     client.UserName := 'testuser';
     client.PassWord := 'testpass';
     client.ClientId := 'testclient';
@@ -52,7 +52,7 @@ begin
       ExpiresAt := 42442.406256875
     end;
     client.Site := 'http://localhost';
-    client.GrantType := gtPassword;   // Only password is supported
+    client.GrantType := gtPassword;
     client.UserName := 'testuser';
     client.PassWord := 'testpass';
     client.ClientId := 'testclient';
@@ -71,9 +71,9 @@ To compile the demo you need Indy 10 for Lazarus, see [here](http://wiki.freepas
 If you can't use Indy you must implement a `TOAuth2HttpClient` descendant which
 implements the methods `Get` and `Post`.
 
-## Limitations
+## Limitations/Features
 
-* Only the password GrantType (i.e. user credentials) is supported.
+* Supported GrantTypes: user credentials, authorization code, client credentials
 * Supported token types: Bearer, MAC (untested)
 * Server must return JSON
 * Refresh token must be returned with the access token

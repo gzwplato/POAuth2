@@ -27,7 +27,9 @@ uses
 
 type
   TOAuth2GrantType = (
-    gtPassword
+    gtPassword,                     // Username, Password
+    gtAuthCode,                     // AuthCode
+    gtClientCredentials             // ClientId, ClientSecret
   );
   TAccessTokenLoc = (atlUnknown, atlHeader, atlFormfield);
 
@@ -40,6 +42,8 @@ type
     FClientSecret: string;
     FSite: string;
     FScope: string;
+    FRedirectUri: string;
+    FAuthCode: string;
     FHttpClient: TOAuth2HttpClient;
     FAccessToken: TOAuth2Token;
     FGrantType: TOAuth2GrantType;
@@ -68,6 +72,9 @@ type
     property Site: string read FSite write SetSite;
     property GrantType: TOAuth2GrantType read FGrantType write SetGrantType default gtPassword;
     property AccessToken: TOAuth2Token read FAccessToken write SetAccessToken;
+    property RedirectUri: string read FRedirectUri write FRedirectUri;
+    // for GrantType = gtAuthCode
+    property AuthCode: string read FAuthCode write FAuthCode;
     property Config: TOAuth2Config read FConfig write FConfig;
   end;
 
@@ -77,7 +84,11 @@ uses
   uOAuth2Consts, uOAuth2Tools, uJson;
 
 const
-  GRANT_TYPE_STRINGS: array[TOAuth2GrantType] of string = ('password');
+  GRANT_TYPE_STRINGS: array[TOAuth2GrantType] of string = (
+    'password',
+    'authorization_code',
+    'client_credentials'
+  );
 
 constructor TOAuth2Client.Create(AClient: TOAuth2HttpClient);
 begin
@@ -180,12 +191,23 @@ begin
   FHttpClient.ClearHeader;
   FHttpClient.ClearFormFields;
   FHttpClient.AddFormField(OAUTH2_GRANT_TYPE, GRANT_TYPE_STRINGS[FGrantType]);
-  FHttpClient.AddFormField(OAUTH2_USERNAME, FUserName);
-  FHttpClient.AddFormField(OAUTH2_PASSWORD, FPassWord);
+  if (FGrantType = gtPassword) then begin
+    FHttpClient.AddFormField(OAUTH2_USERNAME, FUserName);
+    FHttpClient.AddFormField(OAUTH2_PASSWORD, FPassWord);
+  end else if (FGrantType = gtAuthCode) then begin
+    if FAuthCode = '' then
+      raise Exception.Create('Missing auth code for authorization_code grant type');
+    FHttpClient.AddFormField(OAUTH2_CODE, FAuthCode);
+    FHttpClient.AddFormField(OAUTH2_REDIRECT_URI, FRedirectUri);
+  end;
   if FClientId <> '' then
-    FHttpClient.AddFormField(OAUTH2_CLIENT_ID, FClientId);
+    FHttpClient.AddFormField(OAUTH2_CLIENT_ID, FClientId)
+  else if FGrantType = gtClientCredentials then
+    raise Exception.Create('Missing Client ID for client credentials grant type');
   if FClientSecret <> '' then
-    FHttpClient.AddFormField(OAUTH2_CLIENT_SECRET, FClientSecret);
+    FHttpClient.AddFormField(OAUTH2_CLIENT_SECRET, FClientSecret)
+  else if FGrantType = gtClientCredentials then
+    raise Exception.Create('Missing Client Secret for client credentials grant type');
   if FScope <> '' then
     FHttpClient.AddFormField(OAUTH2_SCOPE, FScope);
   url := FSite + FConfig.TokenEndPoint;
@@ -204,11 +226,11 @@ begin
     json.Parse(response.Body);
     val := json.GetValue(OATUH2_ACCESS_TOKEN);
     if val.Kind = JVKString then begin
-      Result.AccessToken := json.Output.Strings[val.Index];
+      Result.AccessToken := string(json.Output.Strings[val.Index]);
     end;
     val := json.GetValue(OAUTH2_REFRESH_TOKEN);
     if val.Kind = JVKString then begin
-      Result.RefreshToken := json.Output.Strings[val.Index];
+      Result.RefreshToken := string(json.Output.Strings[val.Index]);
     end;
     val := json.GetValue(OAUTH2_EXPIRES_IN);
     if val.Kind = JVKNumber then begin
@@ -216,13 +238,11 @@ begin
     end;
     val := json.GetValue(OAUTH2_TOKEN_TYPE);
     if val.Kind = JVKString then begin
-      Result.TokenType := json.Output.Strings[val.Index];
-      if not SameText(Result.TokenType, OAUTH2_TOKENTYPE_BEARER) then
-        raise Exception.Create(OAUTH2_TOKENTYPE_BEARER + ' Token type required');
+      Result.TokenType := string(json.Output.Strings[val.Index]);
     end;
     val := json.GetValue(OAUTH2_SCOPE);
     if val.Kind = JVKString then begin
-      FScope := json.Output.Strings[val.Index];
+      FScope := string(json.Output.Strings[val.Index]);
     end;
   finally
     json.Free;
@@ -261,11 +281,11 @@ begin
     json.Parse(response.Body);
     val := json.GetValue(OATUH2_ACCESS_TOKEN);
     if val.Kind = JVKString then begin
-      AToken.AccessToken := json.Output.Strings[val.Index];
+      AToken.AccessToken := string(json.Output.Strings[val.Index]);
     end;
     val := json.GetValue(OAUTH2_REFRESH_TOKEN);
     if val.Kind = JVKString then begin
-      AToken.RefreshToken := json.Output.Strings[val.Index];
+      AToken.RefreshToken := string(json.Output.Strings[val.Index]);
     end;
     val := json.GetValue(OAUTH2_EXPIRES_IN);
     if val.Kind = JVKNumber then begin
@@ -273,21 +293,19 @@ begin
     end;
     val := json.GetValue(OAUTH2_TOKEN_TYPE);
     if val.Kind = JVKString then begin
-      AToken.TokenType := json.Output.Strings[val.Index];
-      if not SameText(AToken.TokenType, OAUTH2_TOKENTYPE_BEARER) then
-        raise Exception.Create(OAUTH2_TOKENTYPE_BEARER + ' Token type required');
+      AToken.TokenType := string(json.Output.Strings[val.Index]);
     end;
     val := json.GetValue(OAUTH2_MACKEY);
     if val.Kind = JVKString then begin
-      AToken.MacKey := json.Output.Strings[val.Index];
+      AToken.MacKey := string(json.Output.Strings[val.Index]);
     end;
     val := json.GetValue(OAUTH2_MAXALGORITHM);
     if val.Kind = JVKString then begin
-      AToken.MacAlgorithm := json.Output.Strings[val.Index];
+      AToken.MacAlgorithm := string(json.Output.Strings[val.Index]);
     end;
     val := json.GetValue(OAUTH2_SCOPE);
     if val.Kind = JVKString then begin
-      FScope := json.Output.Strings[val.Index];
+      FScope := string(json.Output.Strings[val.Index]);
     end;
   finally
     json.Free;
@@ -302,8 +320,15 @@ var
 begin
   if not Assigned(FAccessToken) then
     FAccessToken := GetAccessToken;
-  if FAccessToken.IsExpired then
-    RefreshAccessToken(FAccessToken);
+  if FAccessToken.IsExpired then begin
+    if FAccessToken.RefreshToken <> '' then
+      RefreshAccessToken(FAccessToken)
+    else begin
+      // no refreh token -> get a new access token
+      FAccessToken.Free;
+      FAccessToken := GetAccessToken;
+    end;
+  end;
 
   FHttpClient.ClearHeader;
   FHttpClient.ClearFormFields;

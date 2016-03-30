@@ -28,6 +28,8 @@ const
   OAUTH2_USERNAME = 'username';
   OAUTH2_PASSWORD = 'password';
   OAUTH2_SCOPE = 'scope';
+  OAUTH2_REDIRECT_URI = 'redirect_uri';
+  OAUTH2_CODE = 'code';
   OAUTH2_TOKENTYPE_BEARER = 'Bearer';
   OAUTH2_TOKENTYPE_MAC = 'MAC';
   OATUH2_BASIC = 'Basic';
