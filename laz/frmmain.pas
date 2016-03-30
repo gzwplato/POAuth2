@@ -388,7 +388,7 @@ begin
         txtTook.Text := IntToStr(stop - start);
         txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
         txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
-        txtExpires.Text := IntToStr(FOAuthClient.AccessToken.ExpiresIn);
+        txtExpires.Text := FormatDateTime('hh:nn:ss', FOAuthClient.AccessToken.ExpiresAt);
         txtResponse.Lines.Clear;
         if res.Code = HTTP_OK then begin
           if IsJson(res.ContentType) then begin
