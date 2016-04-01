@@ -374,38 +374,41 @@ object MainForm: TMainForm
     top = 155
     object MenuItem1: TMenuItem
       Caption = '&File'
-      object MenuItem2: TMenuItem
+      object mnuFileExit: TMenuItem
         Caption = 'Exit'
-        OnClick = MenuItem2Click
+        OnClick = mnuFileExitClick
       end
     end
     object MenuItem3: TMenuItem
       Caption = '&View'
-      object MenuItem5: TMenuItem
+      object mnuViewHistory: TMenuItem
         Caption = 'History'
-        OnClick = MenuItem5Click
+        OnClick = mnuViewHistoryClick
       end
-      object MenuItem4: TMenuItem
+      object mnuViewLog: TMenuItem
         Caption = 'Log'
-        OnClick = MenuItem4Click
+        OnClick = mnuViewLogClick
       end
     end
     object MenuItem6: TMenuItem
       Caption = '&Tools'
-      object MenuItem8: TMenuItem
-        Caption = 'Hashes'
-        OnClick = MenuItem8Click
+      object mnuToolsMac: TMenuItem
+        Caption = 'MAC'
+        OnClick = mnuToolsMacClick
       end
-      object MenuItem7: TMenuItem
+      object MenuItem2: TMenuItem
+        Caption = '-'
+      end
+      object mnuToolsOptions: TMenuItem
         Caption = 'Options...'
-        OnClick = MenuItem7Click
+        OnClick = mnuToolsOptionsClick
       end
     end
     object MenuItem9: TMenuItem
       Caption = '&Help'
-      object MenuItem10: TMenuItem
+      object mnuHelpAbout: TMenuItem
         Caption = 'About...'
-        OnClick = MenuItem10Click
+        OnClick = mnuHelpAboutClick
       end
     end
   end

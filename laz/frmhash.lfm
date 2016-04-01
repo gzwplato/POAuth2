@@ -3,11 +3,12 @@ object HashForm: THashForm
   Height = 412
   Top = 197
   Width = 528
-  Caption = 'Hash'
+  Caption = 'MAC'
   ClientHeight = 412
   ClientWidth = 528
   OnCreate = FormCreate
   Position = poDefaultPosOnly
+  ShowInTaskBar = stAlways
   LCLVersion = '1.6.0.4'
   object txtInput: TMemo
     Left = 0

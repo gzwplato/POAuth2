@@ -10,6 +10,7 @@ object HistoryForm: THistoryForm
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  ShowInTaskBar = stNever
   LCLVersion = '1.6.0.4'
   object lstHistory: TListBox
     Left = 0

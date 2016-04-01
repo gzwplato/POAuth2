@@ -16,15 +16,16 @@ type
     btnPost: TButton;
     cboGrantType: TComboBox;
     Label13: TLabel;
+    MenuItem2: TMenuItem;
     pgClient: TPage;
     txtAuthCode: TEdit;
     Label12: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    MenuItem10: TMenuItem;
+    mnuHelpAbout: TMenuItem;
     MenuItem6: TMenuItem;
-    MenuItem7: TMenuItem;
-    MenuItem8: TMenuItem;
+    mnuToolsOptions: TMenuItem;
+    mnuToolsMac: TMenuItem;
     MenuItem9: TMenuItem;
     nbCredentials: TNotebook;
     pgAuthCode: TPage;
@@ -42,10 +43,10 @@ type
     Label8: TLabel;
     Label9: TLabel;
     MenuItem1: TMenuItem;
-    MenuItem2: TMenuItem;
+    mnuFileExit: TMenuItem;
     MenuItem3: TMenuItem;
-    MenuItem4: TMenuItem;
-    MenuItem5: TMenuItem;
+    mnuViewLog: TMenuItem;
+    mnuViewHistory: TMenuItem;
     mnuMain: TMainMenu;
     pnlForm: TPanel;
     pnlClient: TPanel;
@@ -69,12 +70,12 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure MenuItem10Click(Sender: TObject);
-    procedure MenuItem2Click(Sender: TObject);
-    procedure MenuItem4Click(Sender: TObject);
-    procedure MenuItem5Click(Sender: TObject);
-    procedure MenuItem7Click(Sender: TObject);
-    procedure MenuItem8Click(Sender: TObject);
+    procedure mnuHelpAboutClick(Sender: TObject);
+    procedure mnuFileExitClick(Sender: TObject);
+    procedure mnuViewLogClick(Sender: TObject);
+    procedure mnuViewHistoryClick(Sender: TObject);
+    procedure mnuToolsOptionsClick(Sender: TObject);
+    procedure mnuToolsMacClick(Sender: TObject);
     procedure txtFormFieldsExit(Sender: TObject);
     procedure txtResourceExit(Sender: TObject);
     procedure txtSiteExit(Sender: TObject);
@@ -199,7 +200,7 @@ begin
   FHistoryForm.Show;
 end;
 
-procedure TMainForm.MenuItem10Click(Sender: TObject);
+procedure TMainForm.mnuHelpAboutClick(Sender: TObject);
 begin
   with TAboutDialog.Create(Self) do try
     ShowModal;
@@ -208,22 +209,22 @@ begin
   end;
 end;
 
-procedure TMainForm.MenuItem2Click(Sender: TObject);
+procedure TMainForm.mnuFileExitClick(Sender: TObject);
 begin
   Close;
 end;
 
-procedure TMainForm.MenuItem4Click(Sender: TObject);
+procedure TMainForm.mnuViewLogClick(Sender: TObject);
 begin
   LogForm.Show;
 end;
 
-procedure TMainForm.MenuItem5Click(Sender: TObject);
+procedure TMainForm.mnuViewHistoryClick(Sender: TObject);
 begin
   FHistoryForm.Show;
 end;
 
-procedure TMainForm.MenuItem7Click(Sender: TObject);
+procedure TMainForm.mnuToolsOptionsClick(Sender: TObject);
 var
   cfg: TOAuth2Config;
 begin
@@ -243,7 +244,7 @@ begin
   end;
 end;
 
-procedure TMainForm.MenuItem8Click(Sender: TObject);
+procedure TMainForm.mnuToolsMacClick(Sender: TObject);
 begin
   HashForm.Show;
 end;

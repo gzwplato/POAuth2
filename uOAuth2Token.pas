@@ -114,11 +114,8 @@ begin
 end;
 
 function TOAuth2Token.IsExpired: boolean;
-var
-  n: TDateTime;
 begin
-  n := Now;
-  Result := FExpiresAt < n;
+  Result := FExpiresAt < Now;
 end;
 
 end.
