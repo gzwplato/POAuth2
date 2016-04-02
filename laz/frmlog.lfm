@@ -8,7 +8,7 @@ object LogForm: TLogForm
   ClientWidth = 524
   OnCreate = FormCreate
   OnResize = FormResize
-  Position = poDefaultPosOnly
+  Position = poDefault
   LCLVersion = '1.6.0.4'
   object txtSent: TMemo
     Left = 0

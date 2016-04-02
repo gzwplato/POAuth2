@@ -108,9 +108,6 @@ uses
 
 {$R *.lfm}
 
-const
-  MAX_LOGLINES = 300;
-
 { TMainForm }
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -450,35 +447,19 @@ end;
 procedure TMainForm.ReadStreams;
 var
   sent, recv: string;
-  sl: TStringList;
 begin
-  sl := TStringList.Create;
-  try
-    if FSendStream.Size > 0 then begin
-      SetLength(sent, FSendStream.Size);
-      FSendStream.Position := 0;
-      FSendStream.Read(sent[1], FSendStream.Size);
-      sent := StringReplace(sent, '<EOL>', LineEnding, [rfReplaceAll]);
-      sl.Text := sent;
-      LogForm.txtSent.Lines.AddStrings(sl);
-    end;
-    if FReceiveStream.Size > 0 then begin
-      SetLength(recv, FReceiveStream.Size);
-      FReceiveStream.Position := 0;
-      FReceiveStream.Read(recv[1], FReceiveStream.Size);
-      recv := StringReplace(recv, '<EOL>', LineEnding, [rfReplaceAll]);
-      sl.Text := recv;
-      LogForm.txtRecv.Lines.AddStrings(sl);
-    end;
-    LogForm.txtSent.Lines.Add('----------------------8<----------------------');
-    LogForm.txtRecv.Lines.Add('----------------------8<----------------------');
-  finally
-    sl.Free;
+  if FSendStream.Size > 0 then begin
+    SetLength(sent, FSendStream.Size);
+    FSendStream.Position := 0;
+    FSendStream.Read(sent[1], FSendStream.Size);
+    LogForm.AddSent(sent);
   end;
-  while LogForm.txtSent.Lines.Count > MAX_LOGLINES do
-    LogForm.txtSent.Lines.Delete(0);
-  while LogForm.txtRecv.Lines.Count > MAX_LOGLINES do
-    LogForm.txtRecv.Lines.Delete(0);
+  if FReceiveStream.Size > 0 then begin
+    SetLength(recv, FReceiveStream.Size);
+    FReceiveStream.Position := 0;
+    FReceiveStream.Read(recv[1], FReceiveStream.Size);
+    LogForm.AddRecv(recv);
+  end;
 end;
 
 procedure TMainForm.SelectGrantType;

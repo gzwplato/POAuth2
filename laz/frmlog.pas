@@ -23,6 +23,8 @@ type
     { private declarations }
   public
     { public declarations }
+    procedure AddSent(const AString: string);
+    procedure AddRecv(const AString: string);
   end;
 
 var
@@ -31,6 +33,9 @@ var
 implementation
 
 {$R *.lfm}
+
+const
+  MAX_LOGLINES = 300;
 
 { TLogForm }
 
@@ -43,6 +48,73 @@ begin
       txtRecv.Font.Name := 'DejaVu Sans Mono';
     end;
   {$ENDIF}
+end;
+
+procedure TLogForm.AddSent(const AString: string);
+var
+  sent, s, s2: string;
+  sl: TStringList;
+  i, p: integer;
+begin
+  sent := StringReplace(AString, '<EOL>', LineEnding, [rfReplaceAll]);
+  sl := TStringList.Create;
+  try
+    sl.Text := sent;
+    for i := sl.Count - 1 downto 1 do begin
+      // Add new line between requests
+      s := sl[i];
+      p := Pos('POST /', s);
+      if p = 0 then
+        p := Pos('GET /', s);
+      if p > 1 then begin
+        s2 := Copy(s, p, MaxInt);
+        Delete(s, p, MaxInt);
+        sl[i] := s2;
+        sl.Insert(i, s);
+        sl.Insert(i+1, '');
+      end;
+    end;
+    if sl.Count <> 0 then begin
+      txtSent.Lines.AddStrings(sl);
+      txtSent.Lines.Add('----------------------8<----------------------');
+      while txtSent.Lines.Count > MAX_LOGLINES do
+        txtSent.Lines.Delete(0);
+    end;
+  finally
+    sl.Free;
+  end;
+end;
+
+procedure TLogForm.AddRecv(const AString: string);
+var
+  recv, s, s2: string;
+  sl: TStringList;
+  i, p: integer;
+begin
+  recv := StringReplace(AString, '<EOL>', LineEnding, [rfReplaceAll]);
+  sl := TStringList.Create;
+  try
+    sl.Text := recv;
+    for i := sl.Count - 1 downto 1 do begin
+      s := sl[i];
+      p := Pos('HTTP/1.', s);
+      if p > 1 then begin
+        s2 := Copy(s, p, MaxInt);
+        Delete(s, p, MaxInt);
+        sl[i] := s2;
+        sl.Insert(i, s);
+        sl.Insert(i+1, '');
+      end;
+    end;
+    if sl.Count <> 0 then begin
+      txtRecv.Lines.AddStrings(sl);
+      txtRecv.Lines.Add('----------------------8<----------------------');
+      while txtRecv.Lines.Count > MAX_LOGLINES do
+        txtRecv.Lines.Delete(0);
+    end;
+  finally
+    sl.Free;
+  end;
 end;
 
 procedure TLogForm.FormResize(Sender: TObject);
