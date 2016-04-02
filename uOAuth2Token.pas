@@ -29,7 +29,7 @@ type
     procedure SetExpiresIn(Value: integer);
     function GetBearerAuthHeader: string;
     function GetMacAuthHeader(const AMethod: string; const AUrl: TUrlParts): string;
-    function GetMacSignature(const AMethod: string; const AUrl: TUrlParts;
+    class function GetMacSignature(const AMethod: string; const AUrl: TUrlParts;
       const ATs: LongInt; const ANonce: string): string;
   public
     function IsExpired: boolean;
@@ -54,7 +54,7 @@ begin
   Result := Format('%s %s', [OAUTH2_TOKENTYPE_BEARER, FAccessToken])
 end;
 
-function TOAuth2Token.GetMacSignature(const AMethod: string; const AUrl: TUrlParts;
+class function TOAuth2Token.GetMacSignature(const AMethod: string; const AUrl: TUrlParts;
   const ATs: LongInt; const ANonce: string): string;
 var
   url: string;
@@ -84,7 +84,9 @@ begin
   CreateGUID(guid);
   nonce := GUIDToString(guid);
   nonce := StringReplace(nonce, '-', '', [rfReplaceAll]);
-  mac_sig := GetMacSignature(AMethod, AUrl, ts, nonce);
+  nonce := StringReplace(nonce, '{', '', [rfReplaceAll]);
+  nonce := StringReplace(nonce, '}', '', [rfReplaceAll]);
+  mac_sig := TOAuth2Token.GetMacSignature(AMethod, AUrl, ts, nonce);
 
   p := Pos('hmac-', LowerCase(FMacAlgorithm));
   if p = 0 then
