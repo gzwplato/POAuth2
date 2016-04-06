@@ -50,6 +50,7 @@ begin
       ExpiresIn := 3600;
       // Set after ExpiresIn overwrites calculated value
       ExpiresAt := 42442.406256875
+      TokenType := 'Bearer';
     end;
     client.Site := 'http://localhost';
     client.GrantType := gtPassword;
