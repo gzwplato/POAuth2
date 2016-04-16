@@ -129,7 +129,7 @@ If it still failes, try also making these non-critical:
 I used [oauth2-server-php](https://github.com/bshaffer/oauth2-server-php) as Server.
 To extend the Resource controller to accept HTTP POST add a new route:
 
-~~~iphp
+~~~php
 class Resource
 {
     // Connects the routes in Silex
@@ -199,7 +199,7 @@ class Resource
 
 To make the resource controller correctly return JSON:
 
-~~~iphp 
+~~~php 
 public function resource(Application $app)
 {
     // get the oauth server (configured in src/OAuth2Demo/Server/Server.php)
