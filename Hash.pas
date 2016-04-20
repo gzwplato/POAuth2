@@ -235,11 +235,14 @@ end;
 class function THash.GetHashType(AName: string): PHashType;
 var
   i: integer;
+  nnd: string;
 begin
   if HashTypes <> nil then begin 
     for i := 0 to HashTypes.Count - 1 do begin
       Result := PHashType(HashTypes[i]);
-      if CompareText(Result^.Name, AName) = 0 then
+      // Name without dashes
+      nnd := StringReplace(Result^.Name, '-', '', [rfReplaceAll]);
+      if (CompareText(Result^.Name, AName) = 0) or (CompareText(nnd, AName) = 0) then
         Exit;
     end;
     Result := nil;
