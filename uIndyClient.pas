@@ -107,6 +107,10 @@ begin
         FHttp.Request.Password := FPassword;
         FHttp.Request.BasicAuthentication := (FUsername <> '') and (FPassword <> '');
       end else begin
+        if Assigned(FHttp.Request.Authentication) then begin
+          FHttp.Request.Authentication.Free;
+          FHttp.Request.Authentication := nil;
+        end;
         FHttp.Request.Username := '';
         FHttp.Request.Password := '';
         FHttp.Request.BasicAuthentication := false;
@@ -146,6 +150,10 @@ begin
         FHttp.Request.Password := FPassword;
         FHttp.Request.BasicAuthentication := (FUsername <> '') and (FPassword <> '');
       end else begin
+        if Assigned(FHttp.Request.Authentication) then begin
+          FHttp.Request.Authentication.Free;
+          FHttp.Request.Authentication := nil;
+        end;
         FHttp.Request.Username := '';
         FHttp.Request.Password := '';
         FHttp.Request.BasicAuthentication := false;
