@@ -51,7 +51,7 @@ uses
 
 function TOAuth2Token.GetBearerAuthHeader: string;
 begin
-  Result := Format('%s %s', [OAUTH2_TOKENTYPE_BEARER, FAccessToken])
+  Result := Format('%s %s', [FTokenType, FAccessToken])
 end;
 
 class function TOAuth2Token.GetMacSignature(const AMethod: string; const AUrl: TUrlParts;
