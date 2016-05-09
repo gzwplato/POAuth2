@@ -83,10 +83,16 @@ const
     'text/x-json'
   );
 var
-  i: integer;
+  i, p: integer;
+  val: string;
 begin
+  val := AContentType;
+  p := Pos(';', val);
+  if p <> 0 then begin
+    Delete(val, p, MaxInt);
+  end;
   for i := Low(CT_JSON) to High(CT_JSON) do begin
-    if CompareText(CT_JSON[i], AContentType) = 0 then begin
+    if CompareText(CT_JSON[i], val) = 0 then begin
       Result := true;
       Exit;
     end;

@@ -18,7 +18,7 @@ unit uIndyClient;
 interface
 
 uses
-  SysUtils, Classes, IdHttp, uOAuth2HttpClient, IdIOHandler, IdAuthentication;
+  SysUtils, Classes, IdHttp, uOAuth2HttpClient, IdIOHandler, IdAuthentication, IdHeaderList;
 
 type
   TIndyHttpClient = class(TOAuth2HttpClient)
@@ -27,25 +27,23 @@ type
     FOwnClient: boolean;
     FIOHandler: TIdIOHandler;
     FSSLIOHandler: TIdIOHandler;
+    FUsername: string;
+    FPassword: string;
     procedure SetIOHandler(const AProt: string);
-    function GetUsername: string;
-    procedure SetUsername(Value: string);
-    function GetPassword: string;
-    procedure SetPassword(Value: string);
   public
     constructor Create(AHttp: TIdHttp);
     destructor Destroy; override;
     function Get(const AUrl: string): TOAuth2Response; override;
     function Post(const AUrl: string): TOAuth2Response; override;
 
-    property Username: string read GetUsername write SetUsername;
-    property Password: string read GetPassword write SetPassword;
+    property Username: string read FUsername write FUsername;
+    property Password: string read FPassword write FPassword;
   end;
 
 implementation
 
 uses
-  uOAuth2Tools, IdSSLOpenSSL, IdURI;
+  uOAuth2Tools, IdSSLOpenSSL, IdURI, uOAuth2Consts;
 
 constructor TIndyHttpClient.Create(AHttp: TIdHttp);
 begin
@@ -71,28 +69,6 @@ begin
   if FOwnClient then
     FHttp.Free;
   inherited;
-end;
-
-function TIndyHttpClient.GetUsername: string;
-begin
-  Result := FHttp.Request.Username;
-end;
-
-procedure TIndyHttpClient.SetUsername(Value: string);
-begin
-  FHttp.Request.Username := Value;
-  FHttp.Request.BasicAuthentication := (FHttp.Request.Username <> '') and (FHttp.Request.Password <> '');
-end;
-
-function TIndyHttpClient.GetPassword: string;
-begin
-  Result := FHttp.Request.Password;
-end;
-
-procedure TIndyHttpClient.SetPassword(Value: string);
-begin
-  FHttp.Request.Password := Value;
-  FHttp.Request.BasicAuthentication := (FHttp.Request.Username <> '') and (FHttp.Request.Password <> '');
 end;
 
 procedure TIndyHttpClient.SetIOHandler(const AProt: string);
@@ -125,8 +101,22 @@ begin
     end;
     url := TIdURI.URLEncode(BuildUrl(urlp));
     FHttp.Request.CustomHeaders.Clear;
-    if FHeaders.Count > 0 then
+    if FHeaders.Count > 0 then begin
+      if FHeaders.IndexOfName(OAUTH2_AUTHORIZATION) = -1 then begin
+        FHttp.Request.Username := FUsername;
+        FHttp.Request.Password := FPassword;
+        FHttp.Request.BasicAuthentication := (FUsername <> '') and (FPassword <> '');
+      end else begin
+        FHttp.Request.Username := '';
+        FHttp.Request.Password := '';
+        FHttp.Request.BasicAuthentication := false;
+      end;
       FHttp.Request.CustomHeaders.AddStrings(FHeaders);
+    end else begin
+      FHttp.Request.Username := FUsername;
+      FHttp.Request.Password := FPassword;
+      FHttp.Request.BasicAuthentication := (FUsername <> '') and (FPassword <> '');
+    end;
     body := FHttp.Get(url);
     Result.Code := FHttp.ResponseCode;
     Result.ContentType := FHttp.Response.ContentType;
@@ -150,8 +140,22 @@ begin
     SetIOHandler(urlp.Protocol);
 
     FHttp.Request.CustomHeaders.Clear;
-    if FHeaders.Count > 0 then
+    if FHeaders.Count > 0 then begin
+      if FHeaders.IndexOfName(OAUTH2_AUTHORIZATION) = -1 then begin
+        FHttp.Request.Username := FUsername;
+        FHttp.Request.Password := FPassword;
+        FHttp.Request.BasicAuthentication := (FUsername <> '') and (FPassword <> '');
+      end else begin
+        FHttp.Request.Username := '';
+        FHttp.Request.Password := '';
+        FHttp.Request.BasicAuthentication := false;
+      end;
       FHttp.Request.CustomHeaders.AddStrings(FHeaders);
+    end else begin
+      FHttp.Request.Username := FUsername;
+      FHttp.Request.Password := FPassword;
+      FHttp.Request.BasicAuthentication := (FUsername <> '') and (FPassword <> '');
+    end;
     url := TIdURI.URLEncode(AUrl);
     body := FHttp.Post(url, FFormFields);
     Result.Code := FHttp.ResponseCode;
