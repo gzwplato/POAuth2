@@ -210,7 +210,11 @@ begin
     raise Exception.Create('Missing Client Secret for client credentials grant type');
   if FScope <> '' then
     FHttpClient.AddFormField(OAUTH2_SCOPE, FScope);
-  url := FSite + FConfig.TokenEndPoint;
+  if Pos('://', FConfig.TokenEndPoint) = 0 then
+    url := FSite + FConfig.TokenEndPoint
+  else
+    // Token endpoint seems to be an abolute URL
+    url := FConfig.TokenEndPoint;
   response := FHttpClient.Post(url);
 
   if response.Code <> HTTP_OK then begin
@@ -267,7 +271,11 @@ begin
     FHttpClient.AddFormField(OAUTH2_CLIENT_ID, FClientId);
   if FClientSecret <> '' then
     FHttpClient.AddFormField(OAUTH2_CLIENT_SECRET, FClientSecret);
-  url := FSite + FConfig.TokenEndPoint;
+  if Pos('://', FConfig.TokenEndPoint) = 0 then
+    url := FSite + FConfig.TokenEndPoint
+  else
+    // Token endpoint seems to be an abolute URL
+    url := FConfig.TokenEndPoint;
   response := FHttpClient.Post(url);
 
   if response.Code <> HTTP_OK then begin

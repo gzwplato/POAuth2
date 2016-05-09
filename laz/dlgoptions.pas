@@ -42,7 +42,8 @@ uses
 
 procedure TOptionsDialog.txtAccessTokenEndpointExit(Sender: TObject);
 begin
-  txtAccessTokenEndpoint.Text := AddLeadingSlash(txtAccessTokenEndpoint.Text);
+  if Pos('://', txtAccessTokenEndpoint.Text) = 0 then
+    txtAccessTokenEndpoint.Text := AddLeadingSlash(txtAccessTokenEndpoint.Text);
 end;
 
 end.
