@@ -120,7 +120,6 @@ begin
   pnlclient.Constraints.MinWidth := pnlClient.Width;
   pnlTop.Constraints.MinHeight := pnlTop.Height;
   FIdHttp := TIdHTTP.Create(Self);
-  FIdHttp.Request.UserAgent := 'Mozilla/3.0 (compatible; POAuth2)';
   FClient := TIndyHttpClient.Create(FIdHttp);
   FSendStream := TMemoryStream.Create;
   FReceiveStream := TMemoryStream.Create;
@@ -135,6 +134,7 @@ begin
   StatusBar.SimpleText := 'Settings stored in: ' + IniPropStorage.IniFileName;
   IniPropStorage.Restore;
   IniPropStorage.IniSection := 'general';
+  FIdHttp.Request.UserAgent := IniPropStorage.ReadString('user_agent', 'Mozilla/3.0 (compatible; POAuth2)');
   txtSite.Text := IniPropStorage.ReadString('site', txtSite.Text);
   txtUser.Text := IniPropStorage.ReadString('user', txtUser.Text);
   txtPass.Text := IniPropStorage.ReadString('pass', txtPass.Text);
@@ -227,10 +227,12 @@ var
 begin
   with TOptionsDialog.Create(Self) do try
     cfg := FOAuthClient.Config;
+    txtUserAgent.Text := FIdHttp.Request.UserAgent;
     txtAccessTokenEndpoint.Text := cfg.TokenEndPoint;
     txtUsername.Text := FClient.Username;
     txtPassword.Text := FClient.Password;
     if ShowModal = mrOK then begin
+      FIdHttp.Request.UserAgent := txtUserAgent.Text;
       cfg.TokenEndPoint := txtAccessTokenEndpoint.Text;
       FOAuthClient.Config := cfg;
       FClient.Username := txtUsername.Text;
@@ -274,6 +276,7 @@ var
 begin
   IniPropStorage.EraseSections;
   IniPropStorage.IniSection := 'general';
+  IniPropStorage.WriteString('user_agent', FIdHttp.Request.UserAgent);
   IniPropStorage.WriteString('site', txtSite.Text);
   IniPropStorage.WriteString('user', txtUser.Text);
   IniPropStorage.WriteString('pass', txtPass.Text);
@@ -314,6 +317,7 @@ var
   start, stop: DWord;
 begin
   Screen.Cursor := crHourGlass;
+  start := LCLIntf.GetTickCount;
   try
     AddHistory;
     FSendStream.Clear;
@@ -326,13 +330,7 @@ begin
     FOAuthClient.ClientId := txtClientId.Text;
     FOAuthClient.ClientSecret := txtClientSecret.Text;
     try
-      start := LCLIntf.GetTickCount;
       res := FOAuthClient.Get(txtResource.Text);
-      stop := LCLIntf.GetTickCount;
-      txtTook.Text := IntToStr(stop - start);
-      txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
-      txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
-      txtExpires.Text := FormatDateTime('hh:nn:ss', FOAuthClient.AccessToken.ExpiresAt);
       txtResponse.Lines.Clear;
       if res.Code = HTTP_OK then begin
         if IsJson(res.ContentType) then begin
@@ -353,6 +351,11 @@ begin
         txtResponse.Text := Format('%s: %s', [E.ClassName, E.Message]);
     end;
   finally
+    stop := LCLIntf.GetTickCount;
+    txtTook.Text := IntToStr(stop - start);
+    txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
+    txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
+    txtExpires.Text := FormatDateTime('hh:nn:ss', FOAuthClient.AccessToken.ExpiresAt);
     ReadStreams;
     Screen.Cursor := crDefault;
   end;
@@ -365,6 +368,7 @@ var
   ff: TStringList;
 begin
   Screen.Cursor := crHourGlass;
+  start := LCLIntf.GetTickCount;
   try
     AddHistory;
     FSendStream.Clear;
@@ -380,13 +384,7 @@ begin
     try
       ff.AddStrings(txtFormFields.Lines);
       try
-        start := LCLIntf.GetTickCount;
         res := FOAuthClient.Post(txtResource.Text, ff);
-        stop := LCLIntf.GetTickCount;
-        txtTook.Text := IntToStr(stop - start);
-        txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
-        txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
-        txtExpires.Text := FormatDateTime('hh:nn:ss', FOAuthClient.AccessToken.ExpiresAt);
         txtResponse.Lines.Clear;
         if res.Code = HTTP_OK then begin
           if IsJson(res.ContentType) then begin
@@ -410,6 +408,11 @@ begin
       ff.Free;
     end;
   finally
+    stop := LCLIntf.GetTickCount;
+    txtTook.Text := IntToStr(stop - start);
+    txtAccessToken.Text := FOAuthClient.AccessToken.AccessToken;
+    txtRefreshToken.Text := FOAuthClient.AccessToken.RefreshToken;
+    txtExpires.Text := FormatDateTime('hh:nn:ss', FOAuthClient.AccessToken.ExpiresAt);
     ReadStreams;
     Screen.Cursor := crDefault;
   end;

@@ -13,6 +13,8 @@ type
   TOptionsDialog = class(TForm)
     Button1: TButton;
     Button2: TButton;
+    txtUserAgent: TEdit;
+    Label4: TLabel;
     txtUsername: TEdit;
     txtPassword: TEdit;
     GroupBox1: TGroupBox;

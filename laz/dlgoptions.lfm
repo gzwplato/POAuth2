@@ -1,18 +1,18 @@
 object OptionsDialog: TOptionsDialog
   Left = 2110
-  Height = 262
+  Height = 294
   Top = 263
   Width = 408
   BorderStyle = bsDialog
   Caption = 'Options'
-  ClientHeight = 262
+  ClientHeight = 294
   ClientWidth = 408
   Position = poOwnerFormCenter
   LCLVersion = '1.6.0.4'
   object Panel1: TPanel
     Left = 0
     Height = 40
-    Top = 222
+    Top = 254
     Width = 408
     Align = alBottom
     BevelOuter = bvNone
@@ -104,5 +104,21 @@ object OptionsDialog: TOptionsDialog
       Anchors = [akTop, akLeft, akRight]
       TabOrder = 1
     end
+  end
+  object txtUserAgent: TEdit
+    Left = 8
+    Height = 23
+    Top = 224
+    Width = 392
+    TabOrder = 3
+    Text = 'Mozilla/3.0 (compatible; POAuth2)'
+  end
+  object Label4: TLabel
+    Left = 8
+    Height = 15
+    Top = 208
+    Width = 61
+    Caption = 'User &Agent:'
+    ParentColor = False
   end
 end
