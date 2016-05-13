@@ -30,6 +30,7 @@ type
     FUsername: string;
     FPassword: string;
     procedure SetIOHandler(const AProt: string);
+    procedure AddHeaders;
   public
     constructor Create(AHttp: TIdHttp);
     destructor Destroy; override;
@@ -45,6 +46,55 @@ implementation
 uses
   uOAuth2Tools, IdSSLOpenSSL, IdURI, uOAuth2Consts;
 
+type
+  TIdOAuth2Authentication = class(TIdAuthentication)
+  protected
+    FHeader: string;
+    function DoNext: TIdAuthWhatsNext; override;
+    function GetSteps: Integer; override;
+  public
+    constructor Create; override;
+    function Authentication: String; override;
+    function KeepAlive: Boolean; override;
+    procedure Reset; override;
+  end;
+
+{ TIdOAuth2Authentication }
+
+constructor TIdOAuth2Authentication.Create;
+begin
+  inherited Create;
+  FCurrentStep := 0;
+end;
+
+function TIdOAuth2Authentication.Authentication: String;
+begin
+  Result := FHeader;
+end;
+
+function TIdOAuth2Authentication.KeepAlive: Boolean;
+begin
+  Result := false;
+end;
+
+procedure TIdOAuth2Authentication.Reset;
+begin
+  inherited Reset;
+  FCurrentStep := 0;
+end;
+
+function TIdOAuth2Authentication.DoNext: TIdAuthWhatsNext;
+begin
+  Result := wnDoRequest;
+end;
+
+function TIdOAuth2Authentication.GetSteps: Integer;
+begin
+  Result := 1;
+end;
+
+{ TIndyHttpClient }
+
 constructor TIndyHttpClient.Create(AHttp: TIdHttp);
 begin
   inherited Create;
@@ -58,7 +108,7 @@ begin
     FOwnClient := true;
   end;
   with FHttp do begin
-    AllowCookies := True;
+    AllowCookies := true;
     HandleRedirects := false;
     HTTPOptions := HTTPOptions + [hoKeepOrigProtocol];
   end;
@@ -80,6 +130,16 @@ begin
     FHttp.IOHandler := FSSLIOHandler;
   end else if ((AProt = 'http') and (FHttp.IOHandler is TIdSSLIOHandlerSocketOpenSSL)) then begin
     FHttp.IOHandler := FIOHandler;
+  end;
+end;
+
+procedure TIndyHttpClient.AddHeaders;
+var
+  i: integer;
+begin
+  for i := 0 to FHeaders.Count - 1 do begin
+    if CompareText(FHeaders.Names[i], OAUTH2_AUTHORIZATION) <> 0 then
+      FHttp.Request.CustomHeaders.Add(FHeaders[i]);
   end;
 end;
 
@@ -107,15 +167,17 @@ begin
         FHttp.Request.Password := FPassword;
         FHttp.Request.BasicAuthentication := (FUsername <> '') and (FPassword <> '');
       end else begin
+        FHttp.Request.Username := '';
+        FHttp.Request.Password := '';
+        FHttp.Request.BasicAuthentication := false;
         if Assigned(FHttp.Request.Authentication) then begin
           FHttp.Request.Authentication.Free;
           FHttp.Request.Authentication := nil;
         end;
-        FHttp.Request.Username := '';
-        FHttp.Request.Password := '';
-        FHttp.Request.BasicAuthentication := false;
+        FHttp.Request.Authentication := TIdOAuth2Authentication.Create;
+        TIdOAuth2Authentication(FHttp.Request.Authentication).FHeader := Trim(FHeaders.Values[OAUTH2_AUTHORIZATION]);
       end;
-      FHttp.Request.CustomHeaders.AddStrings(FHeaders);
+      AddHeaders;
     end else begin
       FHttp.Request.Username := FUsername;
       FHttp.Request.Password := FPassword;
@@ -150,15 +212,17 @@ begin
         FHttp.Request.Password := FPassword;
         FHttp.Request.BasicAuthentication := (FUsername <> '') and (FPassword <> '');
       end else begin
+        FHttp.Request.Username := '';
+        FHttp.Request.Password := '';
+        FHttp.Request.BasicAuthentication := false;
         if Assigned(FHttp.Request.Authentication) then begin
           FHttp.Request.Authentication.Free;
           FHttp.Request.Authentication := nil;
         end;
-        FHttp.Request.Username := '';
-        FHttp.Request.Password := '';
-        FHttp.Request.BasicAuthentication := false;
+        FHttp.Request.Authentication := TIdOAuth2Authentication.Create;
+        TIdOAuth2Authentication(FHttp.Request.Authentication).FHeader := Trim(FHeaders.Values[OAUTH2_AUTHORIZATION]);
       end;
-      FHttp.Request.CustomHeaders.AddStrings(FHeaders);
+      AddHeaders;
     end else begin
       FHttp.Request.Username := FUsername;
       FHttp.Request.Password := FPassword;
