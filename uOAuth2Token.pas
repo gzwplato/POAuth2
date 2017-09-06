@@ -63,7 +63,6 @@ begin
   Result := Format('%d'#10'%s'#10'%s'#10'%s'#10'%s'#10'%d', [
     ATs, ANonce, AMethod, url, AUrl.Host, AUrl.Port
   ]);
-  Result := Result;
 end;
 
 function TOAuth2Token.GetMacAuthHeader(const AMethod: string; const AUrl: TUrlParts): string;
