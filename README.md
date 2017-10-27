@@ -234,4 +234,4 @@ public function resource(Application $app)
 ## Get it
 
 * [GitHub](https://github.com/stievie/POAuth2)
-* [Lazarus Win32 Demo binary](https://0x2a.wtf/files/poat.zip)
+* [Win32 and Win64 Demo Binaries](https://github.com/stievie/POAuth2/releases)
